@@ -16,6 +16,7 @@ const CurrentCategories = (props) => {
     });
 
   useEffect(() => {
+    console.log(categories.length);
     const categoriesUnStored = submitData(
       API_DISTINCT_CATEGORIES_URL,
       categories
