@@ -9,9 +9,11 @@ const CurrentCategories = (props) => {
   const { getCurrentCategories, categories } = props;
   const [children, setChildren] = useState();
 
-  const selectedCategories = categories.map((category) => {
-    return category.id;
-  });
+  const selectedCategories =
+    categories.length > 0 ??
+    categories.map((category) => {
+      return category.id;
+    });
 
   useEffect(() => {
     const categoriesUnStored = submitData(
