@@ -1,48 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Select } from "antd";
-import { fetchData } from "../../utility/fetchData";
+import { submitData } from "../../utility/submitData";
 const ContactsAssociate = (props) => {
-  let contacts_Selected = [];
-  let contactsUnselected = [];
-  let children = [];
   const { setAssociateTo, associateTo } = props;
-  /* Ene esta URL hacemos un llamado a un endPoint de nuestra app para que nos retorne unicamente los email */
-  const API_ASSOCIATE_TO_URL =
-    "http://localhost:3120/api/v1/contacts/contactsEmail";
-  const contacts_Stored = fetchData(API_ASSOCIATE_TO_URL);
+  const [contacts_Selected, setContacts_Selected] = useState(associateTo);
+  const [contactsUnselected, setContactsUnselected] = useState([]);
+  const [contactsOptions, setContactsOptions] = useState([]);
 
-  /* Renderizar contactos si la categoria tiene personas asociadas */
-  if (associateTo.length > 0) {
-    for (let i = 0; i < associateTo.length; i++) {
-      contacts_Selected.push(
-        <Select.Option key={associateTo[i]}>{associateTo[i]}</Select.Option>
+  const addCurrentContactsToSelectChildren = async () => {
+    /* Renderizar contactos si la categoria tiene personas asociadas */
+    if (associateTo.length > 0) {
+      setContacts_Selected(
+        associateTo.map((contact) => (
+          <Select.Option key={contact.id}>{contact.email}</Select.Option>
+        ))
       );
     }
+  };
 
-    /* En cada elemento del array donde estan todos los email
-    hacemos verificacion de si el elemento actual existe o no */
-    contacts_Stored.forEach((contact) => {
-      if (associateTo.indexOf(contact) === -1) {
-        contactsUnselected.push(
-          <Select.Option key={contact}>{contact}</Select.Option>
-        );
-      }
+  const addMissingContactsToSelectChildren = () => {
+    const API_ASSOCIATE_TO_URL =
+      "http://localhost:3120/api/v1/contacts/distinctContacts";
+    submitData(API_ASSOCIATE_TO_URL, associateTo).then((resp) => {
+      const { contacts } = resp;
+      const allContactsOptions = [...contacts, ...contacts_Selected];
+      setContactsOptions(contacts_Selected);
+      console.log(contacts_Selected);
+      console.log(contacts);
     });
-
-    children.push(contacts_Selected);
-    children.push(contactsUnselected);
-  }
-
-  /* Renderizar todos los contactos en dado caso que la categoria no este asociado a ninguno */
-  if (associateTo.length === 0) {
-    for (let i = 0; i < contacts_Stored.length; i++) {
-      children.push(
-        <Select.Option key={contacts_Stored[i]}>
-          {contacts_Stored[i]}
-        </Select.Option>
-      );
-    }
-  }
+  };
 
   /*   funcion que retorna las categorias mediante el callback  */
   const returnSelectedConctacts = (contacts, cb) => {
@@ -55,12 +41,16 @@ const ContactsAssociate = (props) => {
     cb(contactObject);
   };
 
+  useEffect(() => {
+    addMissingContactsToSelectChildren();
+  }, [associateTo]);
+
   return (
     <Select
       mode="multiple"
       style={{ width: "100%" }}
       allowClear
-      defaultValue={contacts_Selected}
+      defaultValue={associateTo.map((contact) => contact.email)}
       labelInValue
       optionLabelProp="children"
       optionFilterProp="children"
@@ -70,13 +60,12 @@ const ContactsAssociate = (props) => {
           0
         );
       }}
+      options={contactsOptions}
       /* El problema esta en este callback */
       onChange={(contacts) => {
         returnSelectedConctacts(contacts, setAssociateTo);
       }}
-    >
-      {children}
-    </Select>
+    />
   );
 };
 

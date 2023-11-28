@@ -14,7 +14,7 @@ import DeleteMessageModal from "../components/modals/DeleteMessageModal";
 import SeveralMessagesToSendModal from "../components/modals/SeveralMessagesToSendModal";
 import SendButton from "../components/buttons/SendButton";
 
-const API_URL = "http://localhost:3120/api/v1/messages";
+const API_URL = "http://localhost:3120/api/v1/messages/";
 const API_URL_DELETE_MESSAGES =
   "http://localhost:3120/api/v1/messages/deleteMessage/";
 
@@ -75,11 +75,11 @@ const MessageTable = () => {
           {categories.map((category) => {
             return (
               <Tag
-                key={category}
+                key={category.categorie_name}
                 color={"rgb(158, 255, 206)"}
                 style={{ color: "black" }}
               >
-                {category}
+                {category.categorie_name}
               </Tag>
             );
           })}
@@ -87,20 +87,24 @@ const MessageTable = () => {
       ),
     },
     {
-      title: "Associated to",
-      dataIndex: "associated_to",
-      key: "associated_to",
+      title: "Contacts associated",
+      dataIndex: "contacts",
+      key: "contacts",
       width: 100,
       filtered: true,
       filterSearch: true,
       filters: associatedFilter,
-      onFilter: (value, record) => record.associated_to.indexOf(value) !== -1,
-      render: (associated_to) => (
+      onFilter: (value, record) => record.contacts.indexOf(value) !== -1,
+      render: (contacts) => (
         <>
-          {associated_to.map((contact) => {
+          {contacts.map((contact) => {
             return (
-              <Tag key={contact} color={"#9effce"} style={{ color: "black" }}>
-                {contact}
+              <Tag
+                key={contact.email}
+                color={"#9effce"}
+                style={{ color: "black" }}
+              >
+                {contact.email}
               </Tag>
             );
           })}
@@ -120,16 +124,17 @@ const MessageTable = () => {
     setShowEditMessageModal(true);
   };
 
-  const setMessageInfo = ({ id, message, categories, associate_to }) => {
+  const setMessageInfo = ({ id, message, Categories, Contacts }) => {
     setId(id);
     setMessageToSend(message);
-    setCategories(categories);
-    setAssociateTo(associate_to);
+    setCategories(Categories);
+    setAssociateTo(Contacts);
   };
 
   const renderMessages = () => {
-    if (messages.length > 0) {
-      messages.map((message) => {
+    const { result } = messages;
+    if (result) {
+      result.map((message) => {
         dataSource.push({
           key: message.id,
           message: (
@@ -140,8 +145,8 @@ const MessageTable = () => {
               size="middle"
             />
           ),
-          categories: getObjectProp(message.categories, "categorie_name"),
-          associated_to: message.associate_to,
+          categories: message.Categories,
+          contacts: message.Contacts,
           actions: [
             <Col
               key={message.id}
@@ -169,7 +174,7 @@ const MessageTable = () => {
               <SendToButton
                 setShowSendToModal={setShowSendToModal}
                 setMessageToSend={setMessageToSend}
-                associateTo={message.associate_to}
+                associateTo={message.Categories}
                 setAssociateTo={setAssociateTo}
                 message={message.message}
               />
@@ -179,18 +184,18 @@ const MessageTable = () => {
 
         /* En dado caso que el mensaje tenga categorias asociadas
          agregar a la variable de filtros temporal*/
-        if (message.categories.length > 0) {
-          for (const cC of message.categories) {
-            categoriesTmpFilter.push(cC.categorie_name);
-          }
-        }
+        // if (message.categories.length > 0) {
+        //   for (const cC of message.categories) {
+        //     categoriesTmpFilter.push(cC.categorie_name);
+        //   }
+        // }
         /* En dado caso que el mensaje tenga personas asociadas
          agregar a la variable de filtros temporal*/
-        if (message.associate_to.length > 0) {
-          for (const cA of message.associate_to) {
-            associateTmpFilter.push(cA);
-          }
-        }
+        // if (message.associate_to.length > 0) {
+        //   for (const cA of message.associate_to) {
+        //     associateTmpFilter.push(cA);
+        //   }
+        // }
       });
     }
     /* Las variables de filtros temporales se les reasigna su valor en base a la 
@@ -319,7 +324,6 @@ const MessageTable = () => {
           message={messageTosend}
           associateTo={associateTo}
           setAssociateTo={setAssociateTo}
-          
         />
       )}
 

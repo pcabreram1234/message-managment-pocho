@@ -72,7 +72,7 @@ const EditCategoryModal = (props) => {
       onOk={() => {
         submitData(API_VERIFY_CATEGORY, null, "GET").then((resp) => {
           const { result } = resp;
-          if (result.count > 0 && result.rows[0].id !== idEdit) {
+          if (result.count > 0) {
             handleResultModalInfo(
               "Error al intentar modificar esta categoría",
               "error",
@@ -86,43 +86,51 @@ const EditCategoryModal = (props) => {
             );
             submitData(API_GET_MESSAGE_ASSOCIATE_AT_CATEGORY, null, "GET").then(
               (resp) => {
-                const { rows } = resp.result;
-                const messagestoUpdate = rows.forEach((row) => {
-                  let categories = [];
-                  row.categories.forEach((category) => {
-                    if (category.id === id.toString()) {
-                      categories.push({
-                        id: category.id,
-                        categorie_name: nameEdit,
-                      });
-                    } else {
-                      categories.push({
-                        id: category.id,
-                        categorie_name: category.categorie_name,
-                      });
-                    }
-                    submitData(
-                      API_UPDATE_MESSAGE,
-                      {
-                        id: row.id,
-                        categories: categories,
-                      },
-                      "PATCH"
-                    );
-                  });
-                });
+                const { rows, count } = resp.result;
+                console.log(resp);
+                // if (count > 0) {
+                //   const messagestoUpdate = rows.forEach((row) => {
+                //     let categories = [];
+                //     row.categories.forEach((category) => {
+                //       if (category.id === id.toString()) {
+                //         categories.push({
+                //           id: category.id,
+                //           categorie_name: nameEdit,
+                //         });
+                //       } else {
+                //         categories.push({
+                //           id: category.id,
+                //           categorie_name: category.categorie_name,
+                //         });
+                //       }
+                //       submitData(
+                //         API_UPDATE_MESSAGE,
+                //         {
+                //           id: row.id,
+                //           categories: categories,
+                //         },
+                //         "PATCH"
+                //       );
+                //     });
+                //   });
 
-                setTimeout(() => {
-                  handleResultModalInfo(
-                    "Editando Registro(s)",
-                    "success",
-                    "Registro(s) editado(s)"
-                  );
-                }, 500);
-
-                setTimeout(() => {
-                  editDataFuntion(API_URL, dataToSend, handleResultModalInfo);
-                }, 800);
+                //   setTimeout(() => {
+                //     editDataFuntion(API_URL, dataToSend, handleResultModalInfo);
+                //   }, 800);
+                // } else {
+                //   handleResultModalInfo(
+                //     "Editando Registro(s)",
+                //     "error",
+                //     "Esta categoría no tiene mensajes asociados"
+                //   );
+                // }
+                // setTimeout(() => {
+                //   handleResultModalInfo(
+                //     "Editando Registro(s)",
+                //     "success",
+                //     "Registro(s) editado(s)"
+                //   );
+                // }, 500);
               }
             );
           }

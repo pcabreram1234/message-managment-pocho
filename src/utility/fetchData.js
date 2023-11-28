@@ -21,11 +21,15 @@ const fetchData = (API, method = "GET") => {
       .then((resp) => {
         if (resp.error) {
           location.push("/login");
+          window.localStorage.removeItem("token");
+        } else {
+          setData(resp);
         }
-        setData(resp);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   }, []);
-
   return data;
 };
 

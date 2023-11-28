@@ -4,6 +4,7 @@ import { EditTwoTone } from "@ant-design/icons";
 
 const EditButton = ({ setShowModal, setData, data }) => {
   const handleClick = () => {
+    console.log(data);
     setData(data);
     setShowModal(true);
   };

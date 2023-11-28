@@ -25,6 +25,7 @@ async function submitData(API, data, METHOD = "POST") {
   } else {
     let req = await fetch(API, {
       headers: headers,
+      body: data,
     });
     let resp = await req.json();
     const token = req.headers.get("token");

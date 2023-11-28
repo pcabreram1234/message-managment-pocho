@@ -9,14 +9,7 @@ const CurrentCategories = (props) => {
   const { getCurrentCategories, categories } = props;
   const [children, setChildren] = useState();
 
-  const selectedCategories =
-    categories.length > 0 ??
-    categories.map((category) => {
-      return category.id;
-    });
-
   useEffect(() => {
-    console.log(categories.length);
     const categoriesUnStored = submitData(
       API_DISTINCT_CATEGORIES_URL,
       categories
@@ -24,24 +17,26 @@ const CurrentCategories = (props) => {
       .then((unSelectedCategories) => {
         let tmpSelectedCategories = [];
         let tmpUnselectedCategories = [];
-        for (let c = 0; c < categories.length; c++) {
-          tmpSelectedCategories.push(
-            <Select.Option key={parseInt(categories[c].id)}>
-              {categories[c].categorie_name}
-            </Select.Option>
-          );
-        }
 
-        for (let i = 0; i < unSelectedCategories.length; i++) {
-          tmpUnselectedCategories.push(
-            <Select.Option key={unSelectedCategories[i].id}>
-              {unSelectedCategories[i].categorie_name}
+        tmpSelectedCategories = categories.map((category) => {
+          return (
+            <Select.Option key={category.id}>
+              {category.categorie_name}
             </Select.Option>
           );
-        }
+        });
+
+        tmpUnselectedCategories = unSelectedCategories.map((category) => {
+          return (
+            <Select.Option key={category.id}>
+              {category.categorie_name}
+            </Select.Option>
+          );
+        });
 
         setChildren([tmpSelectedCategories, tmpUnselectedCategories]);
       })
+
       .catch((err) => {
         console.log(err);
       });
@@ -64,7 +59,7 @@ const CurrentCategories = (props) => {
       style={{ width: "100%" }}
       allowClear
       labelInValue
-      defaultValue={selectedCategories}
+      defaultValue={categories.map((category) => category.categorie_name)}
       optionLabelProp="children"
       optionFilterProp="children"
       filterOption={(input, option) =>
