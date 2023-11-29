@@ -23,26 +23,36 @@ const ContactsAssociate = (props) => {
       "http://localhost:3120/api/v1/contacts/distinctContacts";
     submitData(API_ASSOCIATE_TO_URL, associateTo).then((resp) => {
       const { contacts } = resp;
-      const allContactsOptions = [...contacts, ...contacts_Selected];
-      setContactsOptions(contacts_Selected);
-      console.log(contacts_Selected);
-      console.log(contacts);
+      const allContactsOptions = contacts.concat(contacts_Selected);
+      setContactsOptions(
+        allContactsOptions.map((contact) => ({
+          label: contact.email,
+          value: contact.email,
+          key: contact.id,
+        }))
+      );
     });
   };
 
   /*   funcion que retorna las categorias mediante el callback  */
   const returnSelectedConctacts = (contacts, cb) => {
+    console.log(associateTo);
     /* Declaramos un objeto para guardar las categorias seleccionadas */
-    let contactObject = [];
-    contacts.map((contact) => {
-      /* recorremos el array de categories y vamos agregando o eliminando */
-      contactObject.push(contact.key);
-    });
+    const contactObject = contacts.map((contact) => ({
+      email: contact.value,
+      id: contact.key,
+    }));
+    // contacts.map((contact) => {
+    //   console.log(contact);
+    //   /* recorremos el array de categories y vamos agregando o eliminando */
+    //   contactObject.push({ email: contact.value, id: contact.key });
+    // });
     cb(contactObject);
   };
 
   useEffect(() => {
     addMissingContactsToSelectChildren();
+    console.log(associateTo);
   }, [associateTo]);
 
   return (
@@ -50,7 +60,11 @@ const ContactsAssociate = (props) => {
       mode="multiple"
       style={{ width: "100%" }}
       allowClear
-      defaultValue={associateTo.map((contact) => contact.email)}
+      defaultValue={contacts_Selected.map((contact) => ({
+        label: contact.email,
+        value: contact.email,
+        key: contact.id,
+      }))}
       labelInValue
       optionLabelProp="children"
       optionFilterProp="children"
