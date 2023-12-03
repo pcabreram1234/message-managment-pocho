@@ -122,7 +122,7 @@ const filterTableInput = (value, dataSource) => {
       result.push(dataSource[i]);
     }
   }
-  return value === [] || !value ? dataSource : result;
+  return value.length > 0 || value ? dataSource : result;
 };
 
 const renderMessages = (

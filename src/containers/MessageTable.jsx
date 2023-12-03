@@ -181,21 +181,6 @@ const MessageTable = () => {
             </Col>,
           ],
         });
-
-        /* En dado caso que el mensaje tenga categorias asociadas
-         agregar a la variable de filtros temporal*/
-        // if (message.categories.length > 0) {
-        //   for (const cC of message.categories) {
-        //     categoriesTmpFilter.push(cC.categorie_name);
-        //   }
-        // }
-        /* En dado caso que el mensaje tenga personas asociadas
-         agregar a la variable de filtros temporal*/
-        // if (message.associate_to.length > 0) {
-        //   for (const cA of message.associate_to) {
-        //     associateTmpFilter.push(cA);
-        //   }
-        // }
       });
     }
     /* Las variables de filtros temporales se les reasigna su valor en base a la 

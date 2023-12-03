@@ -3,7 +3,7 @@ import { Modal } from "antd";
 import { DeleteFilled } from "@ant-design/icons";
 import { deleteDataFuntion } from "../../utility/Funtions";
 
-const API_URL = "http://localhost:3120/api/v1/messages/deleteMessage/";
+const API_URL = "http://localhost:3120/api/v1/messages/deleteMessages/";
 const DeleteMessageModal = ({
   id,
   setShowDeleteModal,

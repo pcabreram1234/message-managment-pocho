@@ -25,6 +25,7 @@ const Message = ({ data, handleMessageInfo, config, setFieldsCompleted }) => {
 
   const getCurrentCategories = (selectedCategories) => {
     setCategories(selectedCategories);
+    console.log(categoriesEdit);
   };
 
   const getCurrentAssociate = (selectedAssociated) => {
@@ -78,7 +79,7 @@ const Message = ({ data, handleMessageInfo, config, setFieldsCompleted }) => {
       <Form.Item label="Categories">
         <CurrentCategories
           getCurrentCategories={getCurrentCategories}
-          categories={categoriesEdit}
+          categories={categories}
         />
       </Form.Item>
 

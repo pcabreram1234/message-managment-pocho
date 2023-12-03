@@ -1,57 +1,51 @@
 import React, { useState, useEffect } from "react";
 import { Select } from "antd";
 import { fetchData } from "../../utility/fetchData";
-import { submitData } from "../../utility/submitData";
-const API_CATEGORY_URL = "http://localhost:3120/api/v1/categories";
-const API_DISTINCT_CATEGORIES_URL =
-  "http://localhost:3120/api/v1/categories/distinctCategories/";
+
 const CurrentCategories = (props) => {
   const { getCurrentCategories, categories } = props;
-  const [children, setChildren] = useState();
+  const [categoriesOptions, setCategoriesOptions] = useState([]);
+  const [categories_selected, setCategories_selected] = useState([]);
+  const API_CATEGORY_URL = "http://localhost:3120/api/v1/categories";
+  const categories_submited = fetchData(API_CATEGORY_URL);
 
-  useEffect(() => {
-    const categoriesUnStored = submitData(
-      API_DISTINCT_CATEGORIES_URL,
-      categories
-    )
-      .then((unSelectedCategories) => {
-        let tmpSelectedCategories = [];
-        let tmpUnselectedCategories = [];
+  const addCurrentCategoriesToSelectOption = () => {
+    if (categories_submited.categories) {
+      const idCategoriesToFilter = categories.map((category) => category.id);
+      const arrayFilter = categories_submited.categories.filter((category) =>
+        idCategoriesToFilter.includes(category.id)
+      );
+      setCategoriesOptions(
+        categories_submited.categories.map((category) => ({
+          label: category.categorie_name,
+          value: category.categorie_name,
+          key: category.id,
+        }))
+      );
 
-        tmpSelectedCategories = categories.map((category) => {
-          return (
-            <Select.Option key={category.id}>
-              {category.categorie_name}
-            </Select.Option>
-          );
-        });
-
-        tmpUnselectedCategories = unSelectedCategories.map((category) => {
-          return (
-            <Select.Option key={category.id}>
-              {category.categorie_name}
-            </Select.Option>
-          );
-        });
-
-        setChildren([tmpSelectedCategories, tmpUnselectedCategories]);
-      })
-
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
+      setCategories_selected(
+        categories.map((category) => ({
+          label: category.categorie_name,
+          value: category.categorie_name,
+          key: category.id,
+        }))
+      );
+    }
+  };
 
   /*   funcion que retorna las categorias mediante el callback  */
   const returnSelectedCategories = (categories, cb) => {
     /* Declaramos un objeto para guardar las categorias seleccionadas */
-    let categoryObject = [];
-    categories.map((category) => {
-      /* recorremos el array de categories y vamos agregando o eliminando */
-      categoryObject.push({ id: category.key, categorie_name: category.label });
-    });
+    const categoryObject = categories.map((category) => ({
+      categorie_name: category.value,
+      id: category.key,
+    }));
     cb(categoryObject);
   };
+
+  useEffect(() => {
+    addCurrentCategoriesToSelectOption();
+  }, [categories_submited]);
 
   return (
     <Select
@@ -59,7 +53,15 @@ const CurrentCategories = (props) => {
       style={{ width: "100%" }}
       allowClear
       labelInValue
-      defaultValue={categories.map((category) => category.categorie_name)}
+      defaultValue={
+        categories.length > 0
+          ? categories.map((category) => ({
+              label: category.categorie_name,
+              value: category.categorie_name,
+              key: category.id,
+            }))
+          : []
+      }
       optionLabelProp="children"
       optionFilterProp="children"
       filterOption={(input, option) =>
@@ -68,9 +70,8 @@ const CurrentCategories = (props) => {
       onChange={(categories) => {
         returnSelectedCategories(categories, getCurrentCategories);
       }}
-    >
-      {children}
-    </Select>
+      options={categoriesOptions}
+    />
   );
 };
 
