@@ -69,7 +69,8 @@ const MessageTable = () => {
       filtered: true,
       filterSearch: true,
       filters: categoriesFilter,
-      onFilter: (value, record) => record.categories.indexOf(value) !== -1,
+      onFilter: (value, record) =>
+        record.categories.some((obj) => obj.categorie_name === value),
       render: (categories) => (
         <>
           {categories.map((category) => {
@@ -94,7 +95,10 @@ const MessageTable = () => {
       filtered: true,
       filterSearch: true,
       filters: associatedFilter,
-      onFilter: (value, record) => record.contacts.indexOf(value) !== -1,
+      onFilter: (value, record) => {
+        console.log(record);
+        return record.contacts.some((obj) => obj.email === value);
+      },
       render: (contacts) => (
         <>
           {contacts.map((contact) => {
@@ -174,7 +178,7 @@ const MessageTable = () => {
               <SendToButton
                 setShowSendToModal={setShowSendToModal}
                 setMessageToSend={setMessageToSend}
-                associateTo={message.Categories}
+                associateTo={message.Contacts}
                 setAssociateTo={setAssociateTo}
                 message={message.message}
               />
@@ -183,6 +187,18 @@ const MessageTable = () => {
         });
       });
     }
+
+    dataSource.map((data) => {
+      console.log(data);
+      const { categories, contacts } = data;
+      categories.map((category) => {
+        categoriesTmpFilter.push(category.categorie_name);
+      });
+
+      contacts.map((contact) => {
+        associateTmpFilter.push(contact.email);
+      });
+    });
     /* Las variables de filtros temporales se les reasigna su valor en base a la 
     funcion que elimina los duplicados */
     categoriesTmpFilter = deleteDuplicateInFilter(categoriesTmpFilter);
@@ -192,21 +208,24 @@ const MessageTable = () => {
     en cada recorrido le agregue las propiedades del objeto que necesita
     la UI para mostrar las opciones de los filtros */
     categoriesTmpFilter.map((category) => {
-      categoriesFilter.push({ text: category, value: category });
+      categoriesFilter.push({
+        text: category,
+        value: category,
+      });
     });
 
-    associateTmpFilter.map((associate_to) => {
-      associatedFilter.push({ text: associate_to, value: associate_to });
+    associateTmpFilter.map((contact) => {
+      associatedFilter.push({ text: contact, value: contact });
     });
   };
 
   const onSelect = (key, selected) => {
     setSelectedRowKeys(key);
     for (let i = 0; i < selected.length; i++) {
-      const { key, associated_to, message } = selected[i];
+      const { key, contacts, message } = selected[i];
       messagesTosend.push({
         key: key,
-        associated_to: associated_to,
+        contacts: contacts,
         message: message.props.value,
       });
     }

@@ -21,8 +21,6 @@ const EditCategoryModal = (props) => {
   const [modalMessage, setModallMessage] = useState("");
   const [modalInfoText, setModalInfoText] = useState("");
 
-  const API_UPDATE_MESSAGE =
-    "http://localhost:3120/api/v1/messages/updateMessageCategories/";
   const API_VERIFY_CATEGORY = `http://localhost:3120/api/v1/categories/categoriesName/${nameEdit}`;
   const API_GET_MESSAGE_ASSOCIATE_AT_CATEGORY = `http://localhost:3120/api/v1/messages/getMesageAssociateAtCategory/${id}${nameEdit}`;
 
@@ -47,7 +45,6 @@ const EditCategoryModal = (props) => {
   let dataToSend = {
     id: parseInt(idEdit),
     categorie_name: nameEdit,
-    associateTo: associateTo,
   };
 
   if (isModalLoading === true && alertModalType === "success") {
@@ -84,55 +81,7 @@ const EditCategoryModal = (props) => {
               "info",
               "Editando los mensajes asociados a esta categoria"
             );
-            submitData(API_GET_MESSAGE_ASSOCIATE_AT_CATEGORY, null, "GET").then(
-              (resp) => {
-                const { rows, count } = resp.result;
-                console.log(resp);
-                // if (count > 0) {
-                //   const messagestoUpdate = rows.forEach((row) => {
-                //     let categories = [];
-                //     row.categories.forEach((category) => {
-                //       if (category.id === id.toString()) {
-                //         categories.push({
-                //           id: category.id,
-                //           categorie_name: nameEdit,
-                //         });
-                //       } else {
-                //         categories.push({
-                //           id: category.id,
-                //           categorie_name: category.categorie_name,
-                //         });
-                //       }
-                //       submitData(
-                //         API_UPDATE_MESSAGE,
-                //         {
-                //           id: row.id,
-                //           categories: categories,
-                //         },
-                //         "PATCH"
-                //       );
-                //     });
-                //   });
-
-                //   setTimeout(() => {
-                //     editDataFuntion(API_URL, dataToSend, handleResultModalInfo);
-                //   }, 800);
-                // } else {
-                //   handleResultModalInfo(
-                //     "Editando Registro(s)",
-                //     "error",
-                //     "Esta categoría no tiene mensajes asociados"
-                //   );
-                // }
-                // setTimeout(() => {
-                //   handleResultModalInfo(
-                //     "Editando Registro(s)",
-                //     "success",
-                //     "Registro(s) editado(s)"
-                //   );
-                // }, 500);
-              }
-            );
+            editDataFuntion(API_URL, dataToSend, handleResultModalInfo);
           }
         });
       }}

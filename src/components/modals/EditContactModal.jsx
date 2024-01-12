@@ -8,7 +8,7 @@ const API_URL = "http://localhost:3120/api/v1/contacts/editContact";
 const { Text } = Typography;
 
 const EditContactModal = ({ data, setShowModal }) => {
-  const { id, name, phone, categories } = data;
+  const { id, name, phone } = data;
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -18,9 +18,7 @@ const EditContactModal = ({ data, setShowModal }) => {
   const [alertModalType, setAlertModalType] = useState("");
   const [modalMessage, setModallMessage] = useState("");
   const [modalInfoText, setModalInfoText] = useState("");
-  const [categoriesEdit, setCategoriesEdit] = useState(categories);
 
-  console.log(categories);
   useEffect(() => {
     setTimeout(() => {
       setShowAlert(true);
@@ -39,18 +37,16 @@ const EditContactModal = ({ data, setShowModal }) => {
     setModalInfoText(infoText);
   };
 
-  const handleContactInfo = ({ id, name, phone, categories }) => {
+  const handleContactInfo = ({ id, name, phone }) => {
     setIdEdit(id);
     setNameEdit(name);
     setPhoneEdit(phone);
-    setCategoriesEdit(categories);
   };
 
   let dataToSend = {
     id: parseInt(idEdit),
     name: nameEdit,
     phone: phoneEdit,
-    categories: categoriesEdit,
   };
 
   if (isModalLoading === true && alertModalType === "success") {
@@ -81,7 +77,6 @@ const EditContactModal = ({ data, setShowModal }) => {
         id={id}
         name={name}
         phone={phone}
-        categories={categories}
         handleContactInfo={handleContactInfo}
       />
 

@@ -19,15 +19,19 @@ const SeveralMessagesToSendModal = ({ messages, setShowModal }) => {
     },
     {
       title: "Send To",
-      dataIndex: "sendTo",
-      key: "associated_to",
-      render: (associated_to) => {
+      dataIndex: "contacts",
+      key: "contacts",
+      render: (contacts) => {
         return (
           <>
-            {associated_to.map((contact) => {
+            {contacts.map((contact) => {
               return (
-                <Tag key={contact} color={"#9effce"} style={{ color: "black" }}>
-                  {contact}
+                <Tag
+                  key={contact.id}
+                  color={"#9effce"}
+                  style={{ color: "black" }}
+                >
+                  {contact.email}
                 </Tag>
               );
             })}
@@ -42,7 +46,7 @@ const SeveralMessagesToSendModal = ({ messages, setShowModal }) => {
       dataSource.push({
         key: message.key,
         message: message.message,
-        sendTo: message.associated_to,
+        contacts: message.contacts,
       });
     });
   };

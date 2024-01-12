@@ -2,14 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Layout, Typography, Table, Tag, Button } from "antd";
 import AddCategoryModal from "../components/modals/AddCategoryModal";
 import { fetchData } from "../utility/fetchData";
-
 import { PlusCircleFilled, DeleteFilled } from "@ant-design/icons";
 import DeleteButton from "../components/buttons/DeleteButton";
 import EditCategoryButton from "../components/buttons/EditCategoryButton";
 import EditCategoryModal from "../components/modals/EditCategoryModal";
 import DeleteCategoryModal from "../components/modals/DeleteCategoryModal";
 import DeleteCategoriesModal from "../components/modals/DeleteCategoriesModal";
-
 const { Header, Content } = Layout;
 const { Title } = Typography;
 const API_URL = "http://localhost:3120/api/v1/categories";
@@ -42,18 +40,6 @@ const Categories = () => {
       filterSearch: true,
       filters: filterValues,
       onFilter: (value, record) => record.name.indexOf(value) === 0,
-    },
-    {
-      title: "Associate To:",
-      dataIndex: "associate_to",
-      key: "associate_to",
-      render: (text, contact) => {
-        return (
-          <Tag key={contact.key} color={"#9effce"} style={{ color: "black" }}>
-            {contact.name}
-          </Tag>
-        );
-      },
     },
     {
       title: "Edit",

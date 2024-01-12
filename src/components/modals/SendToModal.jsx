@@ -14,7 +14,7 @@ const SendToModal = ({
   setAssociateTo,
 }) => {
   const [showModal, setShowModal] = useState(true);
-  const contacts = fetchData(API_URL);
+
   let children = [];
   const onCancel = () => {
     setShowModal(false);
@@ -27,6 +27,7 @@ const SendToModal = ({
         return <Select.Option key={contact.id}>{contact.email}</Select.Option>;
       });
     } else {
+      const contacts = fetchData(API_URL);
       if (contacts.length > 0) {
         children = contacts.map((contact) => {
           return (

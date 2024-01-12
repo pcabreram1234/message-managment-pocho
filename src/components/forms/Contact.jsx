@@ -12,7 +12,6 @@ import {
 const Contact = (props) => {
   const [name, setName] = useState(props.name);
   const [phone, setPhone] = useState(props.phone);
-  const [categories, setCategories] = useState(props.categories);
   const { handleContactInfo, id } = props;
 
   const handleInput = (e, cb) => {
@@ -24,9 +23,8 @@ const Contact = (props) => {
   };
 
   useEffect(() => {
-    handleContactInfo({ id, name, phone, categories });
-  }, [handleInput, getCurrentCategories]);
-  
+    handleContactInfo({ id, name, phone });
+  }, [handleInput]);
 
   return (
     <Form style={{ marginTop: "10%" }}>
@@ -78,13 +76,6 @@ const Contact = (props) => {
             phoneNumberInput(e.currentTarget.value);
           }}
           placeholder={"809-111-2222"}
-        />
-      </Form.Item>
-
-      <Form.Item label="Categories">
-        <CurrentCategories
-          getCurrentCategories={getCurrentCategories}
-          categories={categories}
         />
       </Form.Item>
     </Form>

@@ -10,7 +10,6 @@ import ShowMessagesButton from "../components/buttons/ShowMessagesButton";
 import MessagesAssociatedModal from "../components/modals/MessagesAssociatedModal";
 import { PlusCircleFilled, DeleteFilled } from "@ant-design/icons";
 import { fetchData } from "../utility/fetchData";
-import { getObjectProp } from "../utility/Funtions";
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
@@ -24,7 +23,6 @@ const Contacts = () => {
   const [id, setId] = useState([]);
   const [name, setName] = useState();
   const [phone, setPhone] = useState();
-  const [categories, setCategories] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [showMessagesAssociatedModal, setShowAssociatedModal] = useState(false);
@@ -64,22 +62,6 @@ const Contacts = () => {
     },
     { title: "Email", dataIndex: "email", key: "email" },
     {
-      title: "Categories",
-      dataIndex: "categories",
-      key: "categories",
-      render: (categories) => (
-        <>
-          {categories.map((category) => {
-            return (
-              <Tag key={category} color={"#9effce"} style={{ color: "black" }}>
-                {category}
-              </Tag>
-            );
-          })}
-        </>
-      ),
-    },
-    {
       title: "Edit",
       dataIndex: "editButton",
       key: "editButton",
@@ -103,7 +85,6 @@ const Contacts = () => {
           key: contact.id,
           name: contact.name,
           phone_number: contact.phone_number,
-          categories: getObjectProp(contact.categories, "categorie_name"),
           email: contact.email,
           editButton: (
             <EditButton
@@ -153,11 +134,10 @@ const Contacts = () => {
     ],
   };
 
-  function setContactInfo({ id, name, phone, categories }) {
+  function setContactInfo({ id, name, phone_number }) {
     setId(id);
     setName(name);
-    setPhone(phone);
-    setCategories(categories);
+    setPhone(phone_number);
   }
 
   const handleShowAddContactModal = () => {
@@ -214,7 +194,7 @@ const Contacts = () => {
       </Content>
       {showEditModal && (
         <EditContactModal
-          data={{ id, name, phone, categories }}
+          data={{ id, name, phone }}
           setShowModal={setShowEditModal}
         />
       )}
