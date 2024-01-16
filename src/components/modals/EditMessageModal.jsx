@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Modal, Alert, Spin, Typography } from "antd";
+import React, { useState } from "react";
+import { Modal } from "antd";
 import { EditFilled } from "@ant-design/icons";
 import { editDataFuntion } from "../../utility/Funtions";
 import Message from "../forms/Message";
@@ -11,11 +11,11 @@ const EditMessageModal = ({
   setPopUpModalInfo,
 }) => {
   /* Destructuring data object */
-  const { id, messageTosend, categoriesEdit, associateTo } = data;
+  const { id, messageTosend, categories, contacts } = data;
   /* Fields states */
   const [message, setMessage] = useState(messageTosend);
-  const [categories, setCategoriesEdit] = useState(categoriesEdit);
-  const [associate_to, setAssociateTo] = useState(associateTo);
+  const [categoriesEdit, setCategoriesEdit] = useState(categories);
+  const [associate_to, setAssociateTo] = useState(contacts);
   const [fieldsCompleted, setFieldsCompleted] = useState(false);
 
   /* Service URL API */
@@ -38,8 +38,8 @@ const EditMessageModal = ({
   let dataToSend = {
     id: parseInt(id),
     message: message,
-    associate_to: associate_to,
-    categories: categories,
+    Contacts: associate_to,
+    Categories: categoriesEdit,
   };
 
   return (

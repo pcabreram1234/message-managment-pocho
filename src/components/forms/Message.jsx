@@ -8,15 +8,15 @@ const { TextArea } = Input;
 
 const Message = ({ data, handleMessageInfo, config, setFieldsCompleted }) => {
   /* Destructuring data object */
-  const { message, categories, associate_to } = data;
+  const { message, Categories, Contacts } = data;
 
   /* Form Hook */
   const [formMessage] = Form.useForm();
 
   /* Messsage States */
   const [messageToSave, setMessageToSave] = useState(message);
-  const [associateTo, setAssociateTo] = useState(associate_to);
-  const [categoriesEdit, setCategories] = useState(categories);
+  const [contacts, setContacts] = useState(Contacts);
+  const [categoriesEdit, setCategories] = useState(Categories);
   const [dateOnSend, setDateOnSend] = useState([]);
 
   const handleInput = (e, cb) => {
@@ -25,11 +25,10 @@ const Message = ({ data, handleMessageInfo, config, setFieldsCompleted }) => {
 
   const getCurrentCategories = (selectedCategories) => {
     setCategories(selectedCategories);
-    console.log(categoriesEdit);
   };
 
   const getCurrentAssociate = (selectedAssociated) => {
-    setAssociateTo(selectedAssociated);
+    setContacts(selectedAssociated);
   };
 
   const handleDataAfterValidateForm = () => {
@@ -37,14 +36,14 @@ const Message = ({ data, handleMessageInfo, config, setFieldsCompleted }) => {
       case true:
         handleMessageInfo({
           messageToSave,
-          associateTo,
+          contacts,
           categoriesEdit,
           dateOnSend,
         });
         break;
 
       default:
-        handleMessageInfo(messageToSave, associateTo, categoriesEdit);
+        handleMessageInfo(messageToSave, contacts, categoriesEdit);
         break;
     }
   };
@@ -79,18 +78,18 @@ const Message = ({ data, handleMessageInfo, config, setFieldsCompleted }) => {
       <Form.Item label="Categories">
         <CurrentCategories
           getCurrentCategories={getCurrentCategories}
-          categories={categories}
+          categories={Categories}
         />
       </Form.Item>
 
       <Form.Item
         label="Associate To/Send To"
         required
-        initialValue={associate_to}
+        initialValue={contacts}
         rules={[{ required: true }]}
       >
         <ContactsAssociate
-          associateTo={associateTo}
+          associateTo={contacts}
           setAssociateTo={getCurrentAssociate}
         />
       </Form.Item>

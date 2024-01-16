@@ -8,9 +8,9 @@ const ContactsAssociate = (props) => {
   const [contactsOptions, setContactsOptions] = useState([]);
 
   const addCurrentContactsToSelectOption = () => {
+    console.log(associateTo);
     if (contacts.length > 0) {
-      console.log(contacts);
-      const idContactsToFilter = associateTo.map((contact) => contact.id);
+      const idContactsToFilter = contacts.map((contact) => contact.id);
       const arrayFilter = contacts.filter((contact) =>
         idContactsToFilter.includes(contact.id)
       );
@@ -46,7 +46,7 @@ const ContactsAssociate = (props) => {
       style={{ width: "100%" }}
       allowClear
       defaultValue={
-        associateTo.length > 0
+        associateTo !== undefined && associateTo.length > 0
           ? associateTo.map((contact) => ({
               label: contact.email,
               value: contact.email,

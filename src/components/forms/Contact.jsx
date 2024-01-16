@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Input, Form } from "antd";
 import { getObjectProp } from "../../utility/Funtions";
-import CurrentCategories from "../buttons/CurrentCategories";
 
 import {
   onlyNumbers,

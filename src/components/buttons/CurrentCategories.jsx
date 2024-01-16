@@ -47,6 +47,10 @@ const CurrentCategories = (props) => {
     addCurrentCategoriesToSelectOption();
   }, [categories_submited]);
 
+  useEffect(() => {
+    console.log(props);
+  }, []);
+
   return (
     <Select
       mode="multiple"
@@ -54,7 +58,7 @@ const CurrentCategories = (props) => {
       allowClear
       labelInValue
       defaultValue={
-        categories.length > 0
+        categories !== undefined && categories.length > 0
           ? categories.map((category) => ({
               label: category.categorie_name,
               value: category.categorie_name,

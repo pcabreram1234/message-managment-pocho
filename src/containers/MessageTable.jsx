@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Table, Tag, Layout, Typography, Input, Button, Col } from "antd";
 import { fetchData } from "../utility/fetchData";
-import { deleteDuplicateInFilter, getObjectProp } from "../utility/Funtions";
+import { deleteDuplicateInFilter } from "../utility/Funtions";
 import { DeleteFilled, PlusCircleFilled } from "@ant-design/icons";
 import AddMessageModal from "../components/modals/AddMessageModal";
 import SendToModal from "../components/modals/SendToModal";
@@ -15,8 +15,6 @@ import SeveralMessagesToSendModal from "../components/modals/SeveralMessagesToSe
 import SendButton from "../components/buttons/SendButton";
 
 const API_URL = "http://localhost:3120/api/v1/messages/";
-const API_URL_DELETE_MESSAGES =
-  "http://localhost:3120/api/v1/messages/deleteMessage/";
 
 const { Content, Header } = Layout;
 const { Title } = Typography;
@@ -29,8 +27,8 @@ const MessageTable = () => {
   /* Fields Message States */
   const [id, setId] = useState([]);
   const [messageTosend, setMessageToSend] = useState([]);
-  const [categoriesEdit, setCategories] = useState([]);
-  const [associateTo, setAssociateTo] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [contacts, setContacts] = useState([]);
 
   /* Modal states */
   const [showSendToModal, setShowSendToModal] = useState(false);
@@ -132,7 +130,7 @@ const MessageTable = () => {
     setId(id);
     setMessageToSend(message);
     setCategories(Categories);
-    setAssociateTo(Contacts);
+    setContacts(Contacts);
   };
 
   const renderMessages = () => {
@@ -179,7 +177,7 @@ const MessageTable = () => {
                 setShowSendToModal={setShowSendToModal}
                 setMessageToSend={setMessageToSend}
                 associateTo={message.Contacts}
-                setAssociateTo={setAssociateTo}
+                setAssociateTo={setContacts}
                 message={message.message}
               />
             </Col>,
@@ -189,7 +187,6 @@ const MessageTable = () => {
     }
 
     dataSource.map((data) => {
-      console.log(data);
       const { categories, contacts } = data;
       categories.map((category) => {
         categoriesTmpFilter.push(category.categorie_name);
@@ -326,8 +323,8 @@ const MessageTable = () => {
         <SendToModal
           setShowSendToModal={setShowSendToModal}
           message={messageTosend}
-          associateTo={associateTo}
-          setAssociateTo={setAssociateTo}
+          associateTo={contacts}
+          setAssociateTo={setContacts}
         />
       )}
 
@@ -341,7 +338,7 @@ const MessageTable = () => {
 
       {showEditMessageModal && (
         <EditMessageModal
-          data={{ id, messageTosend, categoriesEdit, associateTo }}
+          data={{ id, messageTosend, categories, contacts }}
           setShowEditMessageModal={setShowEditMessageModal}
           setShowPopUpModal={setShowPopUpModal}
           setPopUpModalInfo={setPopUpModalInfo}

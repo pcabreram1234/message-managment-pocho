@@ -65,12 +65,13 @@ const MessageConfigTable = ({
   ];
 
   const renderMessages = () => {
-    if (messages.length > 0) {
-      messages.map((message) => {
+    const { result } = messages;
+    if (result) {
+      result.map((message) => {
         dataSource.push({
           key: message.id,
           message: message.message,
-          categories: getObjectProp(message.categories, "categorie_name"),
+          categories: getObjectProp(message.Categories, "categorie_name"),
           config: (
             <ConfigMessageButton
               setShowModal={setShowModal}
@@ -82,11 +83,9 @@ const MessageConfigTable = ({
 
         /* En dado caso que el mensaje tenga categorias asociadas
          agregar a la variable de filtros temporal*/
-        if (message.categories.length > 0) {
-          for (const cC of message.categories) {
-            categoriesTmpFilter.push(cC.categorie_name);
-          }
-        }
+        message.Categories.map((record) => {
+          categoriesTmpFilter.push(record.categorie_name);
+        });
 
         /* Agregamos valores a la variable de filtros */
         messageTmpFilter.push({

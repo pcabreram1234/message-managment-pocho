@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Modal } from "antd";
 import { SettingFilled } from "@ant-design/icons";
 import { fetchData } from "../../utility/fetchData";
@@ -14,7 +14,7 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
   const [showPopUpModal, setShowPopUpModal] = useState(false);
   /* Message states */
   const [messageToSave, setMessageToSave] = useState([]);
-  const [associateTo, setAssociateTo] = useState([]);
+  const [contacts, setContacts] = useState([]);
   const [categoriesEdit, setCategories] = useState([]);
   const [dateOnSend, setDateOnSend] = useState([]);
 
@@ -30,6 +30,7 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
   });
 
   const API_URL = `http://localhost:3120/api/v1/messages/getMessage/${id}`;
+  const data = fetchData(API_URL);
 
   const API_ADD_MESSAGES =
     "http://localhost:3120/api/v1/configuration/addMesageConfiguration/";
@@ -41,23 +42,15 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
     setIsVisble(false);
     cbShowModal(false);
   };
-  let data = [];
-
-  /* Como la funcion fetchData retorna un estado de React despues de actualizarlo
-  con el hook useEffect es recomendable primero declarar la variable vacia
-  luego crear una funcion que reemplaze ese valor en base al retorno del custom Hook */
-  const renderMessageComponent = () => {
-    data = fetchData(API_URL);
-  };
 
   const handleMessageInfo = ({
     messageToSave,
-    associateTo,
+    contacts,
     categoriesEdit,
     dateOnSend,
   }) => {
     setMessageToSave(messageToSave);
-    setAssociateTo(associateTo);
+    setContacts(contacts);
     setCategories(categoriesEdit);
     setDateOnSend(dateOnSend);
   };
@@ -66,13 +59,13 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
     message_id: id,
     message: messageToSave,
     categories: categoriesEdit,
-    send_to: associateTo,
+    send_to: contacts,
     send_on_date: dateOnSend,
     user_id: userInfo.id,
   };
 
   const confirmSendTo = () => {
-    if (associateTo.length === 0) {
+    if (contacts.length === 0) {
       alert("Favor de elegir por lo menos un destinatario");
       return true;
     }
@@ -81,7 +74,7 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
   const onOk = () => {
     if (fieldsCompleted === true) {
       const dateCompared = compareDates(dateOnSend, currentDate);
-      if (dateCompared > 1) {
+      if (dateCompared > 0) {
         alert("La fecha introducida debe ser a partir de la actual");
       } else {
         if (!confirmSendTo()) {
@@ -98,7 +91,7 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
               submitData(API_ADD_MESSAGES, dataToSend).then((resp) => {
                 if (resp.result.rowsInserted) {
                   const rowsInserted = resp.result.rowsInserted;
-                  if (rowsInserted === associateTo.length) {
+                  if (rowsInserted === contacts.length) {
                     setPopUpModalInfo({
                       modalMessage: "Registro guardado",
                       alertModalType: "success",
@@ -130,8 +123,6 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
       }
     }
   };
-
-  renderMessageComponent();
 
   return (
     <Modal
