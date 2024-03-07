@@ -5,7 +5,7 @@ import { reloadPage } from "../../utility/Funtions";
 import { submitData } from "../../utility/submitData";
 import CurrentCategories from "../buttons/CurrentCategories";
 import ContactsAssociate from "../buttons/ContactsAsociate";
-import UserContext from "../../context/UserContext";
+import { AuthContext } from "../../context/UserContext";
 
 const API_URL = "http://localhost:3120/api/v1/messages/addMessage";
 
@@ -22,7 +22,7 @@ const AddMessageModal = ({
   const [categories, setCategories] = useState([]);
   const [associateTo, setAssociateTo] = useState([]);
   const [isChange, setIsChange] = useState(false);
-  const userInfo = useContext(UserContext);
+  const userInfo = useContext(AuthContext);
   const [data, setData] = useState({
     message: message,
     categories: categories,

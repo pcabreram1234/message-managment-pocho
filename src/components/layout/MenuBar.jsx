@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Menu } from "antd";
 import {
   MessageFilled,
@@ -8,18 +8,56 @@ import {
   HistoryOutlined,
   HomeFilled,
   UserOutlined,
-  PlusCircleOutlined,
   BarsOutlined,
 } from "@ant-design/icons";
 import { Typography } from "antd";
 import { Link } from "react-router-dom";
 import UserInfo from "../layout/UserInfo";
-import { userInfo } from "../../context/userHookState";
-import { useHookstate } from "@hookstate/core";
+import { AuthContext } from "../../context/UserContext";
 
 const MenuBar = () => {
   const { Text } = Typography;
-  const state = useContext(useHookstate(userInfo));
+  const state = useContext(AuthContext);
+  const { user } = state;
+
+  const showUserMenu = (user) => {
+    console.log(user);
+    if (user !== undefined && user !== null) {
+      console.log("usuario logeado");
+      if (user.type_user === "adm") {
+        return (
+          <Menu.Item key={"users"}>
+            <Link to={"users"}>
+              <Text style={{ color: "white" }}>
+                Users managment <BarsOutlined />
+              </Text>
+            </Link>
+          </Menu.Item>
+        );
+      }
+    }
+  };
+
+  const showLogOutMenu = (user) => {
+    if (user !== undefined && user !== null) {
+      return (
+        <Menu.SubMenu
+          title="User Info"
+          icon={<UserOutlined />}
+          style={{ marginLeft: "auto" }}
+          key={"SubMenUserInfo"}
+        >
+          <Menu.Item key={"UserInfo"}>
+            <UserInfo />
+          </Menu.Item>
+        </Menu.SubMenu>
+      );
+    }
+  };
+
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
 
   return (
     <Menu
@@ -74,44 +112,8 @@ const MenuBar = () => {
         </Link>
       </Menu.Item>
 
-      {state !== false &&
-        state !== undefined &&
-        userInfo.get().type_user === "adm" && (
-          // <Menu.SubMenu
-          //   title="Users Administration"
-          //   key={"UserAdm"}
-          //   icon={<UserOutlined />}
-          // >
-          // <Menu.Item key={"add_user"}>
-          //   <Link to={"AddUser"}>
-          //     <Text style={{ color: "white" }}>
-          //       Add User <PlusCircleOutlined />
-          //     </Text>
-          //   </Link>
-          // </Menu.Item>
-
-          <Menu.Item key={"users"}>
-            <Link to={"users"}>
-              <Text style={{ color: "white" }}>
-                Users managment <BarsOutlined />
-              </Text>
-            </Link>
-          </Menu.Item>
-          // </Menu.SubMenu>
-        )}
-
-      {state !== false && state !== undefined && (
-        <Menu.SubMenu
-          title="User Info"
-          icon={<UserOutlined />}
-          style={{ marginLeft: "auto" }}
-          key={"SubMenUserInfo"}
-        >
-          <Menu.Item key={"UserInfo"}>
-            <UserInfo />
-          </Menu.Item>
-        </Menu.SubMenu>
-      )}
+      {showUserMenu(user)}
+      {showLogOutMenu(user)}
     </Menu>
   );
 };

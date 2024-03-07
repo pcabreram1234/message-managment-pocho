@@ -6,7 +6,7 @@ import { submitData } from "../../utility/submitData";
 import { compareDates, reloadPage } from "../../utility/Funtions";
 import PopUpModal from "../modals/PopUpModal";
 import Message from "../forms/Message";
-import UserContext from "../../context/UserContext";
+import { AuthContext } from "../../context/UserContext";
 
 const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
   /* Modal state */
@@ -20,7 +20,7 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
 
   /* Form States */
   const [fieldsCompleted, setFieldsCompleted] = useState(false);
-  const userInfo = useContext(UserContext);
+  const userInfo = useContext(AuthContext);
 
   /* PopUpModal States */
   const [popUpModalInfo, setPopUpModalInfo] = useState({
@@ -65,6 +65,7 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
   };
 
   const confirmSendTo = () => {
+    console.log(dataToSend);
     if (contacts.length === 0) {
       alert("Favor de elegir por lo menos un destinatario");
       return true;

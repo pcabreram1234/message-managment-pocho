@@ -5,7 +5,7 @@ import { submitData } from "../../utility/submitData";
 import { reloadPage } from "../../utility/Funtions";
 import PopUpModal from "./PopUpModal";
 import SelectCategories from "../buttons/SelectCategories";
-import UserContext from "../../context/UserContext";
+import { AuthContext } from "../../context/UserContext";
 const API_URL = "http://localhost:3120/api/v1/contacts/addContact";
 
 const AddContactModal = ({ setShowAddContactmodal }) => {
@@ -13,7 +13,6 @@ const AddContactModal = ({ setShowAddContactmodal }) => {
   const [addContactForm] = Form.useForm();
   const [name, setName] = useState();
   const [email, setEmail] = useState();
-  const [categories, setCategories] = useState([]);
   const [phone, setPhone] = useState();
   const [isChange, setIsChange] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -23,13 +22,12 @@ const AddContactModal = ({ setShowAddContactmodal }) => {
     modalInfoText: "",
   });
 
-  const userInfo = useContext(UserContext);
+  const userInfo = useContext(AuthContext);
   const [data, setData] = useState({
     name: name,
     email: email,
-    phone: phone,
-    categories: categories,
-    userId: userInfo.id,
+    phone_number: phone,
+    UserId: userInfo.id,
   });
 
   const onCancel = () => {
@@ -45,14 +43,12 @@ const AddContactModal = ({ setShowAddContactmodal }) => {
     setData({
       name: name,
       email: email,
-      phone: phone,
-      categories: categories,
-      userId: userInfo.id,
+      phone_number: phone,
+      UserId: userInfo.id,
     });
   };
 
   const handleSubmit = () => {
-    console.log(data);
     setTimeout(() => {
       setShowSaveModal(true);
     }, 500);
@@ -168,10 +164,6 @@ const AddContactModal = ({ setShowAddContactmodal }) => {
               setIsChange(true);
             }}
           />
-        </Form.Item>
-
-        <Form.Item label="Selec a least one category">
-          <SelectCategories setCategories={setCategories} />
         </Form.Item>
       </Form>
       {showSaveModal && (

@@ -22,7 +22,7 @@ const HistoryMessageTable = ({
       filtered: true,
       filterSearch: true,
       filters: categoriesFilter,
-      onFilter: (value, record) => record.categories.indexOf(value) !== -1,
+      onFilter: (value, record) => record.ategories.indexOf(value) !== -1,
       render: (categories) => (
         <>
           {categories.map((category) => {
@@ -94,6 +94,8 @@ const HistoryMessageTable = ({
       },
     },
   ];
+
+  console.log(tableDataSource);
 
   return (
     <>

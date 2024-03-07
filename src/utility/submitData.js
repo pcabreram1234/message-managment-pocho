@@ -3,7 +3,7 @@ async function submitData(API, data, METHOD = "POST") {
 
   const headers = {
     "Content-type": "application/json; charset=UTF-8",
-    "x-access-token": token,
+    "x-access-token": token ?? null,
   };
 
   if (METHOD !== "GET") {
@@ -14,9 +14,8 @@ async function submitData(API, data, METHOD = "POST") {
       headers: headers,
     });
     let resp = await req.json();
-    const token = req.headers.get("token");
-    if (token) {
-      window.localStorage.setItem("token", token);
+    if (resp.token) {
+      window.localStorage.setItem("token", resp.token);
     }
     if (resp.error) {
       window.location.href = "/login";
@@ -28,9 +27,8 @@ async function submitData(API, data, METHOD = "POST") {
       body: data,
     });
     let resp = await req.json();
-    const token = req.headers.get("token");
-    if (token) {
-      window.localStorage.setItem("token", token);
+    if (resp.token) {
+      window.localStorage.setItem("token", resp.token);
     }
     if (resp.error) {
       window.location.href = "/login";

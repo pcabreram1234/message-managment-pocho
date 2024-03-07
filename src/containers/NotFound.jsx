@@ -20,10 +20,10 @@ const NotFound = () => {
           Message Managment - Error
         </Title>
         <Title style={{ textAlign: "center", fontSize: "15px" }}>
-          This page does not exist in 10 seconds the page will be redirect to
-          the main pange: <Text strong>{counter}</Text>
+          This page does not exist in 3 seconds the page will be redirect to the
+          main pange: <Text strong>{counter}</Text>
         </Title>
-        {counter > 10 && <Redirect to={"/"} />}
+        {counter === 3 && <Redirect to={"/"} />}
       </Header>
 
       <Content style={{ display: "flex", justifyContent: "center" }}>

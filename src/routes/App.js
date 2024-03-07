@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React from "react";
 import Contacts from "../containers/Contacts";
 import Categories from "../containers/Categories";
 import MessageTable from "../containers/MessageTable";
@@ -8,15 +8,14 @@ import Home from "../containers/Home";
 import MenuBar from "../components/layout/MenuBar";
 import NotFound from "../containers/NotFound";
 import LogInForm from "../components/forms/LoginForm";
-import UserContext from "../context/UserContext";
 import Users from "../containers/Users";
 import { Route, Switch } from "react-router-dom";
-import { userInfo } from "../context/userHookState";
+import { AuthProvider } from "../context/UserContext";
 import "../styles/App.css";
 
 const App = () => {
   return (
-    <UserContext.Provider value={userInfo.get()}>
+    <AuthProvider>
       <div className="App_container">
         <div style={{ position: "relative", width: "100%" }}>
           <MenuBar />
@@ -37,7 +36,7 @@ const App = () => {
           <Route path={"/*"} children={<NotFound />} />
         </Switch>
       </div>
-    </UserContext.Provider>
+    </AuthProvider>
   );
 };
 

@@ -15,10 +15,13 @@ const fetchData = (API, method = "GET") => {
         const token = resp.headers.get("token");
         if (token) {
           window.localStorage.setItem("token", token);
+        } else {
+          location.push("/login");
         }
         return resp.json();
       })
       .then((resp) => {
+        console.log(resp);
         if (resp.error) {
           location.push("/login");
           window.localStorage.removeItem("token");

@@ -8,4 +8,4 @@ export const userToEdit = hookstate({
   type_user: "",
   email: "",
 });
-export const userInfo = hookstate(data);
+export const userInfo = (data);

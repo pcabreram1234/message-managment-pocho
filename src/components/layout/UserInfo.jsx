@@ -1,19 +1,22 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Button, Typography, Row, Col } from "antd";
 import { LogoutOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router";
-import { userInfo } from "../../context/userHookState";
-import { useHookstate } from "@hookstate/core";
+import { AuthContext } from "../../context/UserContext";
 
 const UserInfo = () => {
   const location = useHistory();
-  const state = useHookstate(userInfo);
+  const state = useContext(AuthContext);
+
+  const { setUser } = state;
 
   const sessionLogOut = () => {
     window.localStorage.removeItem("token");
-    userInfo.set(false);
+    setUser(null);
     location.push("/login");
   };
+
+  console.log(state);
 
   const { Text } = Typography;
   return (
@@ -24,13 +27,13 @@ const UserInfo = () => {
     >
       <Col>
         <Text strong style={{ color: "white" }}>
-          User: {state.get().user_name}
+          User: {state?.user?.user_name}
         </Text>
       </Col>
 
       <Col>
         <Text strong style={{ color: "white" }}>
-          Type: {state.get().type_user}
+          Type: {state?.user?.type_user}
         </Text>
       </Col>
 

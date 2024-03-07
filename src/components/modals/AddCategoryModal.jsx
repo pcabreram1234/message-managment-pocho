@@ -4,7 +4,7 @@ import { SaveFilled } from "@ant-design/icons";
 import { Form, Input, Modal } from "antd";
 import { submitData } from "../../utility/submitData";
 import { onlyLetters } from "../../utility/patternsInput";
-import UserContext from "../../context/UserContext";
+import { AuthContext } from "../../context/UserContext";
 
 const API_URL = "http://localhost:3120/api/v1/categories/addCategory";
 

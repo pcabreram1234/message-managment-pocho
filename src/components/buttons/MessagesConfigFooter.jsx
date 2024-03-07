@@ -4,7 +4,7 @@ import { SaveFilled } from "@ant-design/icons";
 import { fetchData } from "../../utility/fetchData";
 import { submitData } from "../../utility/submitData";
 import { reloadPage, compareDates } from "../../utility/Funtions";
-import UserContext from "../../context/UserContext";
+import { AuthContext } from "../../context/UserContext";
 
 const MessagesConfigFooter = ({
   setShowPopUpModal,
@@ -15,7 +15,7 @@ const MessagesConfigFooter = ({
   const [associateTo, seteAssociateTo] = useState("");
   const [dateTosend, setDateOnSend] = useState("");
   let dataTosend = [];
-  const userInfo = useContext(UserContext);
+  const userInfo = useContext(AuthContext);
   const [MessageForm] = Form.useForm();
 
   const API_ASSOCIATE_TO_URL =

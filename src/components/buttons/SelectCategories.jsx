@@ -1,10 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Select } from "antd";
 import { fetchData } from "../../utility/fetchData";
 
 const API = "http://localhost:3120/api/v1/categories";
 const SelectCategories = ({ setCategories }) => {
-  const categories = fetchData(API);
+  const data = fetchData(API);
+  const [options, setOptions] = useState([]);
+
+  const handleSubmitedCategories = () => {
+    if (data.categories) {
+      console.log(data);
+      setOptions(
+        data.categories.map((category) => {
+          return {
+            label: category.categorie_name,
+            value: category.categorie_name,
+            key: category.id,
+          };
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    handleSubmitedCategories();
+  }, [data]);
 
   return (
     <Select
@@ -27,16 +47,8 @@ const SelectCategories = ({ setCategories }) => {
         });
         setCategories(categoriesObject);
       }}
-    >
-      {categories.length > 0 &&
-        categories.map((category) => {
-          return (
-            <Select.Option key={category.id}>
-              {category.categorie_name}
-            </Select.Option>
-          );
-        })}
-    </Select>
+      options={options}
+    />
   );
 };
 
