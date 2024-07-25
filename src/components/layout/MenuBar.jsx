@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { Menu } from "antd";
 import {
   MessageFilled,
@@ -21,9 +21,7 @@ const MenuBar = () => {
   const { user } = state;
 
   const showUserMenu = (user) => {
-    console.log(user);
     if (user !== undefined && user !== null) {
-      console.log("usuario logeado");
       if (user.type_user === "adm") {
         return (
           <Menu.Item key={"users"}>
@@ -54,10 +52,6 @@ const MenuBar = () => {
       );
     }
   };
-
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
 
   return (
     <Menu

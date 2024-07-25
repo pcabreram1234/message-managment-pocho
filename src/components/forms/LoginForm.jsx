@@ -39,10 +39,6 @@ const LogInForm = () => {
           setUser(userLogged);
           location.push("/");
         }
-
-        if (resp.error) {
-          alert(resp.error);
-        }
       })
       .catch((err) => {
         alert(err);

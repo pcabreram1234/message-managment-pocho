@@ -72,9 +72,10 @@ const MessageTable = () => {
       render: (categories) => (
         <>
           {categories.map((category) => {
+        
             return (
               <Tag
-                key={category.categorie_name}
+                key={category.id}
                 color={"rgb(158, 255, 206)"}
                 style={{ color: "black" }}
               >
@@ -102,7 +103,7 @@ const MessageTable = () => {
           {contacts.map((contact) => {
             return (
               <Tag
-                key={contact.email}
+                key={contact.id}
                 color={"#9effce"}
                 style={{ color: "black" }}
               >
@@ -266,6 +267,10 @@ const MessageTable = () => {
       setShowDeleteButton(false);
     }
   }, [selectedRowKeys]);
+
+  useEffect(() => {
+    console.log(columns), [];
+  });
 
   renderMessages();
 

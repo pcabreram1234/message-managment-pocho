@@ -138,7 +138,7 @@ const renderMessages = (
         key: message.id,
         message: message.message,
         categories: getObjectProp(message.categories, "categorie_name"),
-        send_to:getObjectProp(message.categories, "email"),
+        send_to: getObjectProp(message.categories, "email"),
         status: message.message_status,
         send_on_date: new Date(message.send_on_date).toLocaleDateString(),
         send_on_time: new Date(message.send_on_date).toLocaleTimeString(),

@@ -23,11 +23,12 @@ const AddMessageModal = ({
   const [associateTo, setAssociateTo] = useState([]);
   const [isChange, setIsChange] = useState(false);
   const userInfo = useContext(AuthContext);
+  const { user, handleUser } = userInfo;
   const [data, setData] = useState({
     message: message,
     categories: categories,
     associateTo: associateTo,
-    userId: userInfo.id,
+    userId: userInfo.user.id,
   });
 
   const setMessageValue = () => {
@@ -35,9 +36,13 @@ const AddMessageModal = ({
       message: message,
       categories: categories,
       associateTo: associateTo,
-      userId: userInfo.id,
+      userId: userInfo?.user?.id,
     });
   };
+
+  useEffect(() => {
+    console.log(user);
+  }, []);
 
   const getSelectedCategories = (selCat) => {
     setIsChange(true);
@@ -54,9 +59,11 @@ const AddMessageModal = ({
   };
 
   const handleSubmit = () => {
-    /*  console.log(data); */
+    // handleUser();
+    // console.log(data);
     submitData(API_URL, data)
       .then((resp) => {
+        console.log(resp);
         if (resp.message) {
           setPopUpModalInfo("Guardando registro", "error", resp.message);
         } else {
@@ -120,13 +127,13 @@ const AddMessageModal = ({
             { required: true },
             { type: "string" },
             { min: 10 },
-            { max: 200 },
+            { max: 2000 },
           ]}
         >
           <TextArea
             placeholder="Insert the message you want to store"
             autoFocus
-            maxLength={200}
+            maxLength={2000}
             style={{ height: 120 }}
             value={message}
             onChange={(n) => {
