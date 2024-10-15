@@ -4,19 +4,16 @@ import { LogoutOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router";
 import { AuthContext } from "../../context/UserContext";
 
-const UserInfo = () => {
+const UserInfo = ({ user }) => {
   const location = useHistory();
   const state = useContext(AuthContext);
-
   const { setUser } = state;
 
   const sessionLogOut = () => {
-    window.localStorage.removeItem("token");
     setUser(null);
+    window.localStorage.removeItem("token");
     location.push("/login");
   };
-
-  console.log(state);
 
   const { Text } = Typography;
   return (
@@ -27,13 +24,13 @@ const UserInfo = () => {
     >
       <Col>
         <Text strong style={{ color: "white" }}>
-          User: {state?.user?.user_name}
+          User: {user?.user_name}
         </Text>
       </Col>
 
       <Col>
         <Text strong style={{ color: "white" }}>
-          Type: {state?.user?.type_user}
+          Type: {user?.type_user}
         </Text>
       </Col>
 

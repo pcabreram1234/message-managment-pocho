@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { SaveFilled } from "@ant-design/icons";
 import { Modal, Input, Form } from "antd";
 import { reloadPage } from "../../utility/Funtions";
-import { submitData } from "../../utility/submitData";
+import useSubmitData from "../../hooks/useSubmitData";
 import CurrentCategories from "../buttons/CurrentCategories";
 import ContactsAssociate from "../buttons/ContactsAsociate";
 import { AuthContext } from "../../context/UserContext";
@@ -31,18 +31,16 @@ const AddMessageModal = ({
     userId: userInfo.user.id,
   });
 
+  const { submitData } = useSubmitData();
+
   const setMessageValue = () => {
     setData({
       message: message,
       categories: categories,
       associateTo: associateTo,
-      userId: userInfo?.user?.id,
+      userId: user?.id,
     });
   };
-
-  useEffect(() => {
-    console.log(user);
-  }, []);
 
   const getSelectedCategories = (selCat) => {
     setIsChange(true);
@@ -58,28 +56,17 @@ const AddMessageModal = ({
     return addMessageForm.validateFields();
   };
 
-  const handleSubmit = () => {
-    // handleUser();
-    // console.log(data);
-    submitData(API_URL, data)
-      .then((resp) => {
-        console.log(resp);
-        if (resp.message) {
-          setPopUpModalInfo("Guardando registro", "error", resp.message);
-        } else {
-          setPopUpModalInfo(
-            "Guardando registro",
-            "success",
-            "Registro Guardado"
-          );
-          setTimeout(() => {
-            reloadPage();
-          }, 200);
-        }
-      })
-      .catch((err) => {
-        alert(err);
-      });
+  const handleSubmit = async () => {
+    const req = await submitData(API_URL, data);
+    console.log(req);
+    if (req.message) {
+      setPopUpModalInfo("Guardando registro", "error", resp.message);
+    } else {
+      setPopUpModalInfo("Guardando registro", "success", "Registro Guardado");
+      setTimeout(() => {
+        reloadPage();
+      }, 200);
+    }
   };
 
   const onCancel = () => {

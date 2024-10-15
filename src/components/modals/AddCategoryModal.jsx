@@ -5,13 +5,20 @@ import { Form, Input, Modal } from "antd";
 import { submitData } from "../../utility/submitData";
 import { onlyLetters } from "../../utility/patternsInput";
 import { AuthContext } from "../../context/UserContext";
+import PopUpModal from "./PopUpModal";
 
 const API_URL = "http://localhost:3120/api/v1/categories/addCategory";
 
 const AddCategoryModal = ({ setAddCategorymodal }) => {
   const [showModal, setShowModal] = useState(true);
   const [associateTo, setAssociateTo] = useState([]);
-  const userInfo = useContext(UserContext);
+  const userInfo = useContext(AuthContext);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [popUpModalInfo, setPopUpModalInfo] = useState({
+    modalMessage: "Guardando Registro",
+    alertModalType: "",
+    modalInfoText: "",
+  });
 
   const [form] = Form.useForm();
 
@@ -41,13 +48,21 @@ const AddCategoryModal = ({ setAddCategorymodal }) => {
       userId: userInfo.id,
     };
     setTimeout(() => {
+      setShowSaveModal(true);
       submitData(API_URL, data)
         .then((resp) => {
           if (resp.message) {
             /* En esta parte agregar el componen PopModal para que muestre 
             en el Spin el error */
-            alert(resp.message);
+            setPopUpModalInfo({
+              alertModalType: "error",
+              modalInfoText: resp.message,
+            });
           } else {
+            setPopUpModalInfo({
+              alertModalType: "success",
+              modalInfoText: "Registro Guardado",
+            });
             onCancel();
             setTimeout(() => {
               location.href = "";
@@ -104,6 +119,16 @@ const AddCategoryModal = ({ setAddCategorymodal }) => {
           <SelectContacts setAssociateTo={setAssociateTo} />
         </Form.Item>
       </Form>
+
+      {showSaveModal && (
+        <PopUpModal
+          isModalVisible={showSaveModal}
+          modalMessage={popUpModalInfo.modalMessage}
+          alertModalType={popUpModalInfo.alertModalType}
+          modalInfoText={popUpModalInfo.modalInfoText}
+          cb={setShowSaveModal}
+        />
+      )}
     </Modal>
   );
 };

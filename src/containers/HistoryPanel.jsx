@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import HistoryMessageTable from "../components/layout/HistoryMessageTable";
 import SearchInput from "../components/SearchInput";
 import { fetchData } from "../utility/fetchData";
@@ -12,12 +12,12 @@ import { Layout, Typography } from "antd";
 const HistoRyPanel = () => {
   const { Header, Content } = Layout;
   const { Title } = Typography;
-  const [tableDataSource, setTableDataSource] = useState([]);
   const [sendToFilter, setSendToFilter] = useState([]);
   const [sendOnDateFilter, setSendOnDateFilter] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const API_URL = "http://localhost:3120/api/v1/configuration/";
   const messages = fetchData(API_URL);
+  const [tableDataSource, setTableDataSource] = useState(messages);
 
   let tmp = {
     dataSource: [],
@@ -31,6 +31,7 @@ const HistoRyPanel = () => {
   };
 
   const { dataSource, categoriesFilter, categoriesTmpFilter } = tmp;
+
   const data = renderMessages(messages, {
     dataSource,
     categoriesTmpFilter,
@@ -41,6 +42,7 @@ const HistoRyPanel = () => {
     setTableDataSource(data);
     let tmpSendToFilter = [];
     let tmpSendOnDateFilter = [];
+    8;
 
     data.map((message) => {
       tmpSendToFilter.push(message.send_to);
@@ -66,10 +68,16 @@ const HistoRyPanel = () => {
     );
   };
 
-  if (isLoading === true && data.length > 0) {
-    handleTableDataSource(data);
-    setIsLoading(false);
-  }
+  useEffect(() => {
+    if (isLoading === true && data.length > 0) {
+      handleTableDataSource(data);
+      setIsLoading(false);
+    }
+  }, [isLoading, data]);
+
+  useEffect(() => {
+    console.log(data);
+  }, [data]);
 
   return (
     <Layout>
@@ -82,6 +90,7 @@ const HistoRyPanel = () => {
         cb={filterTableInput}
         dataSource={data}
         handleTableDataSource={handleTableDataSource}
+        cbLoading={setIsLoading}
       />
       <Content>
         <HistoryMessageTable

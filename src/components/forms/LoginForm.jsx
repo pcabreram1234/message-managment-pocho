@@ -1,15 +1,15 @@
 import React, { useContext } from "react";
 import { Form, Input, Button, Layout } from "antd";
-import { submitData } from "../../utility/submitData";
 import { LoginOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router";
 import { AuthContext } from "../../context/UserContext";
-import { handleUserInfo } from "../../utility/userInfo";
+import useSubmitData from "../../hooks/useSubmitData";
 
 const LogInForm = () => {
   const API_url = "http://localhost:3120/api/v1/users/login";
   const state = useContext(AuthContext);
-  const { setUser } = state;
+  const { handleUser } = state;
+  const { submitData } = useSubmitData();
 
   const [form] = Form.useForm();
   const { Content } = Layout;
@@ -30,19 +30,11 @@ const LogInForm = () => {
     });
   };
 
-  const handleSubmit = () => {
-    submitData(API_url, form.getFieldsValue())
-      .then((resp) => {
-        if (resp.token) {
-          const userLogged = handleUserInfo();
-          console.log(userLogged);
-          setUser(userLogged);
-          location.push("/");
-        }
-      })
-      .catch((err) => {
-        alert(err);
-      });
+  const handleSubmit = async () => {
+    const req = await submitData(API_url, form.getFieldsValue());
+    if (req.token) {
+      location.push("/");
+    }
   };
 
   return (

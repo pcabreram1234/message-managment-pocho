@@ -72,7 +72,6 @@ const MessageTable = () => {
       render: (categories) => (
         <>
           {categories.map((category) => {
-        
             return (
               <Tag
                 key={category.id}
@@ -95,7 +94,6 @@ const MessageTable = () => {
       filterSearch: true,
       filters: associatedFilter,
       onFilter: (value, record) => {
-        console.log(record);
         return record.contacts.some((obj) => obj.email === value);
       },
       render: (contacts) => (
@@ -267,10 +265,6 @@ const MessageTable = () => {
       setShowDeleteButton(false);
     }
   }, [selectedRowKeys]);
-
-  useEffect(() => {
-    console.log(columns), [];
-  });
 
   renderMessages();
 

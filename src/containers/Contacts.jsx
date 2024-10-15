@@ -23,6 +23,7 @@ const Contacts = () => {
   const [id, setId] = useState([]);
   const [name, setName] = useState();
   const [phone, setPhone] = useState();
+  const [email, setEmail] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [showMessagesAssociatedModal, setShowAssociatedModal] = useState(false);
@@ -134,10 +135,11 @@ const Contacts = () => {
     ],
   };
 
-  function setContactInfo({ id, name, phone_number }) {
+  function setContactInfo({ id, name, phone_number, email }) {
     setId(id);
     setName(name);
     setPhone(phone_number);
+    setEmail(email);
   }
 
   const handleShowAddContactModal = () => {
@@ -194,7 +196,7 @@ const Contacts = () => {
       </Content>
       {showEditModal && (
         <EditContactModal
-          data={{ id, name, phone }}
+          data={{ id, name, phone, email }}
           setShowModal={setShowEditModal}
         />
       )}

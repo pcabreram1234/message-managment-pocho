@@ -22,7 +22,7 @@ const HistoryMessageTable = ({
       filtered: true,
       filterSearch: true,
       filters: categoriesFilter,
-      onFilter: (value, record) => record.ategories.indexOf(value) !== -1,
+      onFilter: (value, record) => record.categories.indexOf(value) !== -1,
       render: (categories) => (
         <>
           {categories.map((category) => {
@@ -71,14 +71,15 @@ const HistoryMessageTable = ({
       onFilter: (value, record) => record.status.indexOf(value) !== -1,
       key: "status",
       render: (status) => {
+        console.log(status);
         let color;
         switch (status) {
-          case "sended":
-            color = "#00C9C3";
+          case "Sended":
+            color = "#A8FFFC";
             break;
 
-          case "error":
-            color = "#C25E84";
+          case "Error":
+            color = "#C7A0B0";
             break;
 
           default:

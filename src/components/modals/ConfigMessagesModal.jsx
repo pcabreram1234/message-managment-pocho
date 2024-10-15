@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Card, Input } from "antd";
+import { Modal, Input } from "antd";
 import PopUpModal from "../modals/PopUpModal";
 import MessagesConfigFooter from "../buttons/MessagesConfigFooter";
 

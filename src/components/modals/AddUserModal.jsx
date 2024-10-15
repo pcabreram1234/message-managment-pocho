@@ -2,10 +2,8 @@ import React, { useState } from "react";
 import { Modal, Form, Input, Button, Select } from "antd";
 import { SaveOutlined } from "@ant-design/icons";
 import PopUpModal from "./PopUpModal";
-import { useHookstate } from "@hookstate/core";
-import { userToEdit } from "../../context/userHookState";
-import { submitData } from "../../utility/submitData";
 import { useHistory } from "react-router";
+import useSubmitData from "../../hooks/useSubmitData";
 
 const AddUserModal = ({ isVisible, cb }) => {
   const history = useHistory();
@@ -15,7 +13,7 @@ const AddUserModal = ({ isVisible, cb }) => {
   const [alertModalType, setAlertModalType] = useState("");
   const [modalMessage, setModalMessage] = useState("");
   const [modalInfoText, setModalInfoText] = useState("");
-
+  const { submitData } = useSubmitData();
   /*Form states */
   const [type_user, setTypeUser] = useState("guest");
   const [user_name, setUsername] = useState([]);
@@ -32,23 +30,22 @@ const AddUserModal = ({ isVisible, cb }) => {
   };
 
   const onSubmit = () => {
-    form.validateFields().then(() => {
+    form.validateFields().then(async () => {
       setShowPopUpModal(true);
-      submitData(API_url, form.getFieldsValue()).then((resp) => {
-        if (resp.isBoom) {
-          setAlertModalType("error");
-          setModalInfoText(resp.output.payload.message);
-        } else {
-          setAlertModalType("info");
-          setModalInfoText("User Saved");
-          setTimeout(() => {
-            setShowModal(false);
-          }, 1200);
-          setTimeout(() => {
-            history.go(0);
-          }, 500);
-        }
-      });
+      const req = await submitData(API_url, form.getFieldsValue());
+      if (req.isBoom) {
+        setAlertModalType("error");
+        setModalInfoText(resp.output.payload.message);
+      } else {
+        setAlertModalType("info");
+        setModalInfoText("User Saved");
+        setTimeout(() => {
+          setShowModal(false);
+        }, 1200);
+        setTimeout(() => {
+          history.go(0);
+        }, 500);
+      }
     });
   };
 

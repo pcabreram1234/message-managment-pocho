@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Menu } from "antd";
 import {
   MessageFilled,
@@ -20,38 +20,9 @@ const MenuBar = () => {
   const state = useContext(AuthContext);
   const { user } = state;
 
-  const showUserMenu = (user) => {
-    if (user !== undefined && user !== null) {
-      if (user.type_user === "adm") {
-        return (
-          <Menu.Item key={"users"}>
-            <Link to={"users"}>
-              <Text style={{ color: "white" }}>
-                Users managment <BarsOutlined />
-              </Text>
-            </Link>
-          </Menu.Item>
-        );
-      }
-    }
-  };
-
-  const showLogOutMenu = (user) => {
-    if (user !== undefined && user !== null) {
-      return (
-        <Menu.SubMenu
-          title="User Info"
-          icon={<UserOutlined />}
-          style={{ marginLeft: "auto" }}
-          key={"SubMenUserInfo"}
-        >
-          <Menu.Item key={"UserInfo"}>
-            <UserInfo />
-          </Menu.Item>
-        </Menu.SubMenu>
-      );
-    }
-  };
+  useEffect(() => {
+    console.log(user?.type_user);
+  }, []);
 
   return (
     <Menu
@@ -99,15 +70,35 @@ const MenuBar = () => {
       </Menu.Item>
 
       <Menu.Item key={"History Panel"}>
-        <Link to={"historyPanel"}>
+        <Link to={"/historyPanel"}>
           <Text style={{ color: "white" }}>
             History Panel <HistoryOutlined />
           </Text>
         </Link>
       </Menu.Item>
 
-      {showUserMenu(user)}
-      {showLogOutMenu(user)}
+      {user?.type_user === "adm" && (
+        <Menu.Item key={"users"}>
+          <Link to={"/users"}>
+            <Text style={{ color: "white" }}>
+              Users managment <BarsOutlined />
+            </Text>
+          </Link>
+        </Menu.Item>
+      )}
+
+      {user !== null && user !== undefined && (
+        <Menu.SubMenu
+          title="User Info"
+          icon={<UserOutlined />}
+          style={{ marginLeft: "auto" }}
+          key={"SubMenUserInfo"}
+        >
+          <Menu.Item key={"UserInfo"}>
+            <UserInfo user={user} />
+          </Menu.Item>
+        </Menu.SubMenu>
+      )}
     </Menu>
   );
 };

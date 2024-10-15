@@ -8,13 +8,14 @@ const API_URL = "http://localhost:3120/api/v1/contacts/editContact";
 const { Text } = Typography;
 
 const EditContactModal = ({ data, setShowModal }) => {
-  const { id, name, phone } = data;
+  const { id, name, phone, email } = data;
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [idEdit, setIdEdit] = useState(id);
   const [nameEdit, setNameEdit] = useState(name);
   const [phoneEdit, setPhoneEdit] = useState(phone);
+  const [emailEdit, setEmailEdit] = useState(email);
   const [alertModalType, setAlertModalType] = useState("");
   const [modalMessage, setModallMessage] = useState("");
   const [modalInfoText, setModalInfoText] = useState("");
@@ -37,16 +38,18 @@ const EditContactModal = ({ data, setShowModal }) => {
     setModalInfoText(infoText);
   };
 
-  const handleContactInfo = ({ id, name, phone }) => {
+  const handleContactInfo = ({ id, name, phone, email }) => {
     setIdEdit(id);
     setNameEdit(name);
     setPhoneEdit(phone);
+    setEmailEdit(email);
   };
 
   let dataToSend = {
     id: parseInt(idEdit),
     name: nameEdit,
     phone: phoneEdit,
+    email: emailEdit,
   };
 
   if (isModalLoading === true && alertModalType === "success") {
@@ -77,6 +80,7 @@ const EditContactModal = ({ data, setShowModal }) => {
         id={id}
         name={name}
         phone={phone}
+        email={email}
         handleContactInfo={handleContactInfo}
       />
 

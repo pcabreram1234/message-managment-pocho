@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Input } from "antd";
 
-const SearchInput = ({ cb, dataSource, handleTableDataSource }) => {
+const SearchInput = ({ cb, dataSource, handleTableDataSource, cbLoading }) => {
   const [inputValue, setInputValue] = useState([]);
 
   const { Search } = Input;
@@ -9,6 +9,7 @@ const SearchInput = ({ cb, dataSource, handleTableDataSource }) => {
   useEffect(() => {
     const rta = cb(inputValue, dataSource);
     handleTableDataSource(rta);
+    cbLoading(true);
   }, [inputValue]);
 
   return (

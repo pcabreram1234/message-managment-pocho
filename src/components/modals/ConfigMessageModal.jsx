@@ -2,11 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import { Modal } from "antd";
 import { SettingFilled } from "@ant-design/icons";
 import { fetchData } from "../../utility/fetchData";
-import { submitData } from "../../utility/submitData";
 import { compareDates, reloadPage } from "../../utility/Funtions";
 import PopUpModal from "../modals/PopUpModal";
 import Message from "../forms/Message";
 import { AuthContext } from "../../context/UserContext";
+import useSubmitData from "../../hooks/useSubmitData";
 
 const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
   /* Modal state */
@@ -17,6 +17,7 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
   const [contacts, setContacts] = useState([]);
   const [categoriesEdit, setCategories] = useState([]);
   const [dateOnSend, setDateOnSend] = useState([]);
+  const { submitData } = useSubmitData();
 
   /* Form States */
   const [fieldsCompleted, setFieldsCompleted] = useState(false);
@@ -72,54 +73,42 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
     }
   };
 
-  const onOk = () => {
+  const onOk = async () => {
     if (fieldsCompleted === true) {
+      setShowPopUpModal(true);
       const dateCompared = compareDates(dateOnSend, currentDate);
       if (dateCompared > 0) {
-        alert("La fecha introducida debe ser a partir de la actual");
+        setPopUpModalInfo({
+          modalMessage: `La fecha introducida debe ser a partir de la actual`,
+          alertModalType: "error",
+          modalInfoText: "Error al Guardar Mensajes",
+        });
       } else {
         if (!confirmSendTo()) {
-          submitData(API_VERIFY_MESSAGE, dataToSend).then((resp) => {
-            const { result } = resp;
-            setShowPopUpModal(true);
-            if (result.count > 0) {
+          const reqAddMessage = await submitData(API_ADD_MESSAGES, dataToSend);
+          if (reqAddMessage?.result?.rowsInserted) {
+            const rowsInserted = reqAddMessage.result.rowsInserted;
+            if (rowsInserted === contacts.length) {
               setPopUpModalInfo({
-                alertModalType: "error",
-                modalInfoText:
-                  "Este mensaje ya ha sido configurado para uno o varios de los destinatarios seleccionados en la fecha indicada",
+                modalMessage: "Registro guardado",
+                alertModalType: "success",
+                modalInfoText: "Guardando Resgistro",
               });
+              reloadPage();
             } else {
-              submitData(API_ADD_MESSAGES, dataToSend).then((resp) => {
-                if (resp.result.rowsInserted) {
-                  const rowsInserted = resp.result.rowsInserted;
-                  if (rowsInserted === contacts.length) {
-                    setPopUpModalInfo({
-                      modalMessage: "Registro guardado",
-                      alertModalType: "success",
-                      modalInfoText: "Guardando Resgistro",
-                    });
-                    reloadPage();
-                  } else {
-                    setPopUpModalInfo({
-                      modalMessage: `${resp.error}`,
-                      alertModalType: "error",
-                      modalInfoText: "Guardando Resgistro",
-                    });
-                  }
-                } else {
-                  setPopUpModalInfo({
-                    modalMessage:
-                      "Ha ocurrido un error favor de tratar de nuevo",
-                    alertModalType: "error",
-                    modalInfoText: "Guardando Resgistro",
-                  });
-                  setTimeout(() => {
-                    reloadPage();
-                  }, 2500);
-                }
+              setPopUpModalInfo({
+                modalMessage: `${reqAddMessage.error}`,
+                alertModalType: "error",
+                modalInfoText: "Guardando Resgistro",
               });
             }
-          });
+          } else {
+            setPopUpModalInfo({
+              modalMessage: "Error",
+              alertModalType: "error",
+              modalInfoText: reqAddMessage?.message,
+            });
+          }
         }
       }
     }

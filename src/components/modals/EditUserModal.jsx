@@ -6,6 +6,7 @@ import { useHookstate } from "@hookstate/core";
 import { userToEdit } from "../../context/userHookState";
 import { submitData } from "../../utility/submitData";
 import { useHistory } from "react-router";
+import useSubmitData from "../../hooks/useSubmitData";
 
 const EditUserModal = ({ isVisible, cb }) => {
   const history = useHistory();
@@ -16,6 +17,8 @@ const EditUserModal = ({ isVisible, cb }) => {
   const [modalMessage, setModalMessage] = useState("");
   const [modalInfoText, setModalInfoText] = useState("");
 
+  const { submitData } = useSubmitData();
+
   const API_url = "http://localhost:3120/api/v1/users/edituser";
   /* Form States */
   const userState = useHookstate(userToEdit);
@@ -25,6 +28,24 @@ const EditUserModal = ({ isVisible, cb }) => {
   const onCancel = () => {
     cb(false);
     setShowModal(false);
+  };
+
+  const handleSubmit = async () => {
+    setShowPopUpModal(true);
+    const req = await submitData(API_url, form.getFieldsValue());
+    if (req.isBoom) {
+      setAlertModalType("error");
+      setModalInfoText(req.output.payload.message);
+    } else {
+      setAlertModalType("info");
+      setModalInfoText("User Saved");
+      setTimeout(() => {
+        setShowModal(false);
+      }, 1200);
+      setTimeout(() => {
+        history.go(0);
+      }, 500);
+    }
   };
 
   return (
@@ -104,24 +125,7 @@ const EditUserModal = ({ isVisible, cb }) => {
             icon={<SaveOutlined />}
             style={{ width: "100%" }}
             type="primary"
-            onClick={() => {
-              setShowPopUpModal(true);
-              submitData(API_url, form.getFieldsValue()).then((resp) => {
-                if (resp.isBoom) {
-                  setAlertModalType("error");
-                  setModalInfoText(resp.output.payload.message);
-                } else {
-                  setAlertModalType("info");
-                  setModalInfoText("User Saved");
-                  setTimeout(() => {
-                    setShowModal(false);
-                  }, 1200);
-                  setTimeout(() => {
-                    history.go(0);
-                  }, 500);
-                }
-              });
-            }}
+            onClick={handleSubmit}
           >
             Save User
           </Button>

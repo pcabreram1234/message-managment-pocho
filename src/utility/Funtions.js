@@ -138,10 +138,10 @@ const renderMessages = (
         key: message.id,
         message: message.message,
         categories: getObjectProp(message.categories, "categorie_name"),
-        send_to: getObjectProp(message.categories, "email"),
-        status: message.message_status,
-        send_on_date: new Date(message.send_on_date).toLocaleDateString(),
-        send_on_time: new Date(message.send_on_date).toLocaleTimeString(),
+        send_to: message.recipient,
+        status: message.status,
+        send_on_date: new Date(message.scheduled_date).toLocaleDateString(),
+        send_on_time: new Date(message.scheduled_date).toLocaleTimeString(),
       });
 
       /* En dado caso que el mensaje tenga categorias asociadas
@@ -165,7 +165,7 @@ const renderMessages = (
   categoriesTmpFilter.map((category) => {
     categoriesFilter.push({ text: category, value: category });
   });
-
+  console.log(dataSource);
   return dataSource;
 };
 

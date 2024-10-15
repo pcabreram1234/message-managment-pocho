@@ -11,18 +11,21 @@ import {
 const Contact = (props) => {
   const [name, setName] = useState(props.name);
   const [phone, setPhone] = useState(props.phone);
+  const [email, setEmail] = useState(props.email);
   const { handleContactInfo, id } = props;
 
   const handleInput = (e, cb) => {
     cb(e.target.value);
   };
 
-  const getCurrentCategories = (selectedCategories) => {
-    setCategories(getObjectProp(selectedCategories, "key"));
-  };
+  // const getCurrentCategories = (selectedCategories) => {
+  //   setCategories(getObjectProp(selectedCategories, "key"));
+  // };
+
+  console.log(props);
 
   useEffect(() => {
-    handleContactInfo({ id, name, phone });
+    handleContactInfo({ id, name, phone, email });
   }, [handleInput]);
 
   return (
@@ -75,6 +78,27 @@ const Contact = (props) => {
             phoneNumberInput(e.currentTarget.value);
           }}
           placeholder={"809-111-2222"}
+        />
+      </Form.Item>
+
+      <Form.Item
+        required
+        label={"Email"}
+        name={"email"}
+        rules={[
+          {
+            type: "email",
+            message: "Please insert a valid email",
+          },
+        ]}
+        initialValue={email}
+      >
+        <Input
+          type={"text"}
+          value={email}
+          onChange={(e) => {
+            handleInput(e, setEmail);
+          }}
         />
       </Form.Item>
     </Form>

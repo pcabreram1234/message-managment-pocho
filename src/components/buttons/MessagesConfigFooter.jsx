@@ -47,14 +47,19 @@ const MessagesConfigFooter = ({
 
   const onOk = () => {
     MessageForm.validateFields().then((resp) => {
+      setShowPopUpModal(true);
       const dateCompared = compareDates(dateTosend, currentDate);
       if (dateCompared > 1) {
-        alert("La fecha introducida debe ser a partir de la actual");
+        setPopUpModalInfo({
+          modalMessage: `La fecha introducida debe ser a partir de la actual`,
+          alertModalType: "error",
+          modalInfoText: "Error al Guardar Mensajes",
+        });
       } else {
         setDataToSend();
         submitData(API_VERIFY_MESSAGE, dataTosend).then((resp) => {
           const { count, rows } = resp.result;
-          setShowPopUpModal(true);
+
           if (count > 0) {
             const contactsRepeated = [];
             rows.forEach((row) => {
