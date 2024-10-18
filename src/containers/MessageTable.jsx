@@ -13,7 +13,6 @@ import PopUpModal from "../components/modals/PopUpModal";
 import DeleteMessageModal from "../components/modals/DeleteMessageModal";
 import SeveralMessagesToSendModal from "../components/modals/SeveralMessagesToSendModal";
 import SendButton from "../components/buttons/SendButton";
-
 const API_URL = "http://localhost:3120/api/v1/messages/";
 
 const { Content, Header } = Layout;

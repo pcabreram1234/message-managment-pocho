@@ -9,7 +9,6 @@ const AddMessage = (props) => {
   const handleInput = (e) => {
     setMessage(e.target.value);
   };
-
   const API_URL = "http://localhost:3120/api/v1/messages/addMessage";
 
   const handleSubmit = () => {

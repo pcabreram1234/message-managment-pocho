@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./routes/App.js";
+import App from "./routes/App.jsx";
 import { AuthProvider } from "./context/UserContext.jsx";
 import { BrowserRouter } from "react-router-dom";
 import "../node_modules/antd/dist/antd.css";
