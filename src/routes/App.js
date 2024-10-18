@@ -16,13 +16,13 @@ import "../styles/App.css";
 const App = () => {
   const state = useContext(AuthContext);
   const { user } = state;
+  console.log(user);
   return (
     <div className="App_container">
       {user !== null && user !== undefined && (
-        <div style={{ position: "relative", width: "100%" }}>
-          <MenuBar />
-        </div>
+        <div style={{ position: "relative", width: "100%" }}></div>
       )}
+      <MenuBar />
       <Switch>
         <Route exact path={"/"} children={<Home />} />
         <Route exact path={"/messages"} children={<MessageTable />} />

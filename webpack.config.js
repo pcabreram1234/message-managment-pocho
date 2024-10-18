@@ -4,6 +4,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const Dotenv = require("dotenv-webpack");
 const { SubresourceIntegrityPlugin } = require("webpack-subresource-integrity");
+const WebpackCopyPlugin = require("copy-webpack-plugin");
 
 module.exports = {
   entry: "./src/index.js",
@@ -82,14 +83,14 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: "assets/styles/[name].[contenthash].css",
     }),
-    /*     new WebpackCopyPlugin({
+    new WebpackCopyPlugin({
       patterns: [
         {
           from: path.resolve(__dirname, "public", "_redirects"),
           force: true,
         },
       ],
-    }), */
+    }),
     new HtmlWebPackPlugin({
       inject: true,
       template: "./public/index.html",
