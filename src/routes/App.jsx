@@ -42,7 +42,7 @@ const App = () => {
         {/* Rutas protegidas, solo accesibles si el usuario está logeado */}
         {user ? (
           <>
-            <Route exact path={"/"} children={<Home />} />
+            {/* <Route exact path={"/"} children={<Home />} /> */}
             <Route exact path={"/messages"} children={<MessageTable />} />
             <Route exact path={"/contacts"} children={<Contacts />} />
             <Route exact path={"/categories"} children={<Categories />} />
