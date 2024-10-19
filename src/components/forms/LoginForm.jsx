@@ -56,6 +56,7 @@ const LogInForm = () => {
           alignItems: "center",
           justifyContent: "center",
           alignContent: "center",
+          textAlign: "center",
         }}
       >
         <Image
