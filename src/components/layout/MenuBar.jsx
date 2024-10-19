@@ -31,11 +31,11 @@ const MenuBar = () => {
       defaultSelectedKeys={"home"}
       style={{ display: "flex", justifyContent: "left" }}
     >
-      <Menu.Item key={"home"}>
+      {/* <Menu.Item key={"home"}>
         <Link to={"/"}>
           <HomeFilled />
         </Link>
-      </Menu.Item>
+      </Menu.Item> */}
 
       <Menu.Item key={"Messages"}>
         <Link to={"/messages"}>
