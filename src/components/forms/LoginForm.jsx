@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
-import { Form, Input, Button, Layout } from "antd";
+import React, { useContext, useEffect } from "react";
+import { Form, Input, Button, Layout, Image, Row, Col } from "antd";
 import { LoginOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router";
 import { AuthContext } from "../../context/UserContext";
 import useSubmitData from "../../hooks/useSubmitData";
+import LogoIcon from "../../assets/logo.svg";
 
 const LogInForm = () => {
   const API_url =
@@ -11,6 +12,7 @@ const LogInForm = () => {
     import.meta.env.VITE_API_URL_ROUTER +
     "users/login";
   const state = useContext(AuthContext);
+  const { user } = state;
   const { submitData } = useSubmitData();
 
   const [form] = Form.useForm();
@@ -35,19 +37,39 @@ const LogInForm = () => {
   const handleSubmit = async () => {
     const req = await submitData(API_url, form.getFieldsValue());
     if (req.token) {
-      location.push("/");
+      location.push("/messages");
     }
   };
 
+  useEffect(() => {
+    if (user) {
+      location.push("/messages");
+    }
+  }, []);
+
   return (
     <Layout style={{ height: "100vh" }}>
-      <Content style={{ padding: "10px 0", display: "grid" }}>
+      <Content
+        style={{
+          // padding: "10px 0",
+          display: "grid",
+          alignItems: "center",
+          justifyContent: "center",
+          alignContent: "center",
+        }}
+      >
+        <Image
+          src={LogoIcon}
+          preview={false}
+          style={{ width: "100%", maxWidth: "200px", textAlign: "center" }}
+        />
+
         <Form
           layout="horizontal"
           size="large"
           autoComplete="off"
           form={form}
-          style={{ width: "40%", margin: "auto" }}
+          style={{ margin: "50px 0" }}
         >
           <Form.Item
             name={"user_name"}
@@ -63,7 +85,11 @@ const LogInForm = () => {
           <Form.Item
             name={"password"}
             rules={[
-              { required: true, message: "Please input your password", min: 4 },
+              {
+                required: true,
+                message: "Please input your password",
+                min: 4,
+              },
             ]}
             style={{ alignItems: "center" }}
           >
