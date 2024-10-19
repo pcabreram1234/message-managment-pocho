@@ -5,15 +5,23 @@ import { submitData } from "../../utility/submitData";
 import { fetchData } from "../../utility/fetchData";
 import { reloadPage, getObjectProp } from "../../utility/Funtions";
 
-const API_URL = "http://localhost:3120/api/v1/contacts";
+const API_URL =
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "contacts";
 const API_URL_ASOCIATE =
-  "http://localhost:3120/api/v1/messages/associate_contact";
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "messages/associate_contact";
 
 const AsociateToModal = ({ setShowAsociateModal, messageId }) => {
   const [showModal, setShowModal] = useState(true);
   const [showSelect, setShowSelect] = useState(false);
   const [data, setData] = useState([]);
-  const API_URL_GET_MESSAGE_ASOCIATION = `http://localhost:3120/api/v1/messages/messagesAsociation/${messageId}`;
+  const API_URL_GET_MESSAGE_ASOCIATION =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    `messages/messagesAsociation/${messageId}`;
   const contacts = fetchData(API_URL);
   const asociation = fetchData(API_URL_GET_MESSAGE_ASOCIATION);
 

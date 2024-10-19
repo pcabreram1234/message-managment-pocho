@@ -4,7 +4,10 @@ import { MailFilled } from "@ant-design/icons";
 import { fetchData } from "../../utility/fetchData";
 import ContactsAssociate from "../buttons/ContactsAsociate";
 
-const API_URL = "http://localhost:3120/api/v1/contacts";
+const API_URL =
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "contacts";
 const { TextArea } = Input;
 
 const SendToModal = ({

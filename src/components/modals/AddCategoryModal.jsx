@@ -7,7 +7,10 @@ import { onlyLetters } from "../../utility/patternsInput";
 import { AuthContext } from "../../context/UserContext";
 import PopUpModal from "./PopUpModal";
 
-const API_URL = "http://localhost:3120/api/v1/categories/addCategory";
+const API_URL =
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "categories/addCategory";
 
 const AddCategoryModal = ({ setAddCategorymodal }) => {
   const [showModal, setShowModal] = useState(true);

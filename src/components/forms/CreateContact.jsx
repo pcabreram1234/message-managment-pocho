@@ -9,8 +9,14 @@ import {
 } from "../../utility/patternsInput";
 import { fetchData } from "../../utility/fetchData";
 
-const API_CATEGORY_URL = "http://localhost:3120/api/v1/categories";
-const API_URL = "http://localhost:3120/api/v1/contacts/addContact";
+const API_CATEGORY_URL =
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "categories";
+const API_URL =
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "contacts/addContact";
 
 const CreateContact = ({ handleModal, setShowModal }) => {
   const categoriesList = fetchData(API_CATEGORY_URL).map((category) => {

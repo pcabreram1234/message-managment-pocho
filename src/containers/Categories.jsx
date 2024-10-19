@@ -10,7 +10,10 @@ import DeleteCategoryModal from "../components/modals/DeleteCategoryModal";
 import DeleteCategoriesModal from "../components/modals/DeleteCategoriesModal";
 const { Header, Content } = Layout;
 const { Title } = Typography;
-const API_URL = "http://localhost:3120/api/v1/categories";
+const API_URL =
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "categories";
 const Categories = () => {
   const [showAddCategoryModal, setAddCategorymodal] = useState(false);
   const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);

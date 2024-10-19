@@ -19,7 +19,10 @@ const EditMessageModal = ({
   const [fieldsCompleted, setFieldsCompleted] = useState(false);
 
   /* Service URL API */
-  const API_URL = "http://localhost:3120/api/v1/messages/editMessage/";
+  const API_URL =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "messages/editMessage/";
 
   /* Modal states */
   const [isVisible, setIsVisible] = useState(true);

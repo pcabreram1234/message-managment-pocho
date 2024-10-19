@@ -15,7 +15,10 @@ const HistoRyPanel = () => {
   const [sendToFilter, setSendToFilter] = useState([]);
   const [sendOnDateFilter, setSendOnDateFilter] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const API_URL = "http://localhost:3120/api/v1/configuration/";
+  const API_URL =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "configuration/";
   const messages = fetchData(API_URL);
   const [tableDataSource, setTableDataSource] = useState(messages);
 

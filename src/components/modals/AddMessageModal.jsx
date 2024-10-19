@@ -7,7 +7,10 @@ import CurrentCategories from "../buttons/CurrentCategories";
 import ContactsAssociate from "../buttons/ContactsAsociate";
 import { AuthContext } from "../../context/UserContext";
 
-const API_URL = "http://localhost:3120/api/v1/messages/addMessage";
+const API_URL =
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "messages/addMessage";
 
 const { TextArea } = Input;
 
@@ -23,7 +26,7 @@ const AddMessageModal = ({
   const [associateTo, setAssociateTo] = useState([]);
   const [isChange, setIsChange] = useState(false);
   const userInfo = useContext(AuthContext);
-  const { user, handleUser } = userInfo;
+  const { user } = userInfo;
   const [data, setData] = useState({
     message: message,
     categories: categories,

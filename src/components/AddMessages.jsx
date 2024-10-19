@@ -9,7 +9,7 @@ const AddMessage = (props) => {
   const handleInput = (e) => {
     setMessage(e.target.value);
   };
-  const API_URL = "http://localhost:3120/api/v1/messages/addMessage";
+  const API_URL = import.meta.env.VITE_API_URL+import.meta.env.VITE_API_URL_ROUTER+"messages/addMessage";
 
   const handleSubmit = () => {
     let DataToSendToModal = {

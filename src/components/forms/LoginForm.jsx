@@ -6,9 +6,11 @@ import { AuthContext } from "../../context/UserContext";
 import useSubmitData from "../../hooks/useSubmitData";
 
 const LogInForm = () => {
-  const API_url = "http://localhost:3120/api/v1/users/login";
+  const API_url =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "users/login";
   const state = useContext(AuthContext);
-  const { handleUser } = state;
   const { submitData } = useSubmitData();
 
   const [form] = Form.useForm();

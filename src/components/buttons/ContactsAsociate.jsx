@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Select } from "antd";
 import { fetchData } from "../../utility/fetchData";
 const ContactsAssociate = (props) => {
-  const API_ASSOCIATE_TO_URL = "http://localhost:3120/api/v1/contacts/";
+  const API_ASSOCIATE_TO_URL =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "contacts/";
   const contacts = fetchData(API_ASSOCIATE_TO_URL);
   const { setAssociateTo, associateTo } = props;
   const [contactsOptions, setContactsOptions] = useState([]);

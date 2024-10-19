@@ -4,7 +4,10 @@ import { DeleteFilled } from "@ant-design/icons";
 import { deleteDataFuntion } from "../../utility/Funtions";
 
 const { Text } = Typography;
-const API_URL = "http://localhost:3120/api/v1/categories/deleteCategory";
+const API_URL =
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "categories/deleteCategory";
 const DeleteCategoryModal = ({ id, cb }) => {
   const [showModal, setShowModal] = useState(true);
   const [showMessage, setShowMessage] = useState(false);

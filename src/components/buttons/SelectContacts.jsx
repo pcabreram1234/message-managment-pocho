@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { Select } from "antd";
 import { fetchData } from "../../utility/fetchData";
 
-const API = "http://localhost:3120/api/v1/contacts";
+const API =
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "contacts";
 const SelectContacts = ({ setAssociateTo }) => {
   const contacts = fetchData(API);
 

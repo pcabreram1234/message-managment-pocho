@@ -30,14 +30,21 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
     modalInfoText: "",
   });
 
-  const API_URL = `http://localhost:3120/api/v1/messages/getMessage/${id}`;
+  const API_URL =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    `messages/getMessage/${id}`;
   const data = fetchData(API_URL);
 
   const API_ADD_MESSAGES =
-    "http://localhost:3120/api/v1/configuration/addMesageConfiguration/";
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "configuration/addMesageConfiguration/";
 
   const API_VERIFY_MESSAGE =
-    "http://localhost:3120/api/v1/configuration/verifyMessage/";
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "configuration/verifyMessage/";
 
   const handleOnCancel = () => {
     setIsVisble(false);

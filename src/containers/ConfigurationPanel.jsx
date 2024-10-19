@@ -18,7 +18,9 @@ const ConfigurationPanel = () => {
   const [messages, setMesssages] = useState([]);
 
   const API_GET_DATE =
-    "http://localhost:3120/api/v1/configuration/getCurrentDate";
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "configuration/getCurrentDate";
 
   const currentDate = fetchData(API_GET_DATE, "GET");
   const handleData = (id) => {

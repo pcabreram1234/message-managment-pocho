@@ -6,7 +6,10 @@ import { reloadPage } from "../../utility/Funtions";
 import PopUpModal from "./PopUpModal";
 import SelectCategories from "../buttons/SelectCategories";
 import { AuthContext } from "../../context/UserContext";
-const API_URL = "http://localhost:3120/api/v1/contacts/addContact";
+const API_URL =
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "contacts/addContact";
 
 const AddContactModal = ({ setShowAddContactmodal }) => {
   const [showModal, setShowModal] = useState(true);

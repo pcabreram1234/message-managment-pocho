@@ -19,12 +19,18 @@ const MessagesConfigFooter = ({
   const [MessageForm] = Form.useForm();
 
   const API_ASSOCIATE_TO_URL =
-    "http://localhost:3120/api/v1/contacts/contactsEmail";
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "contacts/contactsEmail";
   const API_ADD_MESSAGES =
-    "http://localhost:3120/api/v1/configuration/addMesagesConfiguration/";
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "configuration/addMesagesConfiguration/";
 
   const API_VERIFY_MESSAGE =
-    "http://localhost:3120/api/v1/configuration/verifyMessages/";
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "configuration/verifyMessages/";
 
   const getCurrentAssociate = (contacts) => {
     seteAssociateTo(contacts);

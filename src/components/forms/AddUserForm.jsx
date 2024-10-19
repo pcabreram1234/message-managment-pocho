@@ -6,7 +6,10 @@ import { useHistory } from "react-router";
 import PopUpModal from "../modals/PopUpModal";
 
 const AddUserForm = () => {
-  const API_url = "http://localhost:3120/api/v1/users/adduser";
+  const API_url =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "users/adduser";
   const [form] = Form.useForm();
   const [showModal, setShowModal] = useState(false);
   const [alertModalType, setAlertModalType] = useState("");

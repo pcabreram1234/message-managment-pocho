@@ -5,7 +5,10 @@ import { EditFilled } from "@ant-design/icons";
 import { Modal, Alert, Spin, Typography } from "antd";
 import { submitData } from "../../utility/submitData";
 
-const API_URL = "http://localhost:3120/api/v1/categories/editCategory";
+const API_URL =
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "categories/editCategory";
 
 const { Text } = Typography;
 
@@ -21,8 +24,14 @@ const EditCategoryModal = (props) => {
   const [modalMessage, setModallMessage] = useState("");
   const [modalInfoText, setModalInfoText] = useState("");
 
-  const API_VERIFY_CATEGORY = `http://localhost:3120/api/v1/categories/categoriesName/${nameEdit}`;
-  const API_GET_MESSAGE_ASSOCIATE_AT_CATEGORY = `http://localhost:3120/api/v1/messages/getMesageAssociateAtCategory/${id}${nameEdit}`;
+  const API_VERIFY_CATEGORY =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    `categories/categoriesName/${nameEdit}`;
+  const API_GET_MESSAGE_ASSOCIATE_AT_CATEGORY =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    `messages/getMesageAssociateAtCategory/${id}${nameEdit}`;
 
   useEffect(() => {
     setTimeout(() => {

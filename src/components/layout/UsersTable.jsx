@@ -13,7 +13,10 @@ const UsersTable = ({ setShowEditUserModal }) => {
   const [alertModalType, setAlertModalType] = useState([]);
   const [modalInfoText, setModalInfoText] = useState([]);
 
-  const API_URL = "http://localhost:3120/api/v1/users";
+  const API_URL =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "users";
   const initialData = fetchData(API_URL);
   const dataSource = [];
 

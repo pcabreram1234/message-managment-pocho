@@ -19,7 +19,10 @@ const EditUserModal = ({ isVisible, cb }) => {
 
   const { submitData } = useSubmitData();
 
-  const API_url = "http://localhost:3120/api/v1/users/edituser";
+  const API_url =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "users/edituser";
   /* Form States */
   const userState = useHookstate(userToEdit);
   const { id, type_user, user_name, email } = userState.get();
@@ -33,7 +36,7 @@ const EditUserModal = ({ isVisible, cb }) => {
   const handleSubmit = async () => {
     setShowPopUpModal(true);
     const req = await submitData(API_url, form.getFieldsValue());
-    if (req.isBoom) {
+    if (req?.isBoom) {
       setAlertModalType("error");
       setModalInfoText(req.output.payload.message);
     } else {
@@ -41,7 +44,7 @@ const EditUserModal = ({ isVisible, cb }) => {
       setModalInfoText("User Saved");
       setTimeout(() => {
         setShowModal(false);
-      }, 1200);
+      }, 500);
       setTimeout(() => {
         history.go(0);
       }, 500);
@@ -51,7 +54,7 @@ const EditUserModal = ({ isVisible, cb }) => {
   return (
     <Modal
       title="Edition of user"
-      visible={showModal}
+      open={showModal}
       onCancel={onCancel}
       okButtonProps={{ disabled: true }}
       cancelButtonProps={{ disabled: true }}

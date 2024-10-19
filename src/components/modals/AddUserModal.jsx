@@ -20,7 +20,10 @@ const AddUserModal = ({ isVisible, cb }) => {
   const [email, setEmail] = useState([]);
   const [password, setPassword] = useState([]);
 
-  const API_url = "http://localhost:3120/api/v1/users/adduser";
+  const API_url =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "users/adduser";
   /* Form States */
   const [form] = Form.useForm();
 

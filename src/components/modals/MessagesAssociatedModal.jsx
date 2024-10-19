@@ -5,7 +5,10 @@ import MessageAsociateToContactCard from "../MessageAsociateToContactCard";
 
 const MessagesAssociatedModal = ({ cb, id, contact }) => {
   const [isVisible, setIsVisible] = useState(true);
-  const API_URL = `http://localhost:3120/api/v1/messages/messagesAssociated/${id}`;
+  const API_URL =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    `messages/messagesAssociated/${id}`;
   const messages = fetchData(API_URL);
   const onCancel = () => {
     cb(false);

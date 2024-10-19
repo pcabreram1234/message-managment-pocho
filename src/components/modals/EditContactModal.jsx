@@ -4,7 +4,10 @@ import { saveDataFuntion } from "../../utility/Funtions";
 import { EditFilled } from "@ant-design/icons";
 import { Modal, Alert, Spin, Typography } from "antd";
 
-const API_URL = "http://localhost:3120/api/v1/contacts/editContact";
+const API_URL =
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "contacts/editContact";
 const { Text } = Typography;
 
 const EditContactModal = ({ data, setShowModal }) => {

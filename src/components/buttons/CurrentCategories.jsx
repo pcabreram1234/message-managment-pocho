@@ -6,7 +6,10 @@ const CurrentCategories = (props) => {
   const { getCurrentCategories, categories } = props;
   const [categoriesOptions, setCategoriesOptions] = useState([]);
   const [categories_selected, setCategories_selected] = useState([]);
-  const API_CATEGORY_URL = "http://localhost:3120/api/v1/categories";
+  const API_CATEGORY_URL =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "categories";
   const categories_submited = fetchData(API_CATEGORY_URL);
 
   const addCurrentCategoriesToSelectOption = () => {

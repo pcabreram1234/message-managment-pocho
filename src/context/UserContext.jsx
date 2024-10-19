@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 const AuthContext = React.createContext();
 const AuthProvider = ({ children }) => {
   const token = window.localStorage.getItem("token");
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(token);
 
   const handleUser = (tokenDecoded) => {
     setUser(tokenDecoded);

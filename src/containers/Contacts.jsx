@@ -13,7 +13,10 @@ import { fetchData } from "../utility/fetchData";
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
-const API_URL = "http://localhost:3120/api/v1/contacts";
+const API_URL =
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "contacts";
 
 const Contacts = () => {
   const [showEditModal, setShowEditModal] = useState(false);
