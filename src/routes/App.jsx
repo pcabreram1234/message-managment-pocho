@@ -18,13 +18,13 @@ const App = () => {
   const state = useContext(AuthContext);
   const { user } = state; // Obtiene el usuario desde el contexto
   const history = useHistory(); // Hook para navegación
-  console.log(user);
+  // console.log(user);
   // Redirigir al login si el usuario no está logeado
-  // useEffect(() => {
-  //   if (!user) {
-  //     history.push("/login");
-  //   }
-  // }, [user, history]);
+  useEffect(() => {
+    if (!user) {
+      history.push("/login");
+    }
+  }, [user, history]);
 
   return (
     <div className="App_container">

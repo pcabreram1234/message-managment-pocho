@@ -34,6 +34,7 @@ const useSubmitData = () => {
     } catch (error) {
       console.log(error);
       openNotification("Error", error, "error");
+      return error;
     }
   };
 

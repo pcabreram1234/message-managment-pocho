@@ -39,6 +39,7 @@ const LogInForm = () => {
     if (req.token) {
       location.push("/messages");
     }
+    console.log(window.localStorage);
   };
 
   useEffect(() => {
@@ -73,14 +74,17 @@ const LogInForm = () => {
           style={{ margin: "50px 0" }}
         >
           <Form.Item
-            name={"user_name"}
+            name={"email"}
             rules={[
-              { required: "true", message: "Please input your username" },
-              { type: "string" },
+              {
+                required: "true",
+                message: "Please enter a valid email address",
+              },
+              { type: "email" },
             ]}
             style={{ alignItems: "center" }}
           >
-            <Input placeholder="Your username" autoFocus />
+            <Input placeholder="example@email.com" autoFocus />
           </Form.Item>
 
           <Form.Item
