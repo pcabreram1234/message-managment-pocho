@@ -9,22 +9,25 @@ import MenuBar from "../components/layout/MenuBar";
 import NotFound from "../containers/NotFound";
 import LogInForm from "../components/forms/LoginForm";
 import Users from "../containers/Users";
-import { Route, Switch, Redirect } from "react-router-dom";
+import { Route, Switch, Redirect, useLocation } from "react-router-dom";
 import { useHistory } from "react-router";
 import { AuthContext } from "../context/UserContext";
+import AccountVerification from "../containers/AccountVerification";
 import "../styles/App.css";
 
 const App = () => {
   const state = useContext(AuthContext);
   const { user } = state; // Obtiene el usuario desde el contexto
   const history = useHistory(); // Hook para navegación
+
   // console.log(user);
   // Redirigir al login si el usuario no está logeado
+  console.log(history);
   useEffect(() => {
-    if (!user) {
+    if (!user && history?.location?.pathname !== "/verifyUser") {
       history.push("/login");
     }
-  }, [user, history]);
+  }, [user, location]);
 
   return (
     <div className="App_container">
@@ -38,6 +41,7 @@ const App = () => {
       <Switch>
         {/* Rutas públicas */}
         <Route exact path={"/login"} children={<LogInForm />} />
+        <Route exact path={"/verifyUser"} children={<AccountVerification />} />
 
         {/* Rutas protegidas, solo accesibles si el usuario está logeado */}
         {user ? (
