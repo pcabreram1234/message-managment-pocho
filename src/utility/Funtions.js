@@ -39,8 +39,8 @@ const editDataFuntion = (API_URL, data, cb) => {
 
 const reloadPage = () => {
   setTimeout(() => {
-    window.location.href = "";
-  }, 500);
+    window.location.reload();
+  }, 1000);
 };
 
 /* Funcion que elimina los elementos duplicados de un array de numeros */

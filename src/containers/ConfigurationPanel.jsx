@@ -40,9 +40,6 @@ const ConfigurationPanel = () => {
         {showConfigurationButton && (
           <ConfigurateButton cbModal={setShowConfigurationMessagesModal} />
         )}
-      </Content>
-
-      <Content>
         <MessageConfigTable
           handleData={handleData}
           setShowModal={setShowConfigurationModal}

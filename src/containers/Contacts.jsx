@@ -190,8 +190,6 @@ const Contacts = () => {
             <DeleteFilled /> Delete Contacts
           </Button>
         )}
-      </Content>
-      <Content>
         <Table
           loading={tableDataSource?.length > 0 ? false : true}
           dataSource={tableDataSource}
@@ -199,6 +197,7 @@ const Contacts = () => {
           rowSelection={rowSelection}
         />
       </Content>
+
       {showEditModal && (
         <EditContactModal
           data={{ id, name, phone, email }}

@@ -278,11 +278,13 @@ const MessageTable = () => {
       </Header>
 
       <Content
-        style={{
-          display: "flex",
-          columnGap: "5px",
-          margin: "5px 0 5px 5px",
-        }}
+        style={
+          {
+            // display: "flex",
+            // columnGap: "5px",
+            // margin: "5px 0 5px 5px",
+          }
+        }
       >
         <Button
           type="primary"
@@ -311,9 +313,6 @@ const MessageTable = () => {
         {showSendToButton && (
           <SendButton setShowModal={setShowSeveralMessagesToSendModal} />
         )}
-      </Content>
-
-      <Content>
         <Table
           loading={dataSource?.length > 0 ? false : true}
           dataSource={dataSource}

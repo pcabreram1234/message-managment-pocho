@@ -15,7 +15,8 @@ const FooterPage = () => {
         left: "50%",
         transform: "translateX(-50%)",
         width: "100%",
-        zIndex: "1000",
+        zIndex: "1",
+        padding: 0,
       }}
     >
       <Row
