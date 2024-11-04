@@ -4,7 +4,9 @@ import App from "./routes/App.jsx";
 import { AuthProvider } from "./context/UserContext.jsx";
 import { BrowserRouter } from "react-router-dom";
 import "../node_modules/antd/dist/antd.css";
+import * as serviceWorker from "./serviceWorker";
 
+// serviceWorker.unregister();
 ReactDOM.render(
   <React.StrictMode>
     <AuthProvider>
@@ -15,3 +17,5 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById("root")
 );
+
+serviceWorker.register();
