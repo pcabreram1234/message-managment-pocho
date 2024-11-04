@@ -20,9 +20,9 @@ self.addEventListener("install", (event) => {
 
 // Interceptar solicitudes y responder con recursos en caché si están disponibles
 self.addEventListener("fetch", (event) => {
-  console.log(event);
+  // console.log(event);
   const url = new URL(event.request.url);
-  console.log(url);
+  // console.log(url);
   // Filtra las peticiones que deseas almacenar en caché, por ejemplo, si el URL contiene una parte específica
   if (event.request.method === "GET") {
     if (
@@ -47,8 +47,11 @@ self.addEventListener("fetch", (event) => {
       );
     }
   }
-  if (url.pathname === "/api/v1/users/login") {
-    console.log("Login detectado, limpiando caché...");
+  if (
+    url.pathname === "/api/v1/users/login" ||
+    event.request.method !== "GET"
+  ) {
+    console.log("Login detectado o pagina recargándose, limpiando caché...");
     event.waitUntil(
       caches.keys().then((cacheNames) =>
         Promise.all(
@@ -61,6 +64,10 @@ self.addEventListener("fetch", (event) => {
       )
     );
   }
+});
+
+self.addEventListener("reload", (e) => {
+  console.log("Pagina cargada");
 });
 
 self.addEventListener("load", (event) => {
