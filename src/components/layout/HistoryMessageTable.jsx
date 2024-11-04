@@ -100,7 +100,11 @@ const HistoryMessageTable = ({
 
   return (
     <>
-      <Table dataSource={tableDataSource} columns={columns} />
+      <Table
+        dataSource={tableDataSource}
+        columns={columns}
+        loading={tableDataSource?.length > 0 ? false : true}
+      />
     </>
   );
 };

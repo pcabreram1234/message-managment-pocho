@@ -24,7 +24,7 @@ const UserInfo = ({ user }) => {
     >
       <Col>
         <Text strong style={{ color: "white" }}>
-          User: {user?.user_name}
+          User: {user?.email}
         </Text>
       </Col>
 

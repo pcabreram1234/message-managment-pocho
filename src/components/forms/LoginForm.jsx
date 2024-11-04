@@ -5,6 +5,7 @@ import { useHistory } from "react-router";
 import { AuthContext } from "../../context/UserContext";
 import useSubmitData from "../../hooks/useSubmitData";
 import LogoIcon from "../../assets/logo.svg";
+import FooterPage from "../layout/Footer";
 
 const LogInForm = () => {
   const API_url =
@@ -84,7 +85,11 @@ const LogInForm = () => {
             ]}
             style={{ alignItems: "center" }}
           >
-            <Input placeholder="example@email.com" autoFocus />
+            <Input
+              placeholder="example@email.com"
+              autoFocus
+              autoComplete="true"
+            />
           </Form.Item>
 
           <Form.Item
@@ -113,6 +118,7 @@ const LogInForm = () => {
           </Form.Item>
         </Form>
       </Content>
+      <FooterPage />
     </Layout>
   );
 };

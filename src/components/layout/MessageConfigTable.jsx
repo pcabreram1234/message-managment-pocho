@@ -140,6 +140,7 @@ const MessageConfigTable = ({
 
   return (
     <Table
+      loading={dataSource?.length > 0 ? false : true}
       ref={tableRef}
       dataSource={dataSource}
       columns={columns}

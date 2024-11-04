@@ -3,6 +3,7 @@ import MessageConfigTable from "../components/layout/MessageConfigTable";
 import ConfigMessageModal from "../components/modals/ConfigMessageModal";
 import ConfigurateButton from "../components/buttons/ConfigurateButton";
 import ConfigMessagesModal from "../components/modals/ConfigMessagesModal";
+import FooterPage from "../components/layout/Footer";
 import { Layout, Typography } from "antd";
 import { fetchData } from "../utility/fetchData";
 
@@ -65,6 +66,7 @@ const ConfigurationPanel = () => {
           currentDate={currentDate}
         />
       )}
+      <FooterPage />
     </Layout>
   );
 };

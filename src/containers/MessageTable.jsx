@@ -21,6 +21,7 @@ const API_URL =
 const { Content, Header } = Layout;
 const { Title } = Typography;
 const { TextArea } = Input;
+import FooterPage from "../components/layout/Footer";
 
 const MessageTable = () => {
   const messages = fetchData(API_URL);
@@ -314,6 +315,7 @@ const MessageTable = () => {
 
       <Content>
         <Table
+          loading={dataSource?.length > 0 ? false : true}
           dataSource={dataSource}
           columns={columns}
           rowSelection={rowSelection}
@@ -370,6 +372,7 @@ const MessageTable = () => {
           setShowModal={setShowSeveralMessagesToSendModal}
         />
       )}
+      <FooterPage />
     </Layout>
   );
 };

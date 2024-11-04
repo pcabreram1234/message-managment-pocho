@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import HistoryMessageTable from "../components/layout/HistoryMessageTable";
 import SearchInput from "../components/SearchInput";
+import FooterPage from "../components/layout/Footer";
 import { fetchData } from "../utility/fetchData";
 import {
   filterTableInput,
@@ -89,12 +90,12 @@ const HistoRyPanel = () => {
           Message's History
         </Title>
       </Header>
-      <SearchInput
+      {/* <SearchInput
         cb={filterTableInput}
         dataSource={data}
         handleTableDataSource={handleTableDataSource}
         cbLoading={setIsLoading}
-      />
+      /> */}
       <Content>
         <HistoryMessageTable
           tableDataSource={tableDataSource}
@@ -104,6 +105,7 @@ const HistoRyPanel = () => {
           sendToFilter={sendToFilter}
         />
       </Content>
+      <FooterPage />
     </Layout>
   );
 };

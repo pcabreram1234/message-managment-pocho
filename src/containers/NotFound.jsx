@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Typography } from "antd";
 import { Redirect } from "react-router";
+import FooterPage from "../components/layout/Footer";
 
 const NotFound = () => {
   const { Header, Content } = Layout;
@@ -17,13 +18,13 @@ const NotFound = () => {
     <Layout>
       <Header>
         <Title style={{ textAlign: "center", color: "white  " }}>
-          Message Managment - Error
+          PMMS - Error
         </Title>
         <Title style={{ textAlign: "center", fontSize: "15px" }}>
           This page does not exist in 3 seconds the page will be redirect to the
           main pange: <Text strong>{counter}</Text>
         </Title>
-        {counter === 3 && <Redirect to={"/"} />}
+        {counter === 3 && <Redirect to={"/messages"} />}
       </Header>
 
       <Content style={{ display: "flex", justifyContent: "center" }}>
@@ -32,6 +33,7 @@ const NotFound = () => {
           alt="Not Found Image"
         />
       </Content>
+      <FooterPage />
     </Layout>
   );
 };

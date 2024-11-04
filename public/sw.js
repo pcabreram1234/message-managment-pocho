@@ -20,32 +20,33 @@ self.addEventListener("install", (event) => {
 
 // Interceptar solicitudes y responder con recursos en caché si están disponibles
 self.addEventListener("fetch", (event) => {
-  // console.log(event);
+  console.log(event);
   const url = new URL(event.request.url);
   console.log(url);
   // Filtra las peticiones que deseas almacenar en caché, por ejemplo, si el URL contiene una parte específica
-  if (
-    url.pathname.startsWith("/api/v1/") &&
-    url.pathname !== "/api/v1/users/login"
-  ) {
-    event.respondWith(
-      caches
-        .match(event.request || url.pathname.toString())
-        .then(async (cachedResponse) => {
-          if (cachedResponse) {
-            // Si la respuesta ya está en caché, devuélvela directamente
-            return cachedResponse;
-          }
+  if (event.request.method === "GET") {
+    if (
+      url.pathname.startsWith("/api/v1/") &&
+      url.pathname !== "/api/v1/users/login"
+    ) {
+      event.respondWith(
+        caches
+          .match(event.request || url.pathname.toString())
+          .then(async (cachedResponse) => {
+            if (cachedResponse) {
+              // Si la respuesta ya está en caché, devuélvela directamente
+              return cachedResponse;
+            }
 
-          // Si no está en caché, haz la solicitud y almacena el resultado en la caché
-          const networkResponse = await fetch(event.request);
-          const cache = await caches.open(CACHE_NAME);
-          cache.put(event.request, networkResponse.clone()); // Clona y guarda la respuesta en caché
-          return networkResponse;
-        })
-    );
+            // Si no está en caché, haz la solicitud y almacena el resultado en la caché
+            const networkResponse = await fetch(event.request);
+            const cache = await caches.open(CACHE_NAME);
+            cache.put(event.request, networkResponse.clone()); // Clona y guarda la respuesta en caché
+            return networkResponse;
+          })
+      );
+    }
   }
-
   if (url.pathname === "/api/v1/users/login") {
     console.log("Login detectado, limpiando caché...");
     event.waitUntil(

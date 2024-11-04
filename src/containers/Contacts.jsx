@@ -10,6 +10,7 @@ import ShowMessagesButton from "../components/buttons/ShowMessagesButton";
 import MessagesAssociatedModal from "../components/modals/MessagesAssociatedModal";
 import { PlusCircleFilled, DeleteFilled } from "@ant-design/icons";
 import { fetchData } from "../utility/fetchData";
+import FooterPage from "../components/layout/Footer";
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
@@ -192,6 +193,7 @@ const Contacts = () => {
       </Content>
       <Content>
         <Table
+          loading={tableDataSource?.length > 0 ? false : true}
           dataSource={tableDataSource}
           columns={tableColumns}
           rowSelection={rowSelection}
@@ -225,6 +227,7 @@ const Contacts = () => {
           contact={name}
         />
       )}
+      <FooterPage />
     </Layout>
   );
 };

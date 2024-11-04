@@ -31,7 +31,6 @@ const Users = () => {
           />
         )}
       </Content>
-      <Footer></Footer>
     </Layout>
   );
 };

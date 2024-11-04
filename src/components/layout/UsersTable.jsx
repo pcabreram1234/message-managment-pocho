@@ -95,7 +95,11 @@ const UsersTable = ({ setShowEditUserModal }) => {
   renderUsers();
 
   return (
-    <Table columns={columns} dataSource={dataSource}>
+    <Table
+      columns={columns}
+      dataSource={dataSource}
+      loading={dataSource?.length > 0 ? false : true}
+    >
       {showDeleteModal && (
         <DeleteMessageModal
           id={userId}
