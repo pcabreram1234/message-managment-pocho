@@ -41,7 +41,7 @@ const App = () => {
     };
 
     checkAuthStatus();
-  }, [location, loading]);
+  }, [location]);
 
   // Mientras se verifica la autenticación, muestra un indicador de carga
   if (loading) return <div>Loading...</div>;

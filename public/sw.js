@@ -77,7 +77,8 @@ self.addEventListener("fetch", (event) => {
         if (cachedResponse) {
           await cache.delete(cacheDependency.requestToUpdate);
         }
-        return fetch(event.request); // Ejecutar la solicitud después de borrar del caché
+        event.respondWith(fetch(event.request));
+        return; // Ejecutar la solicitud después de borrar del caché
       })
     );
   }
