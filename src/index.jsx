@@ -1,21 +1,24 @@
 import React from "react";
-import ReactDOM from "react-dom";
+
 import App from "./routes/App.jsx";
 import { AuthProvider } from "./context/UserContext.jsx";
 import { BrowserRouter } from "react-router-dom";
 import "../node_modules/antd/dist/antd.css";
 import * as serviceWorker from "./serviceWorker";
+import { createRoot } from "react-dom/client";
 
 // serviceWorker.unregister();
-ReactDOM.render(
+const container = document.getElementById("root");
+
+const root = createRoot(container);
+root.render(
   <React.StrictMode>
     <AuthProvider>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </AuthProvider>
-  </React.StrictMode>,
-  document.getElementById("root")
+  </React.StrictMode>
 );
 
 serviceWorker.register();

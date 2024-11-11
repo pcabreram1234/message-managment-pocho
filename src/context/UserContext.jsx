@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 const AuthContext = React.createContext();
 const AuthProvider = ({ children }) => {
-  const token = window.localStorage.getItem("token");
-  const [user, setUser] = useState(token);
+  const [user, setUser] = useState(null);
 
-  const handleUser = (tokenDecoded) => {
-    setUser(tokenDecoded);
+  const handleUser = (email) => {
+    setUser(email);
   };
 
   useEffect(() => {
-    handleUser(token);
-  }, []);
+    console.log(user);
+  }, [user]);
 
   return (
     <AuthContext.Provider

@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/UserContext";
 import { useHistory } from "react-router";
 import * as jose from "jose";
+import * as serviceWorker from "../serviceWorker";
 const fetchData = (API, method = "GET") => {
   const userState = useContext(AuthContext);
   const { handleUser } = userState;
@@ -12,31 +13,27 @@ const fetchData = (API, method = "GET") => {
   useEffect(() => {
     fetch(API, {
       method: method,
-      headers: {
-        "x-access-token": token,
-      },
+      credentials: "include",
     })
       .then((resp) => {
-        const token = resp.headers.get("token");
-        if (token) {
-          window.localStorage.setItem("token", token);
-          handleUser(jose.decodeJwt(token));
+        if (resp.ok) {
+          const token = jose.decodeJwt(resp.headers.get("token"));
+          handleUser(token);
+          return resp.json();
         } else {
+          serviceWorker.unregister();
           location.push("/login");
-          handleUser([]);
+          handleUser(null);
+          setData(null);
         }
-        return resp.json();
       })
       .then((resp) => {
-        if (resp.error) {
-          location.push("/login");
-          window.localStorage.removeItem("token");
-        } else {
-          setData(resp);
-        }
+        setData(resp);
       })
       .catch((err) => {
+        serviceWorker.unregister();
         console.log(err);
+        handleUser(null);
       });
   }, []);
   return data;

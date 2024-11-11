@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { SaveFilled } from "@ant-design/icons";
 import { Modal, Input, Form } from "antd";
 import { reloadPage } from "../../utility/Funtions";
-import useSubmitData from "../../hooks/useSubmitData";
+import { submitData } from "../../utility/submitData";
 import CurrentCategories from "../buttons/CurrentCategories";
 import ContactsAssociate from "../buttons/ContactsAsociate";
 import { AuthContext } from "../../context/UserContext";
@@ -34,8 +34,6 @@ const AddMessageModal = ({
     userId: userInfo.user.id,
   });
 
-  const { submitData } = useSubmitData();
-
   const setMessageValue = () => {
     setData({
       message: message,
@@ -62,8 +60,8 @@ const AddMessageModal = ({
   const handleSubmit = async () => {
     const req = await submitData(API_URL, data);
     console.log(req);
-    if (req.message) {
-      setPopUpModalInfo("Guardando registro", "error", resp.message);
+    if (req?.message) {
+      setPopUpModalInfo("Guardando registro", "error", resp?.message);
     } else {
       setPopUpModalInfo("Guardando registro", "success", "Registro Guardado");
       setTimeout(() => {

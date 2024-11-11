@@ -51,29 +51,28 @@ const AddContactModal = ({ setShowAddContactmodal }) => {
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setTimeout(() => {
       setShowSaveModal(true);
     }, 500);
-    submitData(API_URL, data)
-      .then((resp) => {
-        if (resp.message) {
-          setPopUpModalInfo({
-            alertModalType: "error",
-            modalInfoText: resp.message,
-          });
-        } else {
-          setPopUpModalInfo({
-            alertModalType: "success",
-            modalInfoText: "Registro Guardado",
-          });
 
-          reloadPage();
-        }
-      })
-      .catch((err) => {
-        alert(err);
-      });
+    try {
+      const req = await submitData(API_URL, data);
+      if (req?.message) {
+        setPopUpModalInfo({
+          alertModalType: "error",
+          modalInfoText: req?.message,
+        });
+      } else {
+        setPopUpModalInfo({
+          alertModalType: "success",
+          modalInfoText: "Registro Guardado",
+        });
+        reloadPage();
+      }
+    } catch (error) {
+      throw new Error(error);
+    }
   };
 
   const onOk = () => {

@@ -1,4 +1,4 @@
-import { submitData } from "../utility/submitData";
+import { submitData } from "../utility/submitData.js";
 
 const saveDataFuntion = (API_URL, data, cb) => {
   submitData(API_URL, data).then((resp) => {
@@ -6,7 +6,7 @@ const saveDataFuntion = (API_URL, data, cb) => {
       cb("Guardando Registro(s)", "success", "Registro(s) Guardado(s)");
       reloadPage();
     } else {
-      cb("Guardando Registro(s)", "error", resp.message);
+      cb("Guardando Registro(s)", "error", resp?.message);
     }
   });
 };
@@ -30,7 +30,7 @@ const editDataFuntion = (API_URL, data, cb) => {
         cb("Editando Registro(s)", "success", "Registro Editado");
         reloadPage();
       } else {
-        alert(resp.message);
+        alert(resp);
         cb("Editando Registro(s)", "error", resp.message);
       }
     }, 500);

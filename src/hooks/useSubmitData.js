@@ -1,40 +1,51 @@
 import { useContext } from "react";
 import { openNotification } from "../components/Notification";
 import { AuthContext } from "../context/UserContext";
+import { useHistory } from "react-router";
 import * as jose from "jose";
+
 const useSubmitData = () => {
   const userState = useContext(AuthContext);
   const { handleUser } = userState;
+  const history = useHistory();
 
   const submitData = async (API, data, METHOD = "POST") => {
-    const token = window.localStorage.getItem("token");
     const headers = {
       "Content-type": "application/json; charset=UTF-8",
-      "x-access-token": token ?? null,
     };
 
     try {
-      const req = await fetch(API, {
+      const response = await fetch(API, {
         method: METHOD,
         body: METHOD !== "GET" ? JSON.stringify({ data }) : undefined,
         headers,
+        credentials: "include",
       });
-      const resp = await req.json();
-      if (resp.token) {
-        window.localStorage.setItem("token", resp.token);
-        handleUser(jose.decodeJwt(resp.token));
-      }
-      if (resp.error) {
-        alert(resp.error);
-        if (window.location.pathname !== "/login") {
-          window.location.href = "/login";
+
+      if (response.ok) {
+        const resp = await response.json();
+        const token = response.headers.get("token");
+        if (token) {
+          handleUser(jose.decodeJwt(token));
+          history.push("/messages");
+        } else {
+          openNotification("Error", resp?.error || "Login failed", "error");
+          handleUser(null);
+          history.push("/login");
+          // throw new Error("User data is incomplete.");
         }
+      } else {
+        handleUser(null);
+        history.push("/login");
       }
-      return resp;
     } catch (error) {
-      console.log(error);
-      openNotification("Error", error, "error");
-      return error;
+      console.error("Error during submission:", error);
+      openNotification(
+        "Error",
+        (error.error ?? error.message) || "Login failed",
+        "error"
+      );
+      history.push("/login");
     }
   };
 

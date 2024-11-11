@@ -1,69 +1,87 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Contacts from "../containers/Contacts";
 import Categories from "../containers/Categories";
 import MessageTable from "../containers/MessageTable";
 import ConfigurationPanel from "../containers/ConfigurationPanel";
 import HistoRyPanel from "../containers/HistoryPanel";
-import Home from "../containers/Home";
 import MenuBar from "../components/layout/MenuBar";
 import NotFound from "../containers/NotFound";
 import LogInForm from "../components/forms/LoginForm";
 import Users from "../containers/Users";
-import { Route, Switch, Redirect } from "react-router-dom";
-import { useHistory } from "react-router";
+import { Route, Switch, Redirect, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/UserContext";
 import AccountVerification from "../containers/AccountVerification";
+import { submitData } from "../utility/submitData";
 import "../styles/App.css";
 
 const App = () => {
   const state = useContext(AuthContext);
-  const { user } = state; // Obtiene el usuario desde el contexto
-  const history = useHistory(); // Hook para navegación
+  const { user, handleUser } = state; // Obtiene el usuario y la función para manejar el estado del usuario
+  const [loading, setLoading] = useState(true); // Estado de carga
+  const location = useLocation();
 
-  // console.log(user);
-  // Redirigir al login si el usuario no está logeado
-  console.log(history);
+  // useEffect en App.js para verificar la autenticación en cada recarga
   useEffect(() => {
-    if (!user && history?.location?.pathname !== "/verifyUser") {
-      history.push("/login");
-    }
-  }, [user, location]);
+    const checkAuthStatus = async () => {
+      try {
+        const response = await submitData(
+          import.meta.env.VITE_API_URL +
+            import.meta.env.VITE_API_URL_ROUTER +
+            "users/check-auth",
+          null,
+          "GET"
+        );
+        console.log(response);
+        handleUser(response?.result ?? null);
+      } catch (error) {
+        console.error("Error verifying authentication:", error);
+      } finally {
+        setLoading(false); // Fin del estado de carga
+      }
+    };
+
+    checkAuthStatus();
+  }, [location, loading]);
+
+  // Mientras se verifica la autenticación, muestra un indicador de carga
+  if (loading) return <div>Loading...</div>;
 
   return (
     <div className="App_container">
-      {/* Renderizar el MenuBar solo si el usuario está logeado */}
-      {user ? (
+      {/* Renderizar el MenuBar solo si el usuario está autenticado */}
+      {user && (
         <div style={{ position: "relative", width: "100%" }}>
           <MenuBar />
         </div>
-      ) : (
-        <Redirect to="/login" />
       )}
 
-      {user && (
-        <Switch>
-          <Route exact path={"/login"} children={<LogInForm />} />
-          <Route
-            exact
-            path={"/verifyUser"}
-            children={<AccountVerification />}
-          />
-          {/* Rutas protegidas, solo accesibles si el usuario está logeado */}
+      <Switch>
+        {/* Rutas públicas */}
+        <Route exact path="/login" children={<LogInForm />} />
+        <Route exact path="/verifyUser" children={<AccountVerification />} />
 
-          {/* <Route exact path={"/"} children={<Home />} /> */}
-          <Route exact path={"/messages"} children={<MessageTable />} />
-          <Route exact path={"/contacts"} children={<Contacts />} />
-          <Route exact path={"/categories"} children={<Categories />} />
-          <Route exact path={"/users"} children={<Users />} />
-          <Route
-            exact
-            path={"/configurationPanel"}
-            children={<ConfigurationPanel />}
-          />
-          <Route exact path={"/historyPanel"} children={<HistoRyPanel />} />
-          <Route path="*" exact children={<NotFound />} />
-        </Switch>
-      )}
+        {/* Rutas protegidas */}
+        {user ? (
+          <>
+            <Route exact path="/messages" children={<MessageTable />} />
+            <Route exact path="/contacts" children={<Contacts />} />
+            <Route exact path="/categories" children={<Categories />} />
+            <Route exact path="/users" children={<Users />} />
+            <Route
+              exact
+              path="/configurationPanel"
+              children={<ConfigurationPanel />}
+            />
+            <Route exact path="/historyPanel" children={<HistoRyPanel />} />
+          </>
+        ) : (
+          // Redirigir al login si el usuario no está autenticado
+          <Redirect to="/login" />
+        )}
+
+        {/* Ruta para la página no encontrada */}
+        <Route path="*" children={<NotFound />} />
+      </Switch>
     </div>
   );
 };

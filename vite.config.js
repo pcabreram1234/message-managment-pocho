@@ -16,5 +16,6 @@ export default defineConfig({
     host: "localhost",
     port: 8086,
     open: true,
+   
   },
 });

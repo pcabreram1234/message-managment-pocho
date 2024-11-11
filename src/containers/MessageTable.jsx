@@ -136,6 +136,7 @@ const MessageTable = () => {
   };
 
   const renderMessages = () => {
+    console.log(messages)
     const { result } = messages;
     if (result) {
       result.map((message) => {

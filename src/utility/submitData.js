@@ -1,12 +1,11 @@
-import React from "react";
 import { openNotification } from "../components/Notification";
 
-async function submitData(API, data, METHOD = "POST") {
-  const token = window.localStorage.getItem("token");
+export const submitData = async (API, data, METHOD = "POST") => {
+  // const token = window.localStorage.getItem("token");
 
   const headers = {
     "Content-type": "application/json; charset=UTF-8",
-    "x-access-token": token ?? null,
+    // "x-access-token": token ?? null,
   };
 
   if (METHOD !== "GET") {
@@ -16,45 +15,46 @@ async function submitData(API, data, METHOD = "POST") {
         body: JSON.stringify({ data }),
         /* Colocamos como header el tipo JSON para que express pueda usar el midleware app.use(json()) */
         headers: headers,
+        credentials: "include",
       });
-      let resp = await req.json();
-      if (resp.token) {
-        window.localStorage.setItem("token", resp.token);
-      }
-      if (resp.error) {
-        alert(resp.error);
-        if (location.pathname !== "/login") {
-          window.location.href = "/login";
+      if (req.ok) {
+        const token = req.headers.get("token");
+        if (token) {
+          let resp = await req.json();
+          return resp;
+        } else {
+          openNotification("Error", "Please log in again", "error");
         }
+      } else {
+        // Manejar el caso de error con la respuesta de error JSON
+        const errorResp = await req.json();
+        return errorResp;
       }
-
-      return resp;
     } catch (error) {
-      console.log(error);
-      openNotification("Error", error, "error");
+      openNotification("Error", error?.message, "error");
     }
   } else {
     try {
       let req = await fetch(API, {
         headers: headers,
         body: data,
+        credentials: "include",
       });
-      let resp = await req.json();
-      if (resp.token) {
-        window.localStorage.setItem("token", resp.token);
-      }
-
-      if (resp.error) {
-        alert(resp.error);
-        if (location.pathname !== "/login") {
-          window.location.href = "/login";
+      if (req.ok) {
+        const token = req.headers.get("token");
+        if (token) {
+          let resp = await req.json();
+          return resp;
+        } else {
+          openNotification("Error", "Please log in again", "error");
         }
+      } else {
+        // Manejar el caso de error con la respuesta de error JSON
+        const errorResp = await req.json();
+        return errorResp;
       }
-      return resp;
     } catch (error) {
-      openNotification("Error", error, "error");
+      openNotification("Error", error?.message, "error");
     }
   }
-}
-
-export { submitData };
+};

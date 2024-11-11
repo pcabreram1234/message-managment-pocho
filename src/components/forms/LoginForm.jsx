@@ -35,17 +35,13 @@ const LogInForm = () => {
     });
   };
 
-  const handleSubmit = async () => {
-    const req = await submitData(API_url, form.getFieldsValue());
-    if (req.token) {
-      location.push("/messages");
-    }
-    console.log(window.localStorage);
+  const handleSubmit = () => {
+    submitData(API_url, form.getFieldsValue());
   };
 
   useEffect(() => {
     if (user) {
-      location.push("/messages");
+      location.goBack(-1);
     }
   }, []);
 
