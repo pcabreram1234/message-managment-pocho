@@ -41,7 +41,7 @@ const LogInForm = () => {
 
   useEffect(() => {
     if (user) {
-      location.goBack(-1);
+      console.log(location.goBack(-1));
     }
   }, []);
 
