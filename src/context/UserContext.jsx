@@ -7,9 +7,9 @@ const AuthProvider = ({ children }) => {
     setUser(email);
   };
 
-  useEffect(() => {
-    console.log(user);
-  }, [user]);
+  // useEffect(() => {
+  //   console.log(user);
+  // }, [user]);
 
   return (
     <AuthContext.Provider

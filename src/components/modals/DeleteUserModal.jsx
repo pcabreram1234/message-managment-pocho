@@ -6,8 +6,8 @@ import { deleteDataFuntion } from "../../utility/Funtions";
 const API_URL =
   import.meta.env.VITE_API_URL +
   import.meta.env.VITE_API_URL_ROUTER +
-  "messages/deleteMessages";
-const DeleteMessageModal = ({
+  "users/deleteuser";
+const DeleteuserModal = ({
   id,
   setShowDeleteModal,
   setPopUpModalInfo,
@@ -38,4 +38,4 @@ const DeleteMessageModal = ({
   );
 };
 
-export default DeleteMessageModal;
+export default DeleteuserModal;

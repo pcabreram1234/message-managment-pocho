@@ -1,18 +1,13 @@
 // public/service-worker.js
 
-const CACHE_NAME = "PMMS" + new Date().getTime().toString();
+const CACHE_NAME = "PMMS_v1";
 const urlsToCache = [
   "/",
   "/index.html",
   // Agrega aquí otros recursos que quieras almacenar en caché
 ];
 
-const urlsToNoTCached = [
-  "/api/v1/users/login",
-  "/api/v1/users/signup",
-  "/api/v1/users/verify",
-  "/api/v1/users/check-auth",
-];
+const urlsToNoTCached = ["/api/v1/users/verify", "/api/v1/users/check-auth"];
 
 const cacheDependencyMap = {
   messages: {
@@ -25,6 +20,7 @@ const cacheDependencyMap = {
       "/api/v1/messages/associate_contact",
     ],
     requestToUpdate: "/api/v1/messages",
+    foreignCacheToUpdate: "/api/v1/configuration",
   },
 
   contacts: {
@@ -36,17 +32,46 @@ const cacheDependencyMap = {
       "/api/v1/contacts/deleteContacts",
     ],
     requestToUpdate: "/api/v1/contacts",
+    foreignCacheToUpdate: "/api/v1/messages",
+  },
+  categories: {
+    cacheToDelete: [
+      "/api/v1/categories/distinctCategories",
+      "/api/v1/categories/addCategory",
+      "/api/v1/categories/editCategory",
+      "/api/v1/categories/deleteCategory",
+      "/api/v1/categories/deleteCategories",
+    ],
+    requestToUpdate: "/api/v1/categories",
+    foreignCacheToUpdate: "/api/v1/messages",
+  },
+  configuration: {
+    cacheToDelete: [
+      "/api/v1/configuration/addMesageConfiguration",
+      "/api/v1/configuration/addMesagesConfiguration",
+      "/api/v1/configuration/verifyMessage",
+      "/api/v1/configuration/verifyMessages",
+    ],
+    requestToUpdate: "/api/v1/configuration",
+  },
+  users: {
+    cacheToDelete: [
+      "/api/v1/users/login",
+      "/api/v1/users/logoff",
+      "/api/v1/users/adduser",
+      "/api/v1/users/edituser",
+      "/api/v1/users/deleteuser",
+      "/api/v1/users/signup",
+    ],
+    requestToUpdate: "/api/v1/users",
   },
 };
-
-const requestMethosToNotCached = ["POST", "PATCH", "PUT", "DELETE"];
 
 // Instalar el Service Worker y almacenar los recursos en caché
 self.addEventListener("install", (event) => {
   // caches.delete(CACHE_NAME);
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log("Cache abierta");
       return cache.addAll(urlsToCache);
     })
   );
@@ -57,55 +82,82 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
   // 1. Verifica si la solicitud es para una ruta que no debe ser cacheada
-  const isNotCacheableRoute = urlsToNoTCached.some((el) =>
-    url.pathname.startsWith(el)
-  );
 
-  // Verificar si la solicitud no es del tipo GET y no debe ser cacheada
-  if (event.request.method !== "GET" || isNotCacheableRoute) return;
-
-  // Extraer la ruta de la API de la URL para comprobar dependencias en el caché
-  const apiRoute = url.pathname.split("/")[3];
-  const cacheDependency = cacheDependencyMap[apiRoute];
-
-  if (cacheDependency && cacheDependency.cacheToDelete.includes(url.pathname)) {
-    event.waitUntil(
-      caches.open(CACHE_NAME).then(async (cache) => {
-        const cachedResponse = await cache.match(
-          cacheDependency.requestToUpdate
-        );
-        if (cachedResponse) {
-          await cache.delete(cacheDependency.requestToUpdate);
-        }
-        event.respondWith(fetch(event.request));
-        return; // Ejecutar la solicitud después de borrar del caché
-      })
+  if (event.request.method === "GET") {
+    const isNotCacheableRoute = urlsToNoTCached.some((el) =>
+      url.pathname.startsWith(el)
     );
-  }
 
-  // 2. Maneja las solicitudes que no deben ser cacheadas o que no son de tipo GET
-  if (isNotCacheableRoute || event.request.method !== "GET") {
-    caches.open(CACHE_NAME);
-    event.respondWith(fetch(event.request));
-    return;
-  }
+    // console.log(
+    //   "La ruta " + event.request.url + " es cacheable: " + isNotCacheableRoute
+    // );
 
-  // 3. Para rutas cacheables: revisa si el recurso está en caché y si no, busca desde la red
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
+    if (isNotCacheableRoute) {
+      return event.respondWith(fetch(event.request));
+    } else {
+      event.respondWith(
+        caches.match(event.request).then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+
+          // Si no está en caché, busca desde la red y cachea el resultado
+          return fetch(event.request).then((networkResponse) => {
+            return caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, networkResponse.clone());
+              return networkResponse;
+            });
+          });
+        })
+      );
+    }
+  } else {
+    // Limpiar cache previa cuando el usuario trata de hacer login o logoff
+    if (
+      url.pathname === cacheDependencyMap.users.cacheToDelete[0] ||
+      url.pathname === cacheDependencyMap.users.cacheToDelete[1]
+    ) {
+      // console.log("usuario esta tratando de hacer login");
+      const cacheWhitelist = [CACHE_NAME];
+      event.waitUntil(
+        caches.open(cacheWhitelist).then((cache) => {
+          caches.keys().then(async (cacheName) => {
+            return await caches.delete(cacheName);
+          });
+        })
+      );
+    } else {
+      const apiRoute = url.pathname.split("/")[3];
+      const cacheDependency = cacheDependencyMap[apiRoute];
+      const isNotCacheableDependency = cacheDependency.cacheToDelete.some(
+        (el) => el === url.pathname
+      );
+      if (isNotCacheableDependency) {
+        event.waitUntil(
+          caches.open(CACHE_NAME).then(async (cache) => {
+            cache.keys().then(async (resp) => {
+              resp.map(async (cacheToVerify) => {
+                const { requestToUpdate, foreignCacheToUpdate } =
+                  cacheDependency;
+                const cacheUrl = new URL(cacheToVerify.url);
+                if (cacheUrl.pathname === requestToUpdate) {
+                  await cache.delete(cacheToVerify);
+                }
+
+                if (foreignCacheToUpdate) {
+                  if (cacheUrl.pathname === foreignCacheToUpdate) {
+                    console.log("Borrar foreing");
+                    await cache.delete(cacheToVerify);
+                  }
+                }
+              });
+            });
+          })
+        );
       }
-
-      // Si no está en caché, busca desde la red y cachea el resultado
-      return fetch(event.request).then((networkResponse) => {
-        return caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, networkResponse.clone());
-          return networkResponse;
-        });
-      });
-    })
-  );
+      return event.respondWith(fetch(event.request));
+    }
+  }
 });
 
 self.addEventListener("reload", (e) => {
@@ -118,16 +170,55 @@ self.addEventListener("beforeunload", (event) => {
 
 // Actualizar el Service Worker limpiando el caché anterior
 self.addEventListener("activate", (event) => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then((cacheNames) =>
-      Promise.all(
-        cacheNames.map((cacheName) => {
-          if (!cacheWhitelist.includes(cacheName)) {
-            return caches.delete(cacheName);
-          }
+    // Obtener todas las caches
+    caches.keys().then((cacheNames) => {
+      // Filtrar caches que no queremos borrar
+      return Promise.all(
+        cacheNames.map(async (cacheName) => {
+          return caches.open(cacheName).then(async (cache) => {
+            // Filtrar las requests dentro de la cache que no son JSON
+            const requests = await cache.keys();
+            return await Promise.all(
+              requests.map(async (request_1) => {
+                // Evitar eliminar los recursos JSON
+                const response = await cache.match(request_1);
+                if (
+                  response &&
+                  response.headers.get("Content-Type") &&
+                  response.headers
+                    .get("Content-Type")
+                    .includes("application/json")
+                ) {
+                  // Es JSON, lo dejamos en la cache
+                  return;
+                } else {
+                  // No es JSON, lo eliminamos
+                  return cache.delete(request_1);
+                }
+              })
+            );
+          });
         })
-      )
-    )
+      );
+    })
   );
 });
+
+// self.addEventListener("activate", (event) => {
+//   console.log("activate");
+//   console.log(event);
+//   const cacheWhitelist = [CACHE_NAME];
+//   event.waitUntil(
+//     caches.keys().then((cacheNames) =>
+//       Promise.all(
+//         cacheNames.map((cacheName) => {
+//           console.log(cacheName);
+//           if (!cacheWhitelist.includes(cacheName)) {
+//             return caches.delete(cacheName);
+//           }
+//         })
+//       )
+//     )
+//   );
+// });

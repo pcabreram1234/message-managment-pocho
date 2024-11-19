@@ -16,7 +16,7 @@ import SendButton from "../components/buttons/SendButton";
 const API_URL =
   import.meta.env.VITE_API_URL +
   import.meta.env.VITE_API_URL_ROUTER +
-  "messages/";
+  "messages";
 
 const { Content, Header } = Layout;
 const { Title } = Typography;

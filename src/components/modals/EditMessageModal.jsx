@@ -22,7 +22,7 @@ const EditMessageModal = ({
   const API_URL =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
-    "messages/editMessage/";
+    "messages/editMessage";
 
   /* Modal states */
   const [isVisible, setIsVisible] = useState(true);

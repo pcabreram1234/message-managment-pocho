@@ -23,11 +23,11 @@ const MessageRow = (props) => {
   const API_EDIT_URL =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
-    "messages/editMessage/";
+    "messages/editMessage";
   const APIT_DELETE_URL =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
-    "messages/deleteMessage/";
+    "messages/deleteMessage";
 
   const handleEditMessage = () => {
     const body = {

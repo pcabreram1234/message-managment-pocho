@@ -5,7 +5,7 @@ const ContactsAssociate = (props) => {
   const API_ASSOCIATE_TO_URL =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
-    "contacts/";
+    "contacts";
   const contacts = fetchData(API_ASSOCIATE_TO_URL);
   const { setAssociateTo, associateTo } = props;
   const [contactsOptions, setContactsOptions] = useState([]);

@@ -4,7 +4,7 @@ import { fetchData } from "../../utility/fetchData";
 import { EditTwoTone, DeleteTwoTone } from "@ant-design/icons";
 import { userToEdit } from "../../context/userHookState";
 import { useHookstate } from "@hookstate/core";
-import DeleteMessageModal from "../modals/DeleteMessageModal";
+import DeleteuserModal from "../modals/DeleteUserModal";
 
 const UsersTable = ({ setShowEditUserModal }) => {
   const [userId, setUserId] = useState([]);
@@ -37,12 +37,13 @@ const UsersTable = ({ setShowEditUserModal }) => {
   ];
 
   const handleEdit = (data) => {
-    const { id, user_name, type_user, email } = data;
+    const { id, user_name, type_user, email, active } = data;
     userToEditstate.set({
       id: id,
       user_name: user_name,
       type_user: type_user,
       email: email,
+      active: active,
     });
     setShowEditUserModal(true);
   };
@@ -59,8 +60,8 @@ const UsersTable = ({ setShowEditUserModal }) => {
   };
 
   const renderUsers = () => {
-    if (initialData.length > 0) {
-      initialData.map((user) => {
+    if (initialData?.length > 0) {
+      initialData?.map((user) => {
         dataSource.push({
           key: user.id,
           user_name: user.user_name,
@@ -81,6 +82,7 @@ const UsersTable = ({ setShowEditUserModal }) => {
             <Button
               style={{ borderRadius: "5px" }}
               onClick={() => {
+                console.log(user);
                 handleDelete(user.id);
               }}
             >
@@ -95,20 +97,21 @@ const UsersTable = ({ setShowEditUserModal }) => {
   renderUsers();
 
   return (
-    <Table
-      columns={columns}
-      dataSource={dataSource}
-      loading={dataSource?.length > 0 ? false : true}
-    >
+    <>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        loading={dataSource?.length > 0 ? false : true}
+      />
       {showDeleteModal && (
-        <DeleteMessageModal
+        <DeleteuserModal
           id={userId}
           setShowDeleteModal={setShowDeleteModal}
           setPopUpModalInfo={setPopUpModalInfo}
           titleModal="Do you want do delete this User?"
         />
       )}
-    </Table>
+    </>
   );
 };
 

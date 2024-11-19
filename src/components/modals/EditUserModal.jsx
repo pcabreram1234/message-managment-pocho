@@ -1,12 +1,11 @@
-import React, { useState } from "react";
-import { Modal, Form, Input, Button, Select } from "antd";
-import { SaveOutlined } from "@ant-design/icons";
-import PopUpModal from "./PopUpModal";
+import React, { useState, useEffect } from "react";
+import { Modal, Form, Input,Select, Spin, Alert, Typography } from "antd";
 import { useHookstate } from "@hookstate/core";
 import { userToEdit } from "../../context/userHookState";
-import { submitData } from "../../utility/submitData";
 import { useHistory } from "react-router";
+import { saveDataFuntion } from "../../utility/Funtions";
 import useSubmitData from "../../hooks/useSubmitData";
+const {Text}=Typography
 
 const EditUserModal = ({ isVisible, cb }) => {
   const history = useHistory();
@@ -16,8 +15,16 @@ const EditUserModal = ({ isVisible, cb }) => {
   const [alertModalType, setAlertModalType] = useState("");
   const [modalMessage, setModalMessage] = useState("");
   const [modalInfoText, setModalInfoText] = useState("");
+  const [isModalLoading, setIsModalLoading] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
   const { submitData } = useSubmitData();
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowAlert(true);
+    }, 900);
+  }, [isModalLoading]);
 
   const API_url =
     import.meta.env.VITE_API_URL +
@@ -33,22 +40,13 @@ const EditUserModal = ({ isVisible, cb }) => {
     setShowModal(false);
   };
 
-  const handleSubmit = async () => {
-    setShowPopUpModal(true);
-    const req = await submitData(API_url, form.getFieldsValue());
-    if (req?.isBoom) {
-      setAlertModalType("error");
-      setModalInfoText(req.output.payload.message);
-    } else {
-      setAlertModalType("info");
-      setModalInfoText("User Saved");
-      setTimeout(() => {
-        setShowModal(false);
-      }, 500);
-      setTimeout(() => {
-        history.go(0);
-      }, 500);
-    }
+
+
+  const handleResultModalInfo = (message, alertModalType, infoText) => {
+    setIsModalLoading(true);
+    setModalMessage(message);
+    setAlertModalType(alertModalType);
+    setModalInfoText(infoText);
   };
 
   return (
@@ -56,8 +54,10 @@ const EditUserModal = ({ isVisible, cb }) => {
       title="Edition of user"
       open={showModal}
       onCancel={onCancel}
-      okButtonProps={{ disabled: true }}
-      cancelButtonProps={{ disabled: true }}
+      onOk={() => {
+        saveDataFuntion(API_url, form.getFieldsValue(), handleResultModalInfo);
+      }}
+      destroyOnClose
     >
       <Form
         style={{
@@ -122,28 +122,15 @@ const EditUserModal = ({ isVisible, cb }) => {
             ]}
           ></Select>
         </Form.Item>
-
-        <Form.Item>
-          <Button
-            icon={<SaveOutlined />}
-            style={{ width: "100%" }}
-            type="primary"
-            onClick={handleSubmit}
-          >
-            Save User
-          </Button>
-        </Form.Item>
-
-        {showPopUpModal && (
-          <PopUpModal
-            alertModalType={alertModalType}
-            isModalVisible={showPopUpModal}
-            modalMessage={modalMessage}
-            modalInfoText={modalInfoText}
-            cb={setShowPopUpModal}
-          />
-        )}
       </Form>
+
+      {isModalLoading && (
+        <>
+          <Text>{modalMessage}</Text>
+          <Spin />
+          {showAlert && <Alert type={alertModalType} message={modalInfoText} />}
+        </>
+      )}
     </Modal>
   );
 };

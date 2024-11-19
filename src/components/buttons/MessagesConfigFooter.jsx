@@ -25,12 +25,12 @@ const MessagesConfigFooter = ({
   const API_ADD_MESSAGES =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
-    "configuration/addMesagesConfiguration/";
+    "configuration/addMesagesConfiguration";
 
   const API_VERIFY_MESSAGE =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
-    "configuration/verifyMessages/";
+    "configuration/verifyMessages";
 
   const getCurrentAssociate = (contacts) => {
     seteAssociateTo(contacts);

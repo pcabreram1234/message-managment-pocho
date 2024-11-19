@@ -31,7 +31,8 @@ export const submitData = async (API, data, METHOD = "POST") => {
         return errorResp;
       }
     } catch (error) {
-      openNotification("Error", error?.message, "error");
+      throw new Error(error);
+      // openNotification("Error", error?.message, "error");
     }
   } else {
     try {
@@ -54,7 +55,8 @@ export const submitData = async (API, data, METHOD = "POST") => {
         return errorResp;
       }
     } catch (error) {
-      openNotification("Error", error?.message, "error");
+      // openNotification("Error", error?.message, "error");
+      throw new Error(error);
     }
   }
 };

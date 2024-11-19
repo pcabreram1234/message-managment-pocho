@@ -40,7 +40,7 @@ const editDataFuntion = (API_URL, data, cb) => {
 const reloadPage = () => {
   setTimeout(() => {
     window.location.reload();
-  }, 1000);
+  }, 300);
 };
 
 /* Funcion que elimina los elementos duplicados de un array de numeros */

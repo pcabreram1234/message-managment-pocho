@@ -31,7 +31,6 @@ const App = () => {
           null,
           "GET"
         );
-        console.log(response);
         handleUser(response?.result ?? null);
       } catch (error) {
         console.error("Error verifying authentication:", error);

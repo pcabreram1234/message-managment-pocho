@@ -3,9 +3,10 @@ import { Form, Input, Button, Layout, Image, Row, Col } from "antd";
 import { LoginOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router";
 import { AuthContext } from "../../context/UserContext";
-import useSubmitData from "../../hooks/useSubmitData";
+import useLoginData from "../../hooks/useLogInData";
 import LogoIcon from "../../assets/logo.svg";
 import FooterPage from "../layout/Footer";
+import { openNotification } from "../Notification";
 
 const LogInForm = () => {
   const API_url =
@@ -14,7 +15,7 @@ const LogInForm = () => {
     "users/login";
   const state = useContext(AuthContext);
   const { user } = state;
-  const { submitData } = useSubmitData();
+  const { submitData } = useLoginData();
 
   const [form] = Form.useForm();
   const { Content } = Layout;
@@ -22,21 +23,13 @@ const LogInForm = () => {
   const location = useHistory();
 
   const validateForm = () => {
-    form.validateFields().then((field) => {
-      if (!field.errorFields) {
-        handleSubmit();
-      } else {
-        let err = [];
-        for (let i = 0; i < field.errorFields.length; i++) {
-          err.push(field.errorFields[i].errors[i]);
-        }
-        alert(err);
-      }
+    form.validateFields().then(() => {
+      handleSubmit();
     });
   };
 
   const handleSubmit = () => {
-    submitData(API_url, form.getFieldsValue());
+    submitData(form.getFieldsValue());
   };
 
   useEffect(() => {

@@ -149,6 +149,22 @@ const AddUserModal = ({ isVisible, cb }) => {
           <Input.Password placeholder="Password" />
         </Form.Item>
 
+        <Form.Item
+          name="active"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Select
+            options={[
+              { label: "Yes", value: true },
+              { label: "No", value: false },
+            ]}
+          />
+        </Form.Item>
+
         <Form.Item>
           <Button
             icon={<SaveOutlined />}

@@ -44,7 +44,7 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
   const API_VERIFY_MESSAGE =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
-    "configuration/verifyMessage/";
+    "configuration/verifyMessage";
 
   const handleOnCancel = () => {
     setIsVisble(false);

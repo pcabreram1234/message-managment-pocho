@@ -14,15 +14,24 @@ import { Typography } from "antd";
 import { Link } from "react-router-dom";
 import UserInfo from "../layout/UserInfo";
 import { AuthContext } from "../../context/UserContext";
+import { submitData } from "../../utility/submitData";
 
 const MenuBar = () => {
   const { Text } = Typography;
   const state = useContext(AuthContext);
   const { user } = state;
+  const API =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "users/check-auth";
 
-  useEffect(() => {
-    console.log(user?.type_user);
-  }, []);
+  const onClick = (e) => {
+    console.log(e);
+    // Solo ejecuta la acción si el ítem clickeado no es "UserInfo"
+    if (e.key !== "UserInfo") {
+      submitData(API, null, "GET");
+    }
+  };
 
   return (
     <Menu
@@ -30,6 +39,7 @@ const MenuBar = () => {
       theme="dark"
       defaultSelectedKeys={"home"}
       style={{ display: "flex", justifyContent: "left" }}
+      onClick={onClick}
     >
       {/* <Menu.Item key={"home"}>
         <Link to={"/"}>

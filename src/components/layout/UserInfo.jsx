@@ -1,18 +1,17 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Button, Typography, Row, Col } from "antd";
 import { LogoutOutlined } from "@ant-design/icons";
-import { useHistory } from "react-router";
-import { AuthContext } from "../../context/UserContext";
+import useLogOffData from "../../hooks/useLogOffData";
 
 const UserInfo = ({ user }) => {
-  const location = useHistory();
-  const state = useContext(AuthContext);
-  const { setUser } = state;
+  const { logOffData } = useLogOffData();
 
   const sessionLogOut = () => {
-    setUser(null);
-    window.localStorage.removeItem("token");
-    location.push("/login");
+    const API_url =
+      import.meta.env.VITE_API_URL +
+      import.meta.env.VITE_API_URL_ROUTER +
+      "users/logoff";
+    logOffData(API_url, null);
   };
 
   const { Text } = Typography;
@@ -24,7 +23,7 @@ const UserInfo = ({ user }) => {
     >
       <Col>
         <Text strong style={{ color: "white" }}>
-          User: {user?.user_name}
+          User: {user?.email.split("@")[0]}
         </Text>
       </Col>
 

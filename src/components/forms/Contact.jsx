@@ -22,8 +22,6 @@ const Contact = (props) => {
   //   setCategories(getObjectProp(selectedCategories, "key"));
   // };
 
-  console.log(props);
-
   useEffect(() => {
     handleContactInfo({ id, name, phone, email });
   }, [handleInput]);
