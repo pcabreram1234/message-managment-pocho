@@ -9,10 +9,17 @@ import MenuBar from "../components/layout/MenuBar";
 import NotFound from "../containers/NotFound";
 import LogInForm from "../components/forms/LoginForm";
 import Users from "../containers/Users";
-import { Route, Switch, Redirect, useLocation, useHistory } from "react-router-dom";
+import {
+  Route,
+  Switch,
+  Redirect,
+  useLocation,
+  useHistory,
+} from "react-router-dom";
 import { AuthContext } from "../context/UserContext";
 import AccountVerification from "../containers/AccountVerification";
 import { submitData } from "../utility/submitData";
+import PopUpModal from "../components/modals/PopUpModal";
 import "../styles/App.css";
 
 const App = () => {
@@ -53,7 +60,7 @@ const App = () => {
   }, [user, location.pathname, history]);
 
   // Mientras se verifica la autenticación, muestra un indicador de carga
-  if (loading) return <Spin spinning={true} />;
+  if (loading) return  <PopUpModal isModalVisible={true} alertModalType={"info"} modalInfoText={"Please Wait"} modalMessage={"Loading"}  />;
 
   return (
     <div className="App_container">

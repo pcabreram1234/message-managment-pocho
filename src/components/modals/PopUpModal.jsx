@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Spin, Alert, Typography } from "antd";
+import { Modal, Spin, Alert, Typography, Space } from "antd";
 const { Text } = Typography;
 
 const PopUpModal = ({
@@ -27,17 +27,22 @@ const PopUpModal = ({
 
   return (
     <Modal
-      visible={currentVisible}
+      open={currentVisible}
       closable={true}
-      cancelButtonProps={{ disabled: true }}
-      okButtonProps={{ disabled: true }}
+      cancelButtonProps={{ disabled: true, hidden: true }}
+      okButtonProps={{ disabled: true, hidden: true }}
+      footer={null}
       onCancel={handleClose}
       onOk={handleClose}
       style={{ display: "flex", flexDirection: "column", textAlign: "center" }}
     >
-      <Text>{modalMessage}</Text>
-      <Spin />
-      {showMessage && <Alert message={modalInfoText} type={alertModalType} />}
+      <Space direction="vertical">
+        <Space>
+          <Spin size="large" />
+          <Text>{modalMessage}</Text>
+        </Space>
+        {showMessage && <Alert message={modalInfoText} type={alertModalType} />}
+      </Space>
     </Modal>
   );
 };
