@@ -33,9 +33,9 @@ const LogInForm = () => {
   };
 
   useEffect(() => {
-    // if (user) {
-    //   location.goBack(-1);
-    // }
+    if (user) {
+      location.goBack(-1);
+    }
   }, []);
 
   return (
@@ -62,6 +62,7 @@ const LogInForm = () => {
           autoComplete="off"
           form={form}
           style={{ margin: "50px 0" }}
+          onSubmitCapture={validateForm}
         >
           <Form.Item
             name={"email"}
@@ -99,7 +100,7 @@ const LogInForm = () => {
             <Button
               type="primary"
               icon={<LoginOutlined />}
-              onClick={validateForm}
+              // onClick={validateForm}
               htmlType="submit"
             >
               Log in

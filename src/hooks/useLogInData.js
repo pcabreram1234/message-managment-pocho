@@ -33,7 +33,9 @@ const useLoginData = () => {
           if (token) {
             openNotification("Success", "Wellcome", "success");
             handleUser(jose.decodeJwt(token));
-            history.push("/messages");
+            setTimeout(() => {
+              history.push("/messages");
+            }, 300);
           }
         }
         if (resp?.error) {
