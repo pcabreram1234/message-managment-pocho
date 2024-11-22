@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Spin } from "antd";
 import Contacts from "../containers/Contacts";
 import Categories from "../containers/Categories";
 import MessageTable from "../containers/MessageTable";
@@ -8,7 +9,7 @@ import MenuBar from "../components/layout/MenuBar";
 import NotFound from "../containers/NotFound";
 import LogInForm from "../components/forms/LoginForm";
 import Users from "../containers/Users";
-import { Route, Switch, Redirect, useLocation } from "react-router-dom";
+import { Route, Switch, Redirect, useLocation, useHistory } from "react-router-dom";
 import { AuthContext } from "../context/UserContext";
 import AccountVerification from "../containers/AccountVerification";
 import { submitData } from "../utility/submitData";
@@ -19,6 +20,7 @@ const App = () => {
   const { user, handleUser } = state; // Obtiene el usuario y la función para manejar el estado del usuario
   const [loading, setLoading] = useState(true); // Estado de carga
   const location = useLocation();
+  const history = useHistory(); // Hook para redirecciones programáticas
 
   // useEffect en App.js para verificar la autenticación en cada recarga
   useEffect(() => {
@@ -31,19 +33,27 @@ const App = () => {
           null,
           "GET"
         );
-        handleUser(response?.result ?? null);
+        if (response?.result) {
+          handleUser(response?.result ?? null);
+        }
       } catch (error) {
         console.error("Error verifying authentication:", error);
       } finally {
-        setLoading(false); // Fin del estado de carga
+        setLoading(false);
       }
     };
 
     checkAuthStatus();
   }, []);
 
+  useEffect(() => {
+    if (user && location.pathname === "/login") {
+      history.replace("/messages");
+    }
+  }, [user, location.pathname, history]);
+
   // Mientras se verifica la autenticación, muestra un indicador de carga
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Spin spinning={true} />;
 
   return (
     <div className="App_container">

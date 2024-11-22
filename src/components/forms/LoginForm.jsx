@@ -1,26 +1,14 @@
-import React, { useContext, useEffect } from "react";
-import { Form, Input, Button, Layout, Image, Row, Col } from "antd";
+import React from "react";
+import { Form, Input, Button, Layout, Image } from "antd";
 import { LoginOutlined } from "@ant-design/icons";
-import { useHistory } from "react-router";
-import { AuthContext } from "../../context/UserContext";
 import useLoginData from "../../hooks/useLogInData";
 import LogoIcon from "../../assets/logo.svg";
 import FooterPage from "../layout/Footer";
-import { openNotification } from "../Notification";
 
 const LogInForm = () => {
-  const API_url =
-    import.meta.env.VITE_API_URL +
-    import.meta.env.VITE_API_URL_ROUTER +
-    "users/login";
-  const state = useContext(AuthContext);
-  const { user } = state;
   const { submitData } = useLoginData();
-
   const [form] = Form.useForm();
   const { Content } = Layout;
-
-  const location = useHistory();
 
   const validateForm = () => {
     form.validateFields().then(() => {
@@ -31,12 +19,6 @@ const LogInForm = () => {
   const handleSubmit = () => {
     submitData(form.getFieldsValue());
   };
-
-  useEffect(() => {
-    if (user) {
-      location.goBack(-1);
-    }
-  }, []);
 
   return (
     <Layout style={{ height: "100vh" }}>

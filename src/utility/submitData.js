@@ -1,5 +1,5 @@
 import { openNotification } from "../components/Notification";
-
+import * as jose from "jose";
 export const submitData = async (API, data, METHOD = "POST") => {
   // const token = window.localStorage.getItem("token");
 
@@ -20,8 +20,7 @@ export const submitData = async (API, data, METHOD = "POST") => {
       if (req.ok) {
         const token = req.headers.get("token");
         if (token) {
-          let resp = await req.json();
-          return resp;
+          return jose.decodeJwt(token);
         } else {
           openNotification("Error", "Please log in again", "error");
         }
