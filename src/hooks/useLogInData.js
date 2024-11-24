@@ -29,12 +29,13 @@ const useLoginData = () => {
       const resp = await response.json();
       if (response.ok) {
         if (resp?.email) {
-          const token = response.headers.get("token");
-          if (token) {
+          const rawToken = response.headers.get("token");
+          if (rawToken) {
             openNotification("Success", "Wellcome", "success");
-            window.localStorage.setItem("token", token);
-            handleUser(jose.decodeJwt(token));
-            // history.push("/messages");
+            window.localStorage.setItem("token", rawToken);
+            handleUser(jose.decodeJwt(rawToken));
+            console.log("El token es " + rawToken);
+            history.push("/messages");
           }
         }
         if (resp?.error) {

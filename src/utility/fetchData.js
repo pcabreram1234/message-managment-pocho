@@ -23,8 +23,9 @@ const fetchData = (API, method = "GET") => {
     })
       .then((resp) => {
         if (resp.ok) {
-          const token = jose.decodeJwt(resp.headers.get("token"));
-          window.localStorage.setItem("token",token)
+          console.log(resp);
+          const token = resp.headers.get("token");
+          window.localStorage.setItem("token", token);
           handleUser(token);
           return resp.json();
         } else {
