@@ -51,7 +51,7 @@ const App = () => {
     };
 
     checkAuthStatus();
-  }, [location]);
+  }, []);
 
   useEffect(() => {
     if (user && location.pathname === "/login") {
