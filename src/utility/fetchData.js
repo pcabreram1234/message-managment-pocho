@@ -18,7 +18,7 @@ const fetchData = (API, method = "GET") => {
   useEffect(() => {
     fetch(API, {
       method: method,
-      credentials: "include",
+      // credentials: "include",
       headers: headers,
     })
       .then((resp) => {
