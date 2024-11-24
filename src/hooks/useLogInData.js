@@ -32,6 +32,7 @@ const useLoginData = () => {
           const token = response.headers.get("token");
           if (token) {
             openNotification("Success", "Wellcome", "success");
+            window.localStorage.setItem("token", token);
             handleUser(jose.decodeJwt(token));
             // history.push("/messages");
           }

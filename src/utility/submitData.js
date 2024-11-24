@@ -1,11 +1,11 @@
 import { openNotification } from "../components/Notification";
 import * as jose from "jose";
 export const submitData = async (API, data, METHOD = "POST") => {
-  // const token = window.localStorage.getItem("token");
+  const token = window.localStorage.getItem("token");
 
   const headers = {
     "Content-type": "application/json; charset=UTF-8",
-    // "x-access-token": token ?? null,
+    "x-access-token": token ?? null,
   };
 
   if (METHOD !== "GET") {
@@ -20,6 +20,7 @@ export const submitData = async (API, data, METHOD = "POST") => {
       if (req.ok) {
         const token = req.headers.get("token");
         if (token) {
+          window.localStorage.setItem("token",token)
           return jose.decodeJwt(token);
         } else {
           openNotification("Error", "Please log in again", "error");

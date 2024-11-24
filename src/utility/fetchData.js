@@ -10,14 +10,21 @@ const fetchData = (API, method = "GET") => {
   const [data, setData] = useState([]);
   const location = useHistory();
   const token = window.localStorage.getItem("token");
+  const headers = {
+    "Content-type": "application/json; charset=UTF-8",
+    token: token,
+  };
+
   useEffect(() => {
     fetch(API, {
       method: method,
       credentials: "include",
+      headers: headers,
     })
       .then((resp) => {
         if (resp.ok) {
           const token = jose.decodeJwt(resp.headers.get("token"));
+          window.localStorage.setItem("token",token)
           handleUser(token);
           return resp.json();
         } else {
