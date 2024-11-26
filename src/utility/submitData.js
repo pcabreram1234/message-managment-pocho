@@ -2,8 +2,6 @@ import { openNotification } from "../components/Notification";
 import * as jose from "jose";
 export const submitData = async (API, data, METHOD = "POST") => {
   const token = window.localStorage.getItem("token");
-
-  console.log(token);
   const headers = {
     "Content-type": "application/json; charset=UTF-8",
     "x-access-token": token,
@@ -16,13 +14,15 @@ export const submitData = async (API, data, METHOD = "POST") => {
         body: JSON.stringify({ data }),
         /* Colocamos como header el tipo JSON para que express pueda usar el midleware app.use(json()) */
         headers: headers,
-        // credentials: "include",
+        credentials: "include",
       });
+
       if (req.ok) {
-        const token = req.headers.get("token");
-        if (token) {
-          window.localStorage.setItem("token", token);
-          return jose.decodeJwt(token);
+        const rawToken = req.headers.get("token");
+        if (rawToken) {
+          window.localStorage.setItem("token", rawToken);
+          const res = await req.json();
+          return res;
         } else {
           openNotification("Error", "Please log in again", "error");
         }
@@ -32,8 +32,8 @@ export const submitData = async (API, data, METHOD = "POST") => {
         return errorResp;
       }
     } catch (error) {
+      openNotification("Error", error?.message, "error");
       throw new Error(error);
-      // openNotification("Error", error?.message, "error");
     }
   } else {
     try {
@@ -43,20 +43,25 @@ export const submitData = async (API, data, METHOD = "POST") => {
         credentials: "include",
       });
       if (req.ok) {
-        const token = req.headers.get("token");
-        if (token) {
+        const rawToken = req.headers.get("token");
+        if (rawToken) {
+          window.localStorage.setItem("token", rawToken);
           let resp = await req.json();
           return resp;
         } else {
+          window.localStorage.clear();
           openNotification("Error", "Please log in again", "error");
         }
       } else {
         // Manejar el caso de error con la respuesta de error JSON
         const errorResp = await req.json();
+        window.localStorage.clear();
+        openNotification("Error", errorResp?.message, "error");
         return errorResp;
       }
     } catch (error) {
-      // openNotification("Error", error?.message, "error");
+      window.localStorage.clear();
+      openNotification("Error", error?.message, "error");
       throw new Error(error);
     }
   }

@@ -25,7 +25,7 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
 
   /* PopUpModal States */
   const [popUpModalInfo, setPopUpModalInfo] = useState({
-    modalMessage: "Guardando Registro",
+    modalMessage: "Saving Information",
     alertModalType: "",
     modalInfoText: "",
   });
@@ -39,7 +39,7 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
   const API_ADD_MESSAGES =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
-    "configuration/addMesageConfiguration/";
+    "configuration/addMesageConfiguration";
 
   const API_VERIFY_MESSAGE =
     import.meta.env.VITE_API_URL +
@@ -75,7 +75,7 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
   const confirmSendTo = () => {
     console.log(dataToSend);
     if (contacts.length === 0) {
-      alert("Favor de elegir por lo menos un destinatario");
+      alert("Please choose at least one recipient");
       return true;
     }
   };
@@ -86,9 +86,9 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
       const dateCompared = compareDates(dateOnSend, currentDate);
       if (dateCompared > 0) {
         setPopUpModalInfo({
-          modalMessage: `La fecha introducida debe ser a partir de la actual`,
+          modalMessage: `The date entered must be from the current one`,
           alertModalType: "error",
-          modalInfoText: "Error al Guardar Mensajes",
+          modalInfoText: "Error trying to save the message",
         });
       } else {
         if (!confirmSendTo()) {
@@ -97,16 +97,16 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
             const rowsInserted = reqAddMessage.result.rowsInserted;
             if (rowsInserted === contacts.length) {
               setPopUpModalInfo({
-                modalMessage: "Registro guardado",
+                modalMessage: "Saved",
                 alertModalType: "success",
-                modalInfoText: "Guardando Resgistro",
+                modalInfoText: "Saving Information",
               });
               reloadPage();
             } else {
               setPopUpModalInfo({
                 modalMessage: `${reqAddMessage.error}`,
                 alertModalType: "error",
-                modalInfoText: "Guardando Resgistro",
+                modalInfoText: "Saving Information",
               });
             }
           } else {

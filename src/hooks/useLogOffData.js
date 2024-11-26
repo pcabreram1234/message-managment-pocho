@@ -7,11 +7,13 @@ import * as jose from "jose";
 const useLogOffData = () => {
   const userState = useContext(AuthContext);
   const { handleUser } = userState;
+  const token = window.localStorage.getItem("token");
   const history = useHistory();
 
   const logOffData = async (API, data, METHOD = "POST") => {
     const headers = {
       "Content-type": "application/json; charset=UTF-8",
+      token: token,
     };
 
     try {
@@ -25,12 +27,10 @@ const useLogOffData = () => {
       if (response.ok) {
         const resp = await response.json();
         if (resp?.message) {
+          window.localStorage.clear();
           handleUser(null);
           history.push("/login");
           openNotification("Info", resp?.message || "Login failed", "success");
-        } else {
-          openNotification("Error", resp?.error || "Login failed", "error");
-          handleUser(null); 
         }
       }
     } catch (error) {

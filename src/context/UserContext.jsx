@@ -22,7 +22,7 @@ const AuthProvider = ({ children }) => {
         setUser(null); // Token inválido
       }
     }
-  }, []);
+  }, [children]);
 
   return (
     <AuthContext.Provider value={{ user, setUser, handleUser }}>

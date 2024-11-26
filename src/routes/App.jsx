@@ -40,16 +40,13 @@ const App = () => {
           null,
           "GET"
         );
-        if (response?.result) {
-          handleUser(response?.result ?? null);
-        }
+        handleUser(response?.result);
       } catch (error) {
         console.error("Error verifying authentication:", error);
       } finally {
         setLoading(false);
       }
     };
-
     checkAuthStatus();
   }, []);
 
@@ -60,7 +57,15 @@ const App = () => {
   }, [user, location.pathname, history]);
 
   // Mientras se verifica la autenticación, muestra un indicador de carga
-  if (loading) return  <PopUpModal isModalVisible={true} alertModalType={"info"} modalInfoText={"Please Wait"} modalMessage={"Loading"}  />;
+  if (loading)
+    return (
+      <PopUpModal
+        isModalVisible={true}
+        alertModalType={"info"}
+        modalInfoText={"Please Wait"}
+        modalMessage={"Loading"}
+      />
+    );
 
   return (
     <div className="App_container">

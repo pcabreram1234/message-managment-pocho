@@ -18,12 +18,11 @@ const fetchData = (API, method = "GET") => {
   useEffect(() => {
     fetch(API, {
       method: method,
-      // credentials: "include",
+      credentials: "include",
       headers: headers,
     })
       .then((resp) => {
         if (resp.ok) {
-          console.log(resp);
           const token = resp.headers.get("token");
           window.localStorage.setItem("token", token);
           handleUser(token);
@@ -31,6 +30,7 @@ const fetchData = (API, method = "GET") => {
         } else {
           serviceWorker.unregister();
           location.push("/login");
+          window.localStorage.clear();
           handleUser(null);
           setData(null);
         }
@@ -41,6 +41,7 @@ const fetchData = (API, method = "GET") => {
       .catch((err) => {
         serviceWorker.unregister();
         console.log(err);
+        window.localStorage.clear();
         handleUser(null);
       });
   }, []);

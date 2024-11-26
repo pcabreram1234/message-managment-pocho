@@ -57,9 +57,9 @@ const MessagesConfigFooter = ({
       const dateCompared = compareDates(dateTosend, currentDate);
       if (dateCompared > 1) {
         setPopUpModalInfo({
-          modalMessage: `La fecha introducida debe ser a partir de la actual`,
+          modalMessage: `The date entered must be from the current one`,
           alertModalType: "error",
-          modalInfoText: "Error al Guardar Mensajes",
+          modalInfoText: "Error Saving Messages",
         });
       } else {
         setDataToSend();
@@ -72,9 +72,9 @@ const MessagesConfigFooter = ({
               contactsRepeated.push(row.send_to);
             });
             setPopUpModalInfo({
-              modalMessage: `El o Los conctacots ${contactsRepeated.toString()} ya están registrados para por lo menos uno de estos mensajes`,
+              modalMessage: `The contact(s) ${contactsRepeated.toString()} are already registered for at least one of these messages`,
               alertModalType: "error",
-              modalInfoText: "Error al Guardar Mensajes",
+              modalInfoText: "Error Saving Messages",
             });
           } else {
             submitData(API_ADD_MESSAGES, dataTosend).then((resp) => {
@@ -83,23 +83,23 @@ const MessagesConfigFooter = ({
                 const rowsAwaited = associateTo.length * dataTosend.length;
                 if (rowsInserted === rowsAwaited) {
                   setPopUpModalInfo({
-                    modalMessage: "Registros guardados",
+                    modalMessage: "Saved",
                     alertModalType: "success",
-                    modalInfoText: "Guardando Resgistros",
+                    modalInfoText: "Saving Information",
                   });
                   reloadPage();
                 } else {
                   setPopUpModalInfo({
                     modalMessage: `${resp.error}`,
                     alertModalType: "error",
-                    modalInfoText: "Guardando Resgistros",
+                    modalInfoText: "Saving Information",
                   });
                 }
               } else {
                 setPopUpModalInfo({
-                  modalMessage: "Ha ocurrido un error favor de tratar de nuevo",
+                  modalMessage: "An error has occurred, please try again.",
                   alertModalType: "error",
-                  modalInfoText: "Guardando Resgistros",
+                  modalInfoText: "Saving Information",
                 });
                 setTimeout(() => {
                   reloadPage();

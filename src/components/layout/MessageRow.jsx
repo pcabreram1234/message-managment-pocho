@@ -39,9 +39,9 @@ const MessageRow = (props) => {
 
     const req = submitData(API_EDIT_URL, body, "PATCH").then((resp) => {
       let DataToSendToModal = {
-        message: "Guardando cambios",
+        message: "Saving Information",
         alertType: "success",
-        infoText: "Cambios guardados",
+        infoText: "Saved",
       };
       const { message, alertType, infoText } = DataToSendToModal;
       /* El servidor envia una respuesta tipo number por lo que solo se debe usar un
@@ -49,7 +49,7 @@ const MessageRow = (props) => {
       if ((resp = 1)) {
         handleModal(message, alertType, infoText);
       } else {
-        handleModal(message, "error", "Ha ocurrido un error");
+        handleModal(message, "error", "An error has occurred, please try again.");
       }
     });
   };
@@ -60,15 +60,15 @@ const MessageRow = (props) => {
     };
     const req = submitData(APIT_DELETE_URL, body, "DELETE").then((resp) => {
       let DataToSendToModal = {
-        message: "Eliminando Mensaje",
+        message: "Deleting Message",
         alertType: "success",
-        infoText: "Mensaje Eliminado",
+        infoText: "Deleted",
       };
       const { message, alertType, infoText } = DataToSendToModal;
       if ((resp = 1)) {
         handleModal(message, alertType, infoText);
       } else {
-        handleModal(message, "error", "Ha ocurrido un error");
+        handleModal(message, "error", "An error has occurred");
       }
     });
   };

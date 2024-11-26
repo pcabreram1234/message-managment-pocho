@@ -8,6 +8,7 @@ const urlsToCache = [
 ];
 
 const urlsToNoTCached = ["/api/v1/users/verify", "/api/v1/users/check-auth"];
+const dinamicGETRequests = [/\/api\/v1\/categories\/categoriesName\/[^/]+$/];
 
 const cacheDependencyMap = {
   messages: {
@@ -53,6 +54,7 @@ const cacheDependencyMap = {
       "/api/v1/configuration/verifyMessages",
     ],
     requestToUpdate: "/api/v1/configuration",
+    foreignCacheToUpdate: "/api/v1/configuration ",
   },
   users: {
     cacheToDelete: [
@@ -84,6 +86,22 @@ self.addEventListener("fetch", (event) => {
   // 1. Verifica si la solicitud es para una ruta que no debe ser cacheada
 
   if (event.request.method === "GET") {
+    const isDinamicGETResquests = dinamicGETRequests.find((el) =>
+      el.test(url.pathname)
+    );
+
+    if (isDinamicGETResquests) {
+      return event.respondWith(
+        caches.match(event.request).then(async (cachedResponse) => {
+          if (cachedResponse) {
+            await caches.delete(cachedResponse);
+            console.log(cachedResponse);
+            return fetch(event.request);
+          }
+        })
+      );
+    }
+
     const isNotCacheableRoute = urlsToNoTCached.some((el) =>
       url.pathname.startsWith(el)
     );
@@ -96,7 +114,7 @@ self.addEventListener("fetch", (event) => {
       return event.respondWith(fetch(event.request));
     } else {
       event.respondWith(
-        caches.match(event.request).then((cachedResponse) => {
+        caches.match(event.request).then(async (cachedResponse) => {
           if (cachedResponse) {
             return cachedResponse;
           }

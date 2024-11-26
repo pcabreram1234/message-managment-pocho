@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { openNotification } from "../components/Notification";
 import { AuthContext } from "../context/UserContext";
 import { useHistory } from "react-router";
@@ -34,7 +34,6 @@ const useLoginData = () => {
             openNotification("Success", "Wellcome", "success");
             window.localStorage.setItem("token", rawToken);
             handleUser(jose.decodeJwt(rawToken));
-            console.log("El token es " + rawToken);
             history.push("/messages");
           }
         }

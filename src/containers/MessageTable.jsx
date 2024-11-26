@@ -176,13 +176,13 @@ const MessageTable = () => {
                 cb={setShowDeleteModal}
               />
 
-              <SendToButton
+              {/* <SendToButton
                 setShowSendToModal={setShowSendToModal}
                 setMessageToSend={setMessageToSend}
                 associateTo={message.Contacts}
                 setAssociateTo={setContacts}
                 message={message.message}
-              />
+              /> */}
             </Col>,
           ],
         });

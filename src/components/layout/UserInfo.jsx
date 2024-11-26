@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, memo } from "react";
 import { Button, Typography, Row, Col } from "antd";
 import { LogoutOutlined } from "@ant-design/icons";
 import useLogOffData from "../../hooks/useLogOffData";
 
-const UserInfo = ({ user }) => {
+const UserInfo = memo(({ user }) => {
   const { logOffData } = useLogOffData();
 
   const sessionLogOut = () => {
@@ -14,6 +14,10 @@ const UserInfo = ({ user }) => {
     logOffData(API_url, null);
   };
 
+  useEffect(() => {
+    console.log(user);
+  }, []);
+
   const { Text } = Typography;
   return (
     <Row
@@ -23,7 +27,7 @@ const UserInfo = ({ user }) => {
     >
       <Col>
         <Text strong style={{ color: "white" }}>
-          User: {user?.email.split("@")[0]}
+          User: {user?.email?.split("@")[0]}
         </Text>
       </Col>
 
@@ -40,6 +44,6 @@ const UserInfo = ({ user }) => {
       </Col>
     </Row>
   );
-};
+});
 
 export default UserInfo;

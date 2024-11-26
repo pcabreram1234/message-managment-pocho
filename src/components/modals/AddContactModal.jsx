@@ -20,7 +20,7 @@ const AddContactModal = ({ setShowAddContactmodal }) => {
   const [isChange, setIsChange] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [popUpModalInfo, setPopUpModalInfo] = useState({
-    modalMessage: "Guardando Registro",
+    modalMessage: "Saving Information",
     alertModalType: "",
     modalInfoText: "",
   });
@@ -66,7 +66,7 @@ const AddContactModal = ({ setShowAddContactmodal }) => {
       } else {
         setPopUpModalInfo({
           alertModalType: "success",
-          modalInfoText: "Registro Guardado",
+          modalInfoText: "Saved",
         });
         reloadPage();
       }

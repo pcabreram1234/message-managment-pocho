@@ -19,7 +19,7 @@ const HistoRyPanel = () => {
   const API_URL =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
-    "configuration/";
+    "configuration";
   const messages = fetchData(API_URL);
   const [tableDataSource, setTableDataSource] = useState(messages);
 

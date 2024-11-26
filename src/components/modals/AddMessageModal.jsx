@@ -61,9 +61,9 @@ const AddMessageModal = ({
     const req = await submitData(API_URL, data);
     console.log(req);
     if (req?.message) {
-      setPopUpModalInfo("Guardando registro", "error", resp?.message);
+      setPopUpModalInfo("Something was wrong", "error", resp?.message);
     } else {
-      setPopUpModalInfo("Guardando registro", "success", "Registro Guardado");
+      setPopUpModalInfo("Saving Information", "success", "Saved");
       setTimeout(() => {
         reloadPage();
       }, 200);

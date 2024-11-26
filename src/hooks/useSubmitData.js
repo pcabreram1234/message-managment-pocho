@@ -12,6 +12,7 @@ const useSubmitData = () => {
   const submitData = async (API, data, METHOD = "POST") => {
     const headers = {
       "Content-type": "application/json; charset=UTF-8",
+      token: window.localStorage.getItem("token"),
     };
 
     try {
@@ -22,12 +23,12 @@ const useSubmitData = () => {
         credentials: "include",
       });
 
+      const resp = await response.json();
       if (response.ok) {
-        const resp = await response.json();
         const token = response.headers.get("token");
         if (token) {
           handleUser(jose.decodeJwt(token));
-          history.push("/messages");
+          return resp;
         } else {
           openNotification("Error", resp?.error || "Login failed", "error");
           handleUser(null);

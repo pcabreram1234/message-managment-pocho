@@ -18,7 +18,7 @@ const AddCategoryModal = ({ setAddCategorymodal }) => {
   const userInfo = useContext(AuthContext);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [popUpModalInfo, setPopUpModalInfo] = useState({
-    modalMessage: "Guardando Registro",
+    modalMessage: "Saving Information",
     alertModalType: "",
     modalInfoText: "",
   });
@@ -64,7 +64,7 @@ const AddCategoryModal = ({ setAddCategorymodal }) => {
           } else {
             setPopUpModalInfo({
               alertModalType: "success",
-              modalInfoText: "Registro Guardado",
+              modalInfoText: "Saved",
             });
             onCancel();
             setTimeout(() => {

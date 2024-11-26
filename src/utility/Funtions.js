@@ -3,10 +3,10 @@ import { submitData } from "../utility/submitData.js";
 const saveDataFuntion = (API_URL, data, cb) => {
   submitData(API_URL, data).then((resp) => {
     if (typeof resp.result === "number" || resp.result === 1) {
-      cb("Guardando Registro(s)", "success", "Registro(s) Guardado(s)");
+      cb("Saving Information", "success", "Saved");
       reloadPage();
     } else {
-      cb("Guardando Registro(s)", "error", resp?.message);
+      cb("Saving Information", "error", resp?.message);
     }
   });
 };
@@ -14,26 +14,25 @@ const saveDataFuntion = (API_URL, data, cb) => {
 const deleteDataFuntion = (API_URL, data, cb) => {
   submitData(API_URL, data, "DELETE").then((resp) => {
     if (typeof resp.result === "number" || resp.result === 1) {
-      cb("Eliminando Registro(s)", "Registro(s) Eliminado(s)", "success");
+      cb("Deleting Record(s)", "Deleted", "success");
       reloadPage();
     } else {
-      alert(resp.message);
-      cb("Ha ocurrido un error", "error", resp.message);
+      // alert(resp.message);
+      cb("Something was wrong", "error", resp.message);
     }
   });
 };
 
 const editDataFuntion = (API_URL, data, cb) => {
   submitData(API_URL, data, "PATCH").then((resp) => {
-    setTimeout(() => {
-      if (typeof resp.result === "number" || resp.result === 1) {
-        cb("Editando Registro(s)", "success", "Registro Editado");
-        reloadPage();
-      } else {
-        alert(resp);
-        cb("Editando Registro(s)", "error", resp.message);
-      }
-    }, 500);
+    console.log(resp);
+    if (typeof resp.result === "number" || resp.result === 1) {
+      cb("Editing Record(s)", "success", "Saved");
+      reloadPage();
+    } else {
+      // alert(resp);
+      cb("Editing Record(s)", "error", resp.message);
+    }
   });
 };
 

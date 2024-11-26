@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { Menu } from "antd";
 import {
   MessageFilled,
@@ -6,7 +6,6 @@ import {
   ContactsFilled,
   OrderedListOutlined,
   HistoryOutlined,
-  HomeFilled,
   UserOutlined,
   BarsOutlined,
 } from "@ant-design/icons";
@@ -15,21 +14,29 @@ import { Link } from "react-router-dom";
 import UserInfo from "../layout/UserInfo";
 import { AuthContext } from "../../context/UserContext";
 import { submitData } from "../../utility/submitData";
-
+import * as jose from "jose";
 const MenuBar = () => {
   const { Text } = Typography;
   const state = useContext(AuthContext);
-  const { user } = state;
+  const { user, handleUser } = state;
+  const rawToken = window.localStorage.getItem("token");
+  const [userState, setUserState] = useState(jose.decodeJwt(rawToken) || user);
   const API =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
     "users/check-auth";
 
   const onClick = (e) => {
-    console.log(e);
-    // Solo ejecuta la acción si el ítem clickeado no es "UserInfo"
     if (e.key !== "UserInfo") {
-      submitData(API, null, "GET");
+      submitData(API, null, "GET")
+        .then((rawToken) => {
+          const { result } = rawToken;
+          setUserState(result);
+          handleUser(result);
+        })
+        .catch((err) => {
+          throw new Error(err);
+        });
     }
   };
 
@@ -87,7 +94,7 @@ const MenuBar = () => {
         </Link>
       </Menu.Item>
 
-      {user?.type_user === "adm" && (
+      {userState?.type_user === "adm" && (
         <Menu.Item key={"users"}>
           <Link to={"/users"}>
             <Text style={{ color: "white" }}>
@@ -97,7 +104,7 @@ const MenuBar = () => {
         </Menu.Item>
       )}
 
-      {user !== null && user !== undefined && (
+      {userState !== null && userState !== undefined && (
         <Menu.SubMenu
           title="User Info"
           icon={<UserOutlined />}
@@ -105,7 +112,7 @@ const MenuBar = () => {
           key={"SubMenUserInfo"}
         >
           <Menu.Item key={"UserInfo"}>
-            <UserInfo user={user} />
+            <UserInfo user={userState} />
           </Menu.Item>
         </Menu.SubMenu>
       )}

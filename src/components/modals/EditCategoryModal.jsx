@@ -24,15 +24,6 @@ const EditCategoryModal = (props) => {
   const [modalMessage, setModallMessage] = useState("");
   const [modalInfoText, setModalInfoText] = useState("");
 
-  const API_VERIFY_CATEGORY =
-    import.meta.env.VITE_API_URL +
-    import.meta.env.VITE_API_URL_ROUTER +
-    `categories/categoriesName/${nameEdit}`;
-  const API_GET_MESSAGE_ASSOCIATE_AT_CATEGORY =
-    import.meta.env.VITE_API_URL +
-    import.meta.env.VITE_API_URL_ROUTER +
-    `messages/getMesageAssociateAtCategory/${id}${nameEdit}`;
-
   useEffect(() => {
     setTimeout(() => {
       setShowAlert(true);
@@ -76,23 +67,12 @@ const EditCategoryModal = (props) => {
       centered={true}
       okText={"Save"}
       onOk={() => {
-        submitData(API_VERIFY_CATEGORY, null, "GET").then((resp) => {
-          const { result } = resp;
-          if (result.count > 0) {
-            handleResultModalInfo(
-              "Error al intentar modificar esta categoría",
-              "error",
-              "Esta categoría ya esta registrada"
-            );
-          } else {
-            handleResultModalInfo(
-              "Editando Registro(s)",
-              "info",
-              "Editando los mensajes asociados a esta categoria"
-            );
-            editDataFuntion(API_URL, dataToSend, handleResultModalInfo);
-          }
-        });
+        handleResultModalInfo(
+          "Editando Registro(s)",
+          "info",
+          "Editando los mensajes asociados a esta categoria"
+        );
+        editDataFuntion(API_URL, dataToSend, handleResultModalInfo);
       }}
       destroyOnClose
     >

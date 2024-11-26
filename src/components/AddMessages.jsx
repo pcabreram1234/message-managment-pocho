@@ -13,9 +13,9 @@ const AddMessage = (props) => {
 
   const handleSubmit = () => {
     let DataToSendToModal = {
-      modalMessage: "Guardando Mensaje",
+      modalMessage: "Saving Message",
       alertType: "success",
-      infoText: "Cambios guardados",
+      infoText: "Saved",
     };
     const { modalMessage, alertType, infoText } = DataToSendToModal;
     const req = submitData(API_URL, message).then((resp) => {
@@ -23,7 +23,7 @@ const AddMessage = (props) => {
       if ((resp = 1)) {
         handleModal(modalMessage, alertType, infoText);
       } else {
-        handleModal(modalMessage, "error", "Ha ocurrido un error");
+        handleModal(modalMessage, "error", "Something was wrong");
       }
     });
     setMessage("");

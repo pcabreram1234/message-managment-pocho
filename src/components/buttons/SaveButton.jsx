@@ -10,9 +10,9 @@ const SaveButton = (props) => {
     setShowModal(true);
     submitData(API_URL, data).then((resp) => {
       if (typeof resp.result === "number") {
-        handleModal("Guardando Registro", "success", "Registro Guardado");
+        handleModal("Saving Information", "success", "Saved");
       } else {
-        handleModal("Guardando Registro", "error", "Ha ocurrido un error");
+        handleModal("Error", "error", "Sometime was wrong");
       }
     });
   };
