@@ -54,10 +54,10 @@ export const submitData = async (API, data, METHOD = "POST") => {
         }
       } else {
         // Manejar el caso de error con la respuesta de error JSON
-        const errorResp = await req.json();
-        window.localStorage.clear();
-        openNotification("Error", errorResp?.message, "error");
-        return errorResp;
+        // const errorResp = await req.json();
+        // window.localStorage.clear();
+        // openNotification("Error", errorResp?.message, "error");
+        // return errorResp;
       }
     } catch (error) {
       window.localStorage.clear();
