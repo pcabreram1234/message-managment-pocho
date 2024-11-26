@@ -32,7 +32,7 @@ export const submitData = async (API, data, METHOD = "POST") => {
         return errorResp;
       }
     } catch (error) {
-      openNotification("Error", error?.message, "error");
+      // openNotification("Error", error?.message, "error");
       throw new Error(error);
     }
   } else {
@@ -61,7 +61,7 @@ export const submitData = async (API, data, METHOD = "POST") => {
       }
     } catch (error) {
       window.localStorage.clear();
-      openNotification("Error", error?.message, "error");
+      // openNotification("Error", error?.message, "error");
       throw new Error(error);
     }
   }
