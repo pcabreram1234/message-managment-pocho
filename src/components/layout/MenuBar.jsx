@@ -20,7 +20,7 @@ const MenuBar = () => {
   const state = useContext(AuthContext);
   const { user, handleUser } = state;
   const rawToken = window.localStorage.getItem("token");
-  const [userState, setUserState] = useState(jose.decodeJwt(rawToken) || user);
+  const [userState, setUserState] = useState(rawToken? jose.decodeJwt(rawToken): user.toString());
   const API =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
