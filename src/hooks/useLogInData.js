@@ -30,6 +30,7 @@ const useLoginData = () => {
       if (response.ok) {
         if (resp?.email) {
           const rawToken = response.headers.get("token");
+          console.log("El token es: ",rawToken)
           if (rawToken) {
             openNotification("Success", "Wellcome", "success");
             window.localStorage.setItem("token", rawToken);
