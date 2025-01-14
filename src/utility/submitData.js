@@ -14,7 +14,7 @@ export const submitData = async (API, data, METHOD = "POST") => {
         body: JSON.stringify({ data }),
         /* Colocamos como header el tipo JSON para que express pueda usar el midleware app.use(json()) */
         headers: headers,
-        credentials: "include",
+        // credentials: "include",
       });
 
       if (req.ok) {
