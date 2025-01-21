@@ -20,7 +20,7 @@ const useSubmitData = () => {
         method: METHOD,
         body: METHOD !== "GET" ? JSON.stringify({ data }) : undefined,
         headers,
-        credentials: "include",
+        // credentials: "include",
       });
 
       const resp = await response.json();

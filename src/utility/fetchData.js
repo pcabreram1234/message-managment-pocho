@@ -18,7 +18,7 @@ const fetchData = (API, method = "GET") => {
   useEffect(() => {
     fetch(API, {
       method: method,
-      credentials: "include",
+      // credentials: "include",
       headers: headers,
     })
       .then((resp) => {
@@ -30,7 +30,7 @@ const fetchData = (API, method = "GET") => {
         } else {
           serviceWorker.unregister();
           location.push("/login");
-          window.localStorage.clear();
+          // window.localStorage.clear();
           handleUser(null);
           setData(null);
         }

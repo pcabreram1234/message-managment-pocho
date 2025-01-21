@@ -21,7 +21,7 @@ const useLogOffData = () => {
         method: METHOD,
         body: METHOD !== "GET" ? JSON.stringify({ data }) : undefined,
         headers,
-        credentials: "include",
+        // credentials: "include",
       });
 
       if (response.ok) {

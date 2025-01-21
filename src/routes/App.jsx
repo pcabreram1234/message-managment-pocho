@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Spin } from "antd";
 import Contacts from "../containers/Contacts";
 import Categories from "../containers/Categories";
 import MessageTable from "../containers/MessageTable";
@@ -20,6 +19,7 @@ import { AuthContext } from "../context/UserContext";
 import AccountVerification from "../containers/AccountVerification";
 import { submitData } from "../utility/submitData";
 import PopUpModal from "../components/modals/PopUpModal";
+import { openNotification } from "../components/Notification";
 import "../styles/App.css";
 
 const App = () => {
@@ -29,25 +29,35 @@ const App = () => {
   const location = useLocation();
   const history = useHistory(); // Hook para redirecciones programáticas
 
-  // useEffect en App.js para verificar la autenticación en cada recarga
+  // useEffect para verificar la autenticación solo al recargar la página
   useEffect(() => {
-    const checkAuthStatus = async () => {
-      try {
-        const response = await submitData(
-          import.meta.env.VITE_API_URL +
-            import.meta.env.VITE_API_URL_ROUTER +
-            "users/check-auth",
-          null,
-          "GET"
-        );
-        handleUser(response?.result);
-      } catch (error) {
-        console.error("Error verifying authentication:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    checkAuthStatus();
+    const navigationType = performance.getEntriesByType("navigation")[0]?.type;
+
+    if (navigationType === "reload") {
+      console.log("Recargando página...");
+      const checkAuthStatus = async () => {
+        try {
+          const response = await submitData(
+            import.meta.env.VITE_API_URL +
+              import.meta.env.VITE_API_URL_ROUTER +
+              "users/check-auth",
+            null,
+            "GET"
+          );
+          handleUser(response?.result);
+        } catch (error) {
+          openNotification("Error", "Error verifying authentication", "error");
+          console.error("Error verifying authentication:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      checkAuthStatus();
+    } else {
+      // Si no es recarga, detener el loading
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {

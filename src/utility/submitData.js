@@ -39,13 +39,15 @@ export const submitData = async (API, data, METHOD = "POST") => {
     try {
       let req = await fetch(API, {
         headers: headers,
-        body: data,
-        credentials: "include",
+        // body: data,
+        // credentials: "include",
       });
       if (req.ok) {
         const rawToken = req.headers.get("token");
         if (rawToken) {
-          window.localStorage.setItem("token", rawToken);
+          console.log("rawToken", rawToken);
+          console.log(req)
+          window.localStorage.setItem("token", rawToken.toString())
           let resp = await req.json();
           return resp;
         } else {

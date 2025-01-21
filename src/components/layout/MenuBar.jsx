@@ -13,32 +13,15 @@ import { Typography } from "antd";
 import { Link } from "react-router-dom";
 import UserInfo from "../layout/UserInfo";
 import { AuthContext } from "../../context/UserContext";
-import { submitData } from "../../utility/submitData";
 import * as jose from "jose";
 const MenuBar = () => {
   const { Text } = Typography;
   const state = useContext(AuthContext);
   const { user, handleUser } = state;
   const rawToken = window.localStorage.getItem("token");
-  const [userState, setUserState] = useState(rawToken? jose.decodeJwt(rawToken): user.toString());
-  const API =
-    import.meta.env.VITE_API_URL +
-    import.meta.env.VITE_API_URL_ROUTER +
-    "users/check-auth";
-
-  const onClick = (e) => {
-    if (e.key !== "UserInfo") {
-      submitData(API, null, "GET")
-        .then((rawToken) => {
-          const { result } = rawToken;
-          setUserState(result);
-          handleUser(result);
-        })
-        .catch((err) => {
-          throw new Error(err);
-        });
-    }
-  };
+  const [userState, setUserState] = useState(
+    rawToken ? jose.decodeJwt(rawToken) : user.toString()
+  );
 
   return (
     <Menu
@@ -46,14 +29,7 @@ const MenuBar = () => {
       theme="dark"
       defaultSelectedKeys={"home"}
       style={{ display: "flex", justifyContent: "left" }}
-      onClick={onClick}
     >
-      {/* <Menu.Item key={"home"}>
-        <Link to={"/"}>
-          <HomeFilled />
-        </Link>
-      </Menu.Item> */}
-
       <Menu.Item key={"Messages"}>
         <Link to={"/messages"}>
           <Text style={{ color: "white" }}>
