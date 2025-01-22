@@ -3,7 +3,6 @@ import React from "react";
 import App from "./routes/App.jsx";
 import { AuthProvider } from "./context/UserContext.jsx";
 import { BrowserRouter } from "react-router-dom";
-import "../public/reset.css";
 import * as serviceWorker from "./serviceWorker";
 import { createRoot } from "react-dom/client";
 
