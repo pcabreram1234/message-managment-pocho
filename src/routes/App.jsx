@@ -20,7 +20,7 @@ import AccountVerification from "../containers/AccountVerification";
 import { submitData } from "../utility/submitData";
 import PopUpModal from "../components/modals/PopUpModal";
 import { openNotification } from "../components/Notification";
-// import "../styles/App.css";
+import "../styles/App.css";
 
 const App = () => {
   const state = useContext(AuthContext);
