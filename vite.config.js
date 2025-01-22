@@ -18,9 +18,4 @@ export default defineConfig({
     open: true,
 
   },
-  build: {
-    rollupOptions: {
-      external: ['node_modules/antd/dist/reset.css']
-    }
-  }
 });
