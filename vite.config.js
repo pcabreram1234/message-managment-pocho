@@ -20,7 +20,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      external: ['antd/dist/reset.css']
+      external: ['node_modules/antd/dist/reset.css']
     }
   }
 });
