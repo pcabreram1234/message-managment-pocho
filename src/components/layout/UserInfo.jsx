@@ -63,7 +63,7 @@ const UserInfo = memo(({ user }) => {
       >
         <div style={{ textAlign: "center" }}>
           <Spin size="large" />
-          <p>Cerrando sesión, por favor espere...</p>
+          <p>Logging out, please wait...</p>
         </div>
       </Modal>
     </>
