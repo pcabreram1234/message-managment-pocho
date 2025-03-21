@@ -61,6 +61,8 @@ const Message = ({ data, handleMessageInfo, config, setFieldsCompleted }) => {
           {
             type: "string",
             min: 10,
+            message: "Message must be at least 10 characters",
+            required: true,
           },
         ]}
         initialValue={messageToSave}
@@ -85,8 +87,9 @@ const Message = ({ data, handleMessageInfo, config, setFieldsCompleted }) => {
       <Form.Item
         label="Associate To/Send To"
         required
+        name="contacts"
         initialValue={contacts}
-        rules={[{ required: true }]}
+        rules={[{ required: true, message: "Please select a contact" }]}
       >
         <ContactsAssociate
           associateTo={contacts}

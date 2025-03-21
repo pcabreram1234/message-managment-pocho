@@ -70,7 +70,7 @@ const getObjectProp = (data, property) => {
 /* Funcion que valida si todos los campos estan marcados como obligatorios
 de un formulario, en esta funcion se usa el hook de validateForm de la libreria
 de AntDesign */
-function validateForm(form, cb, cbErrorHandle) {
+function validateForm(form, cb, cbTriggerFomrCompleted) {
   form
     .validateFields()
     .then((values) => {
@@ -79,12 +79,12 @@ function validateForm(form, cb, cbErrorHandle) {
       para evitar el renderizado infinito dentro de la promesa
       colocamos un setTimeout para que se ejecute una sola vez */
       setTimeout(() => {
-        cbErrorHandle(true);
+        cbTriggerFomrCompleted(true);
       }, 500);
     })
     .catch((errorInfo) => {
       setTimeout(() => {
-        cbErrorHandle(false);
+        cbTriggerFomrCompleted(false);
       }, 500);
     });
 }

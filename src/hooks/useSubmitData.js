@@ -30,15 +30,11 @@ const useSubmitData = () => {
           handleUser(jose.decodeJwt(token));
           return resp;
         } else {
-          openNotification("Error", resp?.error || "Login failed", "error");
           handleUser(null);
           history.push("/login");
-          // throw new Error("User data is incomplete.");
         }
-      } else {
-        handleUser(null);
-        history.push("/login");
       }
+      return resp;
     } catch (error) {
       console.error("Error during submission:", error);
       openNotification(

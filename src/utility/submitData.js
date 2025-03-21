@@ -51,7 +51,7 @@ export const submitData = async (API, data, METHOD = "POST") => {
           let resp = await req.json();
           return resp;
         } else {
-          window.localStorage.clear();
+          // window.localStorage.clear();
           openNotification("Error", "Please log in again", "error");
         }
       } else {
@@ -62,7 +62,7 @@ export const submitData = async (API, data, METHOD = "POST") => {
         // return errorResp;
       }
     } catch (error) {
-      window.localStorage.clear();
+      // window.localStorage.clear();
       // openNotification("Error", error?.message, "error");
       throw new Error(error);
     }

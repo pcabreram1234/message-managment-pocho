@@ -33,15 +33,16 @@ const DeleteCategoriesModal = ({ id, setShowDeleteCategoriesModal }) => {
       okType="danger"
       okText="Yes"
       cancelText="No"
+      destroyOnClose={true}
       onCancel={onCancel}
       onOk={() => {
         deleteDataFuntion(API_URL, id, handleResultModalInfo);
         setTimeout(() => {
           setShowMessage(true);
         }, 900);
-        setTimeout(() => {
-          window.location.href = "";
-        }, 1500);
+        // setTimeout(() => {
+        //   window.location.href = "";
+        // }, 1500);
       }}
     >
       {showMessage && (

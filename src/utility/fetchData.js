@@ -24,6 +24,7 @@ const fetchData = (API, method = "GET") => {
       .then((resp) => {
         if (resp.ok) {
           const token = resp.headers.get("token");
+          console.log(token)
           window.localStorage.setItem("token", token);
           handleUser(token);
           return resp.json();
@@ -41,7 +42,7 @@ const fetchData = (API, method = "GET") => {
       .catch((err) => {
         serviceWorker.unregister();
         console.log(err);
-        window.localStorage.clear();
+        // window.localStorage.clear();
         handleUser(null);
       });
   }, []);

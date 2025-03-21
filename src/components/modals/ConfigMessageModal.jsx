@@ -75,49 +75,33 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
   const confirmSendTo = () => {
     console.log(dataToSend);
     if (contacts.length === 0) {
-      alert("Please choose at least one recipient");
+      // alert("Please choose at least one recipient");
       return true;
     }
   };
 
   const onOk = async () => {
-    if (fieldsCompleted === true) {
-      setShowPopUpModal(true);
-      const dateCompared = compareDates(dateOnSend, currentDate);
-      if (dateCompared > 0) {
-        setPopUpModalInfo({
-          modalMessage: `The date entered must be from the current one`,
-          alertModalType: "error",
-          modalInfoText: "Error trying to save the message",
-        });
-      } else {
-        if (!confirmSendTo()) {
-          const reqAddMessage = await submitData(API_ADD_MESSAGES, dataToSend);
-          if (reqAddMessage?.result?.rowsInserted) {
-            const rowsInserted = reqAddMessage.result.rowsInserted;
-            if (rowsInserted === contacts.length) {
-              setPopUpModalInfo({
-                modalMessage: "Saved",
-                alertModalType: "success",
-                modalInfoText: "Saving Information",
-              });
-              reloadPage();
-            } else {
-              setPopUpModalInfo({
-                modalMessage: `${reqAddMessage.error}`,
-                alertModalType: "error",
-                modalInfoText: "Saving Information",
-              });
-            }
-          } else {
-            setPopUpModalInfo({
-              modalMessage: "Error",
-              alertModalType: "error",
-              modalInfoText: reqAddMessage?.message,
-            });
-          }
-        }
-      }
+    setShowPopUpModal(true);
+    const reqAddMessage = await submitData(API_ADD_MESSAGES, dataToSend);
+
+    if (reqAddMessage?.result?.rowsInserted > 0) {
+      setPopUpModalInfo({
+        modalMessage: "Saved",
+        alertModalType: "success",
+        modalInfoText: "Saving Information",
+      });
+
+      setTimeout(() => {
+        handleOnCancel();
+      }, 2000);
+    }
+
+    if (reqAddMessage?.message) {
+      setPopUpModalInfo({
+        modalMessage: "Error",
+        alertModalType: "error",
+        modalInfoText: reqAddMessage?.message,
+      });
     }
   };
 

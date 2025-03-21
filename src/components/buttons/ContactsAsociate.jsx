@@ -1,76 +1,53 @@
 import React, { useEffect, useState } from "react";
 import { Select } from "antd";
 import { fetchData } from "../../utility/fetchData";
-const ContactsAssociate = (props) => {
+
+const ContactsAssociate = ({ setAssociateTo, associateTo }) => {
   const API_ASSOCIATE_TO_URL =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
     "contacts";
+
+  // Obtener la lista de contactos
   const contacts = fetchData(API_ASSOCIATE_TO_URL);
-  const { setAssociateTo, associateTo } = props;
-  const [contactsOptions, setContactsOptions] = useState([]);
 
-  const addCurrentContactsToSelectOption = () => {
-    console.log(associateTo);
-    if (contacts.length > 0) {
-      const idContactsToFilter = contacts.map((contact) => contact.id);
-      const arrayFilter = contacts.filter((contact) =>
-        idContactsToFilter.includes(contact.id)
-      );
+  // Convertir los contactos a opciones para el Select
+  const contactsOptions = contacts.map((contact) => ({
+    label: contact.email,
+    value: contact.email,
+    key: contact.id,
+  }));
 
-      setContactsOptions(
-        contacts.map((contact) => ({
-          label: contact.email,
-          value: contact.email,
-          key: contact.id,
-        }))
-      );
-    }
-  };
+  // Convertir los contactos seleccionados al formato esperado por el Select
+  const selectedContacts = associateTo?.map((contact) => ({
+    label: contact.email,
+    value: contact.email,
+    key: contact.id,
+  }));
 
-  /*   funcion que retorna las categorias mediante el callback  */
-  const returnSelectedConctacts = (contacts, cb) => {
-    /* Declaramos un objeto para guardar las categorias seleccionadas */
-    const contactObject = contacts.map((contact) => ({
+  // Manejar la selección de contactos
+  const handleChange = (selected) => {
+    const formattedContacts = selected.map((contact) => ({
       email: contact.value,
       id: contact.key,
     }));
-    cb(contactObject);
-    return contactObject;
+    setAssociateTo(formattedContacts);
   };
-
-  useEffect(() => {
-    addCurrentContactsToSelectOption();
-  }, [contacts]);
 
   return (
     <Select
       mode="multiple"
       style={{ width: "100%" }}
       allowClear
-      defaultValue={
-        associateTo !== undefined && associateTo.length > 0
-          ? associateTo.map((contact) => ({
-              label: contact.email,
-              value: contact.email,
-              key: contact.id,
-            }))
-          : []
-      }
+      defaultValue={selectedContacts} // Usar value en lugar de defaultValue
       labelInValue
       optionLabelProp="children"
       optionFilterProp="children"
-      filterOption={(input, option) => {
-        return (
-          option.children.toLowerCase().indexOf(`${input.toLowerCase()}`, 0) >=
-          0
-        );
-      }}
+      filterOption={(input, option) =>
+        option.children.toLowerCase().includes(input.toLowerCase())
+      }
       options={contactsOptions}
-      /* El problema esta en este callback */
-      onChange={(contacts) => {
-        returnSelectedConctacts(contacts, setAssociateTo);
-      }}
+      onChange={handleChange}
     />
   );
 };

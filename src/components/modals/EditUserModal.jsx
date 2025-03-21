@@ -4,7 +4,6 @@ import { useHookstate } from "@hookstate/core";
 import { userToEdit } from "../../context/userHookState";
 import { useHistory } from "react-router";
 import { saveDataFuntion } from "../../utility/Funtions";
-import useSubmitData from "../../hooks/useSubmitData";
 const {Text}=Typography
 
 const EditUserModal = ({ isVisible, cb }) => {
@@ -18,7 +17,6 @@ const EditUserModal = ({ isVisible, cb }) => {
   const [isModalLoading, setIsModalLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
 
-  const { submitData } = useSubmitData();
 
   useEffect(() => {
     setTimeout(() => {

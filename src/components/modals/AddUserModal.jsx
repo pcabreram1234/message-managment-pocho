@@ -38,7 +38,7 @@ const AddUserModal = ({ isVisible, cb }) => {
       const req = await submitData(API_url, form.getFieldsValue());
       if (req.isBoom) {
         setAlertModalType("error");
-        setModalInfoText(resp.output.payload.message);
+        setModalInfoText(req.message);
       } else {
         setAlertModalType("info");
         setModalInfoText("User Saved");
@@ -55,10 +55,10 @@ const AddUserModal = ({ isVisible, cb }) => {
   return (
     <Modal
       title="Adding user"
-      visible={showModal}
+      open={showModal}
       onCancel={onCancel}
-      okButtonProps={{ disabled: true }}
-      cancelButtonProps={{ disabled: true }}
+      okButtonProps={{ disabled: true, hidden: true }}
+      cancelButtonProps={{ disabled: true, hidden: true }}
     >
       <Form
         style={{

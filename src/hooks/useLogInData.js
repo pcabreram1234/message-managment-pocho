@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { openNotification } from "../components/Notification";
 import { AuthContext } from "../context/UserContext";
 import { useHistory } from "react-router";
@@ -6,7 +6,7 @@ import * as jose from "jose";
 
 const useLoginData = () => {
   const userState = useContext(AuthContext);
-  const { handleUser } = userState;
+  const { handleUser, user } = userState;
   const history = useHistory();
 
   const API =
@@ -28,13 +28,17 @@ const useLoginData = () => {
 
       const resp = await response.json();
       if (response.ok) {
+        for (const header of response.headers.entries()) {
+          const [headerName, headerValue] = header;
+          console.log("Header:", headerName, headerValue);
+        }
         if (resp?.email) {
           const rawToken = response.headers.get("token");
-          if (rawToken) {
+          console.log("Token:", rawToken);
+          if (rawToken !== null && rawToken !== undefined) {
             openNotification("Success", "Wellcome", "success");
             window.localStorage.setItem("token", rawToken);
             handleUser(jose.decodeJwt(rawToken));
-            history.push("/messages");
           }
         }
         if (resp?.error) {
@@ -54,6 +58,13 @@ const useLoginData = () => {
       );
     }
   };
+
+  useEffect(() => {
+    if (user) {
+
+      history.push("/messages");
+    }
+  }, [user]);
 
   return { submitData };
 };

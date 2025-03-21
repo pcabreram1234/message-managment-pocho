@@ -201,7 +201,12 @@ const Categories = () => {
         <DeleteCategoryModal cb={setShowDeleteCategoryModal} id={id} />
       )}
 
-      {showDeleteCategoriesModal && <DeleteCategoriesModal id={id} />}
+      {showDeleteCategoriesModal && (
+        <DeleteCategoriesModal
+          id={id}
+          setShowDeleteCategoriesModal={setShowDeleteCategoriesModal}
+        />
+      )}
     </Layout>
   );
 };
