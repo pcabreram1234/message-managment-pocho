@@ -1,76 +1,81 @@
 // public/service-worker.js
+const API_BASE_URL = self.location.origin.includes(`localhost`)
+  ? `http://localhost:3000`
+  : window.__ENV__.API_BASE_URL;
 
-const CACHE_NAME = "PMMS_v1";
+const CACHE_NAME = `PMMS_v1`;
 const urlsToCache = [
-  "/",
-  "/index.html",
+  `/`,
+  `/index.html`,
   // Agrega aquí otros recursos que quieras almacenar en caché
 ];
 
-const urlsToNoTCached = ["/api/v1/users/verify", "/api/v1/users/check-auth"];
-const dinamicGETRequests = [/\/api\/v1\/categories\/categoriesName\/[^/]+$/];
+const urlsToNoTCached = [`${API_BASE_URL}/api/v1/users/verify`, `${API_BASE_URL}/api/v1/users/check-auth`];
+const dinamicGETRequests = [
+  new RegExp(`${API_BASE_URL}/api/v1/categories/categoriesName/[^/]+$`)
+];
 
 const cacheDependencyMap = {
   messages: {
     cacheToDelete: [
-      "/api/v1/messages/addMessage",
-      "/api/v1/messages/editMessage",
-      "/api/v1/messages/updateMessageCategories",
-      "/api/v1/messages/deleteMessage",
-      "/api/v1/messages/deleteMessages",
-      "/api/v1/messages/associate_contact",
+      `${API_BASE_URL}/api/v1/messages/addMessage`,
+      `${API_BASE_URL}/api/v1/messages/editMessage`,
+      `${API_BASE_URL}/api/v1/messages/updateMessageCategories`,
+      `${API_BASE_URL}/api/v1/messages/deleteMessage`,
+      `${API_BASE_URL}/api/v1/messages/deleteMessages`,
+      `${API_BASE_URL}/api/v1/messages/associate_contact`,
     ],
-    requestToUpdate: "/api/v1/messages",
-    foreignCacheToUpdate: "/api/v1/configuration",
+    requestToUpdate: `${API_BASE_URL}/api/v1/messages`,
+    foreignCacheToUpdate: `${API_BASE_URL}/api/v1/configuration`,
   },
 
   contacts: {
     cacheToDelete: [
-      "/api/v1/contacts/distinctContacts",
-      "/api/v1/contacts/addContact",
-      "/api/v1/contacts/editContact",
-      "/api/v1/contacts/deleteContact",
-      "/api/v1/contacts/deleteContacts",
+      `${API_BASE_URL}/api/v1/contacts/distinctContacts`,
+      `${API_BASE_URL}/api/v1/contacts/addContact`,
+      `${API_BASE_URL}/api/v1/contacts/editContact`,
+      `${API_BASE_URL}/api/v1/contacts/deleteContact`,
+      `${API_BASE_URL}/api/v1/contacts/deleteContacts`,
     ],
-    requestToUpdate: "/api/v1/contacts",
-    foreignCacheToUpdate: "/api/v1/messages",
+    requestToUpdate: `${API_BASE_URL}/api/v1/contacts`,
+    foreignCacheToUpdate: `${API_BASE_URL}/api/v1/messages`,
   },
   categories: {
     cacheToDelete: [
-      "/api/v1/categories/distinctCategories",
-      "/api/v1/categories/addCategory",
-      "/api/v1/categories/editCategory",
-      "/api/v1/categories/deleteCategory",
-      "/api/v1/categories/deleteCategories",
+      `${API_BASE_URL}/api/v1/categories/distinctCategories`,
+      `${API_BASE_URL}/api/v1/categories/addCategory`,
+      `${API_BASE_URL}/api/v1/categories/editCategory`,
+      `${API_BASE_URL}/api/v1/categories/deleteCategory`,
+      `${API_BASE_URL}/api/v1/categories/deleteCategories`,
     ],
-    requestToUpdate: "/api/v1/categories",
-    foreignCacheToUpdate: "/api/v1/messages",
+    requestToUpdate: `${API_BASE_URL}/api/v1/categories`,
+    foreignCacheToUpdate: `${API_BASE_URL}/api/v1/messages`,
   },
   configuration: {
     cacheToDelete: [
-      "/api/v1/configuration/addMesageConfiguration",
-      "/api/v1/configuration/addMesagesConfiguration",
-      "/api/v1/configuration/verifyMessage",
-      "/api/v1/configuration/verifyMessages",
+      `${API_BASE_URL}/api/v1/configuration/addMesageConfiguration`,
+      `${API_BASE_URL}/api/v1/configuration/addMesagesConfiguration`,
+      `${API_BASE_URL}/api/v1/configuration/verifyMessage`,
+      `${API_BASE_URL}/api/v1/configuration/verifyMessages`,
     ],
-    requestToUpdate: "/api/v1/configuration",
-    foreignCacheToUpdate: "/api/v1/configuration ",
+    requestToUpdate: `${API_BASE_URL}/api/v1/configuration`,
+    foreignCacheToUpdate: `${API_BASE_URL}/api/v1/configuration `,
   },
   users: {
     cacheToDelete: [
-      "/api/v1/users/login",
-      "/api/v1/users/logoff",
-      "/api/v1/users/adduser",
-      "/api/v1/users/edituser",
-      "/api/v1/users/deleteuser",
-      "/api/v1/users/signup",
+      `${API_BASE_URL}/api/v1/users/login`,
+      `${API_BASE_URL}/api/v1/users/logoff`,
+      `${API_BASE_URL}/api/v1/users/adduser`,
+      `${API_BASE_URL}/api/v1/users/edituser`,
+      `${API_BASE_URL}/api/v1/users/deleteuser`,
+      `${API_BASE_URL}/api/v1/users/signup`,
     ],
-    requestToUpdate: "/api/v1/users",
+    requestToUpdate: `${API_BASE_URL}/api/v1/users`,
   },
 };
 
 // Instalar el Service Worker y almacenar los recursos en caché
-self.addEventListener("install", (event) => {
+self.addEventListener(`install`, (event) => {
   // caches.delete(CACHE_NAME);
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -80,12 +85,12 @@ self.addEventListener("install", (event) => {
 });
 
 // Interceptar solicitudes y responder con recursos en caché si están disponibles
-self.addEventListener("fetch", (event) => {
+self.addEventListener(`fetch`, (event) => {
   const url = new URL(event.request.url);
 
   // 1. Verifica si la solicitud es para una ruta que no debe ser cacheada
 
-  if (event.request.method === "GET") {
+  if (event.request.method === `GET`) {
     const isDinamicGETResquests = dinamicGETRequests.find((el) =>
       el.test(url.pathname)
     );
@@ -107,7 +112,7 @@ self.addEventListener("fetch", (event) => {
     );
 
     // console.log(
-    //   "La ruta " + event.request.url + " es cacheable: " + isNotCacheableRoute
+    //   `La ruta ` + event.request.url + ` es cacheable: ` + isNotCacheableRoute
     // );
 
     if (isNotCacheableRoute) {
@@ -135,7 +140,7 @@ self.addEventListener("fetch", (event) => {
       url.pathname === cacheDependencyMap.users.cacheToDelete[0] ||
       url.pathname === cacheDependencyMap.users.cacheToDelete[1]
     ) {
-      // console.log("usuario esta tratando de hacer login");
+      // console.log(`usuario esta tratando de hacer login`);
       const cacheWhitelist = [CACHE_NAME];
       event.waitUntil(
         caches.open(cacheWhitelist).then((cache) => {
@@ -145,7 +150,7 @@ self.addEventListener("fetch", (event) => {
         })
       );
     } else {
-      const apiRoute = url.pathname.split("/")[3];
+      const apiRoute = url.pathname.split(`/`)[3];
       const cacheDependency = cacheDependencyMap[apiRoute];
       const isNotCacheableDependency = cacheDependency.cacheToDelete.some(
         (el) => el === url.pathname
@@ -164,7 +169,7 @@ self.addEventListener("fetch", (event) => {
 
                 if (foreignCacheToUpdate) {
                   if (cacheUrl.pathname === foreignCacheToUpdate) {
-                    console.log("Borrar foreing");
+                    console.log(`Borrar foreing`);
                     await cache.delete(cacheToVerify);
                   }
                 }
@@ -178,16 +183,16 @@ self.addEventListener("fetch", (event) => {
   }
 });
 
-self.addEventListener("reload", (e) => {
-  console.log("Pagina cargada");
+self.addEventListener(`reload`, (e) => {
+  console.log(`Pagina cargada`);
 });
 
-self.addEventListener("beforeunload", (event) => {
-  console.log("cargado nuevamente el service worker");
+self.addEventListener(`beforeunload`, (event) => {
+  console.log(`cargado nuevamente el service worker`);
 });
 
 // Actualizar el Service Worker limpiando el caché anterior
-self.addEventListener("activate", (event) => {
+self.addEventListener(`activate`, (event) => {
   event.waitUntil(
     // Obtener todas las caches
     caches.keys().then((cacheNames) => {
@@ -203,10 +208,10 @@ self.addEventListener("activate", (event) => {
                 const response = await cache.match(request_1);
                 if (
                   response &&
-                  response.headers.get("Content-Type") &&
+                  response.headers.get(`Content-Type`) &&
                   response.headers
-                    .get("Content-Type")
-                    .includes("application/json")
+                    .get(`Content-Type`)
+                    .includes(`application/json`)
                 ) {
                   // Es JSON, lo dejamos en la cache
                   return;
@@ -223,8 +228,8 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// self.addEventListener("activate", (event) => {
-//   console.log("activate");
+// self.addEventListener(`activate`, (event) => {
+//   console.log(`activate`);
 //   console.log(event);
 //   const cacheWhitelist = [CACHE_NAME];
 //   event.waitUntil(
