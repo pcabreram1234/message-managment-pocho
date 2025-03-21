@@ -10,7 +10,7 @@ const MessagesConfigFooter = ({
   setShowPopUpModal,
   messages,
   setPopUpModalInfo,
-  currentDate,
+  handleOnCancel,
 }) => {
   const [associateTo, seteAssociateTo] = useState("");
   const [dateTosend, setDateOnSend] = useState("");
@@ -52,64 +52,34 @@ const MessagesConfigFooter = ({
   };
 
   const onOk = () => {
-    MessageForm.validateFields().then((resp) => {
-      setShowPopUpModal(true);
-      const dateCompared = compareDates(dateTosend, currentDate);
-      if (dateCompared > 1) {
-        setPopUpModalInfo({
-          modalMessage: `The date entered must be from the current one`,
-          alertModalType: "error",
-          modalInfoText: "Error Saving Messages",
-        });
-      } else {
+    MessageForm.validateFields()
+      .then(async (resp) => {
         setDataToSend();
-        submitData(API_VERIFY_MESSAGE, dataTosend).then((resp) => {
-          const { count, rows } = resp.result;
+      })
+      .then(async () => {
+        setShowPopUpModal(true);
+        const reqAddMessage = await submitData(API_ADD_MESSAGES, dataTosend);
 
-          if (count > 0) {
-            const contactsRepeated = [];
-            rows.forEach((row) => {
-              contactsRepeated.push(row.send_to);
-            });
-            setPopUpModalInfo({
-              modalMessage: `The contact(s) ${contactsRepeated.toString()} are already registered for at least one of these messages`,
-              alertModalType: "error",
-              modalInfoText: "Error Saving Messages",
-            });
-          } else {
-            submitData(API_ADD_MESSAGES, dataTosend).then((resp) => {
-              if (resp.result.rowsInserted) {
-                const rowsInserted = resp.result.rowsInserted;
-                const rowsAwaited = associateTo.length * dataTosend.length;
-                if (rowsInserted === rowsAwaited) {
-                  setPopUpModalInfo({
-                    modalMessage: "Saved",
-                    alertModalType: "success",
-                    modalInfoText: "Saving Information",
-                  });
-                  reloadPage();
-                } else {
-                  setPopUpModalInfo({
-                    modalMessage: `${resp.error}`,
-                    alertModalType: "error",
-                    modalInfoText: "Saving Information",
-                  });
-                }
-              } else {
-                setPopUpModalInfo({
-                  modalMessage: "An error has occurred, please try again.",
-                  alertModalType: "error",
-                  modalInfoText: "Saving Information",
-                });
-                setTimeout(() => {
-                  reloadPage();
-                }, 2500);
-              }
-            });
-          }
-        });
-      }
-    });
+        if (reqAddMessage?.result?.rowsInserted > 0) {
+          setPopUpModalInfo({
+            modalMessage: "Saved",
+            alertModalType: "success",
+            modalInfoText: "Saving Information",
+          });
+
+          setTimeout(() => {
+            handleOnCancel();
+          }, 2000);
+        }
+
+        if (reqAddMessage?.message) {
+          setPopUpModalInfo({
+            modalMessage: "Error",
+            alertModalType: "error",
+            modalInfoText: reqAddMessage?.message,
+          });
+        }
+      });
   };
 
   return (

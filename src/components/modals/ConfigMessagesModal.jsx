@@ -38,7 +38,7 @@ const ConfigMessageModal = ({ messages, cbShowModal, currentDate }) => {
 
   return (
     <Modal
-      title="Edit Messages"
+      title="Config Messages"
       visible={isVisible}
       closable={true}
       onCancel={handleOnCancel}
@@ -48,8 +48,8 @@ const ConfigMessageModal = ({ messages, cbShowModal, currentDate }) => {
         <MessagesConfigFooter
           setShowPopUpModal={setShowPopUpModal}
           setPopUpModalInfo={setPopUpModalInfo}
+          handleOnCancel={handleOnCancel}
           messages={messages}
-          currentDate={currentDate}
         />
       }
     >

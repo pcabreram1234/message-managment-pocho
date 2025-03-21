@@ -1,5 +1,5 @@
-import React from "react";
-import { Form, Input, Button, Layout, Image } from "antd";
+import React, { useState } from "react";
+import { Form, Input, Button, Layout, Image, Modal, Spin } from "antd";
 import { LoginOutlined } from "@ant-design/icons";
 import useLoginData from "../../hooks/useLogInData";
 import LogoIcon from "../../assets/logo.svg";
@@ -10,32 +10,40 @@ const LogInForm = () => {
   const [form] = Form.useForm();
   const { Content } = Layout;
 
+  // Estado para controlar el spinner y el modal
+  const [loading, setLoading] = useState(false);
+
   const validateForm = () => {
     form.validateFields().then(() => {
       handleSubmit();
     });
   };
 
-  const handleSubmit = () => {
-    submitData(form.getFieldsValue());
+  const handleSubmit = async () => {
+    try {
+      setLoading(true); // Mostrar el modal con el spinner
+      await submitData(form.getFieldsValue());
+    } finally {
+      setTimeout(() => {
+        setLoading(false); // Ocultar el modal después del envío
+      }, 500);
+    }
   };
 
   return (
     <Layout style={{ height: "100vh" }}>
       <Content
         style={{
-          // padding: "10px 0",
           display: "grid",
           alignItems: "center",
           justifyContent: "center",
-          alignContent: "center",
           textAlign: "center",
         }}
       >
         <Image
           src={LogoIcon}
           preview={false}
-          style={{ width: "100%", maxWidth: "200px", textAlign: "center" }}
+          style={{ width: "100%", maxWidth: "200px" }}
         />
 
         <Form
@@ -47,15 +55,14 @@ const LogInForm = () => {
           onSubmitCapture={validateForm}
         >
           <Form.Item
-            name={"email"}
+            name="email"
             rules={[
               {
-                required: "true",
+                required: true,
                 message: "Please enter a valid email address",
               },
               { type: "email" },
             ]}
-            style={{ alignItems: "center" }}
           >
             <Input
               placeholder="example@email.com"
@@ -65,7 +72,7 @@ const LogInForm = () => {
           </Form.Item>
 
           <Form.Item
-            name={"password"}
+            name="password"
             rules={[
               {
                 required: true,
@@ -73,25 +80,34 @@ const LogInForm = () => {
                 min: 4,
               },
             ]}
-            style={{ alignItems: "center" }}
           >
             <Input.Password placeholder="Your password" />
           </Form.Item>
 
-          <Form.Item style={{ alignItems: "center", textAlign: "center" }}>
-            <Button
-              type="primary"
-              icon={<LoginOutlined />}
-              // onClick={validateForm}
-              htmlType="submit"
-            >
+          <Form.Item>
+            <Button type="primary" icon={<LoginOutlined />} htmlType="submit">
               Log in
             </Button>
           </Form.Item>
         </Form>
+
+        {/* Modal con Spinner */}
+        <Modal
+          visible={loading}
+          footer={null}
+          closable={false}
+          centered
+          maskClosable={false}
+        >
+          <div style={{ textAlign: "center" }}>
+            <Spin size="large" />
+            <p>Logging in, please wait...</p>
+          </div>
+        </Modal>
       </Content>
       <FooterPage />
     </Layout>
   );
 };
+
 export default LogInForm;
