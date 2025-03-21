@@ -27,6 +27,7 @@ const ContactsAssociate = ({ setAssociateTo, associateTo }) => {
 
   // Manejar la selección de contactos
   const handleChange = (selected) => {
+    console.log(selected);
     const formattedContacts = selected.map((contact) => ({
       email: contact.value,
       id: contact.key,
