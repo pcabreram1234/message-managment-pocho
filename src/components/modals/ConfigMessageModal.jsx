@@ -64,7 +64,7 @@ const ConfigMessageModal = ({ id, cbShowModal, currentDate }) => {
   };
 
   const dataToSend = {
-    message_id: id,
+    MessageId: id,
     message: messageToSave,
     categories: categoriesEdit,
     send_to: contacts,

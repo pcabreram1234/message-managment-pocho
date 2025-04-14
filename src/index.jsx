@@ -7,7 +7,7 @@ import { BrowserRouter } from "react-router-dom";
 import * as serviceWorker from "./serviceWorker";
 import { createRoot } from "react-dom/client";
 
-// serviceWorker.unregister();
+serviceWorker.unregister();
 const container = document.getElementById("root");
 
 const root = createRoot(container);

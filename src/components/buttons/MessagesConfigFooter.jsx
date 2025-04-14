@@ -42,7 +42,7 @@ const MessagesConfigFooter = ({
     messages.forEach((message) => {
       dataTosend.push({
         message: message.message,
-        message_id: message.key,
+        MessageId: message.key,
         send_to: associateTo,
         send_on_date: dateTosend,
         categories: message.categories,
