@@ -8,7 +8,7 @@ import EditCategoryButton from "../components/buttons/EditCategoryButton";
 import EditCategoryModal from "../components/modals/EditCategoryModal";
 import DeleteCategoryModal from "../components/modals/DeleteCategoryModal";
 import DeleteCategoriesModal from "../components/modals/DeleteCategoriesModal";
-import FooterPage from "../components/layout/Footer";
+
 const { Header, Content } = Layout;
 const { Title } = Typography;
 const API_URL =
@@ -181,8 +181,6 @@ const Categories = () => {
           columns={tableColumns}
           rowSelection={rowSelection}
         />
-
-        <FooterPage />
       </Content>
 
       {showAddCategoryModal && (

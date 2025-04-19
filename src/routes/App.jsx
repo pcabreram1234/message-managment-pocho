@@ -4,7 +4,7 @@ import Categories from "../containers/Categories";
 import MessageTable from "../containers/MessageTable";
 import ConfigurationPanel from "../containers/ConfigurationPanel";
 import HistoRyPanel from "../containers/HistoryPanel";
-import MenuBar from "../components/layout/MenuBar";
+import AppLayout from "../components/layout/MenuBar";
 import NotFound from "../containers/NotFound";
 import LogInForm from "../components/forms/LoginForm";
 import Users from "../containers/Users";
@@ -15,11 +15,12 @@ import {
   useLocation,
   useHistory,
 } from "react-router-dom";
-import { AuthContext } from "../context/UserContext";
 import AccountVerification from "../containers/AccountVerification";
-import { submitData } from "../utility/submitData";
 import PopUpModal from "../components/modals/PopUpModal";
+import FooterPage from "../components/layout/Footer";
+import { AuthContext } from "../context/UserContext";
 import { openNotification } from "../components/Notification";
+import { submitData } from "../utility/submitData";
 import "../styles/App.css";
 
 const App = () => {
@@ -82,37 +83,48 @@ const App = () => {
       {/* Renderizar el MenuBar solo si el usuario está autenticado */}
       {user && (
         <div style={{ position: "relative", width: "100%" }}>
-          <MenuBar />
+          <AppLayout
+            children={
+              <Switch>
+                {/* Rutas públicas */}
+                <Route exact path="/login" children={<LogInForm />} />
+                <Route
+                  exact
+                  path="/verifyUser"
+                  children={<AccountVerification />}
+                />
+
+                {/* Rutas protegidas */}
+                {user ? (
+                  <>
+                    <Route exact path="/messages" children={<MessageTable />} />
+                    <Route exact path="/contacts" children={<Contacts />} />
+                    <Route exact path="/categories" children={<Categories />} />
+                    <Route exact path="/users" children={<Users />} />
+                    <Route
+                      exact
+                      path="/configurationPanel"
+                      children={<ConfigurationPanel />}
+                    />
+                    <Route
+                      exact
+                      path="/historyPanel"
+                      children={<HistoRyPanel />}
+                    />
+                    <Route exact path="/About" children={<FooterPage />} />
+                  </>
+                ) : (
+                  // Redirigir al login si el usuario no está autenticado
+                  <Redirect to="/login" />
+                )}
+
+                {/* Ruta para la página no encontrada */}
+                <Route path="*" children={<NotFound />} />
+              </Switch>
+            }
+          />
         </div>
       )}
-
-      <Switch>
-        {/* Rutas públicas */}
-        <Route exact path="/login" children={<LogInForm />} />
-        <Route exact path="/verifyUser" children={<AccountVerification />} />
-
-        {/* Rutas protegidas */}
-        {user ? (
-          <>
-            <Route exact path="/messages" children={<MessageTable />} />
-            <Route exact path="/contacts" children={<Contacts />} />
-            <Route exact path="/categories" children={<Categories />} />
-            <Route exact path="/users" children={<Users />} />
-            <Route
-              exact
-              path="/configurationPanel"
-              children={<ConfigurationPanel />}
-            />
-            <Route exact path="/historyPanel" children={<HistoRyPanel />} />
-          </>
-        ) : (
-          // Redirigir al login si el usuario no está autenticado
-          <Redirect to="/login" />
-        )}
-
-        {/* Ruta para la página no encontrada */}
-        <Route path="*" children={<NotFound />} />
-      </Switch>
     </div>
   );
 };

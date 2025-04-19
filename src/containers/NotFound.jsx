@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Typography } from "antd";
 import { Redirect } from "react-router";
-import FooterPage from "../components/layout/Footer";
 
 const NotFound = () => {
   const { Header, Content } = Layout;
@@ -33,7 +32,6 @@ const NotFound = () => {
           alt="Not Found Image"
         />
       </Content>
-      <FooterPage />
     </Layout>
   );
 };

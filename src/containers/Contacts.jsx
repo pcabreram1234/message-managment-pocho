@@ -10,7 +10,7 @@ import ShowMessagesButton from "../components/buttons/ShowMessagesButton";
 import MessagesAssociatedModal from "../components/modals/MessagesAssociatedModal";
 import { PlusCircleFilled, DeleteFilled } from "@ant-design/icons";
 import { fetchData } from "../utility/fetchData";
-import FooterPage from "../components/layout/Footer";
+
 const { Header, Content } = Layout;
 const { Title } = Typography;
 
@@ -226,7 +226,6 @@ const Contacts = () => {
           contact={name}
         />
       )}
-      <FooterPage />
     </Layout>
   );
 };

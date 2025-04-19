@@ -21,7 +21,6 @@ const API_URL =
 const { Content, Header } = Layout;
 const { Title } = Typography;
 const { TextArea } = Input;
-import FooterPage from "../components/layout/Footer";
 
 const MessageTable = () => {
   const messages = fetchData(API_URL);
@@ -136,7 +135,7 @@ const MessageTable = () => {
   };
 
   const renderMessages = () => {
-    console.log(messages)
+    console.log(messages);
     const { result } = messages;
     if (result) {
       result.map((message) => {
@@ -372,7 +371,6 @@ const MessageTable = () => {
           setShowModal={setShowSeveralMessagesToSendModal}
         />
       )}
-      <FooterPage />
     </Layout>
   );
 };

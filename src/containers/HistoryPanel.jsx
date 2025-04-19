@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HistoryMessageTable from "../components/layout/HistoryMessageTable";
 import SearchInput from "../components/SearchInput";
-import FooterPage from "../components/layout/Footer";
 import { fetchData } from "../utility/fetchData";
 import {
   filterTableInput,
@@ -105,7 +104,7 @@ const HistoRyPanel = () => {
           sendToFilter={sendToFilter}
         />
       </Content>
-      <FooterPage />
+
     </Layout>
   );
 };

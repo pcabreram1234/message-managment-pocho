@@ -5,7 +5,7 @@ import { Layout, Typography } from "antd";
 import AddUserModal from "../components/modals/AddUserModal";
 import AddUserButton from "../components/buttons/AddUserButton";
 
-const { Header, Footer, Content } = Layout;
+const { Header, Content } = Layout;
 const { Title } = Typography;
 const Users = () => {
   const [showEditUserModal, setShowEditUserModal] = useState(false);
