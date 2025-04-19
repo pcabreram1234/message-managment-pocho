@@ -145,7 +145,7 @@ const renderMessages = (
 
       /* En dado caso que el mensaje tenga categorias asociadas
        agregar a la variable de filtros temporal*/
-      if (message.categories.length > 0) {
+      if (message.categories?.length > 0) {
         for (const cC of message.categories) {
           categoriesTmpFilter.push(cC.categorie_name);
         }
