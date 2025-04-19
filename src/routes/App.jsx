@@ -18,6 +18,7 @@ import {
 import AccountVerification from "../containers/AccountVerification";
 import PopUpModal from "../components/modals/PopUpModal";
 import FooterPage from "../components/layout/Footer";
+import Dashboard from "../containers/Dashboard";
 import { AuthContext } from "../context/UserContext";
 import { openNotification } from "../components/Notification";
 import { submitData } from "../utility/submitData";
@@ -97,6 +98,7 @@ const App = () => {
                 {/* Rutas protegidas */}
                 {user ? (
                   <>
+                    <Route exact path="/dashboard" children={<Dashboard />} />
                     <Route exact path="/messages" children={<MessageTable />} />
                     <Route exact path="/contacts" children={<Contacts />} />
                     <Route exact path="/categories" children={<Categories />} />

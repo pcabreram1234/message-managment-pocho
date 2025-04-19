@@ -12,6 +12,7 @@ import {
   MenuFoldOutlined,
   SmileOutlined,
   DashboardOutlined,
+  NotificationFilled,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import UserInfo from "../layout/UserInfo";
@@ -41,12 +42,9 @@ const AppLayout = ({ children }) => {
         collapsible
         collapsed={collapsed}
         onCollapse={setCollapsed}
-        // theme="dark"
-        style={
-          {
-            // backgroundColor: "transparent",
-          }
-        }
+        style={{
+          color: "white",
+        }}
       >
         {/* Branding */}
         <div
@@ -86,10 +84,9 @@ const AppLayout = ({ children }) => {
 
         <Menu mode="inline" defaultSelectedKeys={["Dashboard"]} theme="dark">
           <Menu.Item key="Dashboard" icon={<DashboardOutlined />}>
-            <Link to="/Dashboard">
+            <Link to="/dashboard">
               <Text style={{ color: "white" }}>Dashboard</Text>
             </Link>
-            
           </Menu.Item>
           <Menu.Item key="Messages" icon={<MessageFilled />}>
             <Link to="/messages">
@@ -106,6 +103,12 @@ const AppLayout = ({ children }) => {
           <Menu.Item key="Contacts" icon={<ContactsFilled />}>
             <Link to="/contacts">
               <Text style={{ color: "white" }}>Contacts</Text>
+            </Link>
+          </Menu.Item>
+
+          <Menu.Item key="campaigns" icon={<NotificationFilled />}>
+            <Link to="/campaigns">
+              <Text style={{ color: "white" }}>Campaigns</Text>
             </Link>
           </Menu.Item>
 
