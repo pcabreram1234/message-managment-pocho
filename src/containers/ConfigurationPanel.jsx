@@ -29,10 +29,8 @@ const ConfigurationPanel = () => {
 
   return (
     <Layout>
-      <Header>
-        <Title style={{ color: "white", textAlign: "center" }}>
-          Messages Delivery Configuration
-        </Title>
+      <Header style={{ background: "transparent" }}>
+        <Title style={{ textAlign: "center" }}>Schedule messages</Title>
       </Header>
 
       <Content style={{ margin: "5px 0 5px 5px" }}>

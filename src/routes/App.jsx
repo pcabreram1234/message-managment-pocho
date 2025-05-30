@@ -8,17 +8,19 @@ import AppLayout from "../components/layout/MenuBar";
 import NotFound from "../containers/NotFound";
 import LogInForm from "../components/forms/LoginForm";
 import Users from "../containers/Users";
-import {
-  Route,
-  Switch,
-  Redirect,
-  useLocation,
-  useHistory,
-} from "react-router-dom";
 import AccountVerification from "../containers/AccountVerification";
 import PopUpModal from "../components/modals/PopUpModal";
 import FooterPage from "../components/layout/Footer";
 import Dashboard from "../containers/Dashboard";
+import Campaigns from "../containers/Campaigns";
+import Settings from "../containers/Settings";
+import {
+  Route,
+  Routes,
+  Navigate,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { AuthContext } from "../context/UserContext";
 import { openNotification } from "../components/Notification";
 import { submitData } from "../utility/submitData";
@@ -29,7 +31,7 @@ const App = () => {
   const { user, handleUser } = state; // Obtiene el usuario y la función para manejar el estado del usuario
   const [loading, setLoading] = useState(true); // Estado de carga
   const location = useLocation();
-  const history = useHistory(); // Hook para redirecciones programáticas
+  const history = useNavigate(); // Hook para redirecciones programáticas
 
   // useEffect para verificar la autenticación solo al recargar la página
   useEffect(() => {
@@ -64,7 +66,7 @@ const App = () => {
 
   useEffect(() => {
     if (user && location.pathname === "/login") {
-      history.replace("/messages");
+      history("/dashboard");
     }
   }, [user, location.pathname, history]);
 
@@ -81,51 +83,39 @@ const App = () => {
 
   return (
     <div className="App_container">
-      {/* Renderizar el MenuBar solo si el usuario está autenticado */}
       {user && (
         <div style={{ position: "relative", width: "100%" }}>
           <AppLayout
-            children={
-              <Switch>
-                {/* Rutas públicas */}
-                <Route exact path="/login" children={<LogInForm />} />
+            children={[
+              <Routes>
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route exact path="/messages" element={<MessageTable />} />
+                <Route exact path="/contacts" element={<Contacts />} />
+                <Route exact path="/categories" element={<Categories />} />
+                <Route exact path="/users" element={<Users />} />
+                <Route exact path="/campaigns" element={<Campaigns />} />
                 <Route
                   exact
-                  path="/verifyUser"
-                  children={<AccountVerification />}
+                  path="/automations"
+                  element={<ConfigurationPanel />}
                 />
-
-                {/* Rutas protegidas */}
-                {user ? (
-                  <>
-                    <Route exact path="/dashboard" children={<Dashboard />} />
-                    <Route exact path="/messages" children={<MessageTable />} />
-                    <Route exact path="/contacts" children={<Contacts />} />
-                    <Route exact path="/categories" children={<Categories />} />
-                    <Route exact path="/users" children={<Users />} />
-                    <Route
-                      exact
-                      path="/configurationPanel"
-                      children={<ConfigurationPanel />}
-                    />
-                    <Route
-                      exact
-                      path="/historyPanel"
-                      children={<HistoRyPanel />}
-                    />
-                    <Route exact path="/About" children={<FooterPage />} />
-                  </>
-                ) : (
-                  // Redirigir al login si el usuario no está autenticado
-                  <Redirect to="/login" />
-                )}
-
-                {/* Ruta para la página no encontrada */}
-                <Route path="*" children={<NotFound />} />
-              </Switch>
-            }
+                <Route exact path="/settings" element={<Settings />} />
+                <Route exact path="/historyPanel" element={<HistoRyPanel />} />
+                <Route exact path="/About" element={<FooterPage />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>,
+            ]}
           />
         </div>
+      )}
+
+      {!user && (
+        <Routes>
+          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route exact path="/login" element={<LogInForm />} />
+          <Route exact path="/verifyUser" element={<AccountVerification />} />
+        </Routes>
       )}
     </div>
   );

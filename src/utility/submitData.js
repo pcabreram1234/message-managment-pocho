@@ -19,10 +19,16 @@ export const submitData = async (API, data, METHOD = "POST") => {
 
       if (req.ok) {
         const rawToken = req.headers.get("token");
+        const contentType = req.headers.get("content-type");
         if (rawToken) {
           window.localStorage.setItem("token", rawToken);
-          const res = await req.json();
-          return res;
+          if (contentType && contentType.includes("application/json")) {
+            const res = await req.json();
+            return res;
+          } else {
+            const res = await req.text();
+            return res;
+          }
         } else {
           openNotification("Error", "Please log in again", "error");
         }
@@ -44,26 +50,22 @@ export const submitData = async (API, data, METHOD = "POST") => {
       });
       if (req.ok) {
         const rawToken = req.headers.get("token");
+        const contentType = req.headers.get("content-type");
         if (rawToken) {
-          console.log("rawToken", rawToken);
-          console.log(req)
-          window.localStorage.setItem("token", rawToken.toString())
-          let resp = await req.json();
-          return resp;
+          window.localStorage.setItem("token", rawToken.toString());
+          if (contentType && contentType.includes("application/json")) {
+            const res = await req.json();
+            return res;
+          } else {
+            const res = await req.text();
+            return res;
+          }
         } else {
           // window.localStorage.clear();
           openNotification("Error", "Please log in again", "error");
         }
-      } else {
-        // Manejar el caso de error con la respuesta de error JSON
-        // const errorResp = await req.json();
-        // window.localStorage.clear();
-        // openNotification("Error", errorResp?.message, "error");
-        // return errorResp;
       }
     } catch (error) {
-      // window.localStorage.clear();
-      // openNotification("Error", error?.message, "error");
       throw new Error(error);
     }
   }

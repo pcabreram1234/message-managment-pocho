@@ -1,13 +1,13 @@
 import { useContext } from "react";
 import { openNotification } from "../components/Notification";
 import { AuthContext } from "../context/UserContext";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import * as jose from "jose";
 
 const useSubmitData = () => {
   const userState = useContext(AuthContext);
   const { handleUser } = userState;
-  const history = useHistory();
+  const history = useNavigate();
 
   const submitData = async (API, data, METHOD = "POST") => {
     const headers = {
@@ -31,7 +31,7 @@ const useSubmitData = () => {
           return resp;
         } else {
           handleUser(null);
-          history.push("/login");
+          history("/login");
         }
       }
       return resp;
@@ -42,7 +42,7 @@ const useSubmitData = () => {
         (error.error ?? error.message) || "Login failed",
         "error"
       );
-      history.push("/login");
+      history("/login");
     }
   };
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Form, Input, Button, Select } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { submitData } from "../../utility/submitData";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import PopUpModal from "../modals/PopUpModal";
 
 const AddUserForm = () => {
@@ -15,7 +15,7 @@ const AddUserForm = () => {
   const [alertModalType, setAlertModalType] = useState("");
   const [modalMessage, setModalMessage] = useState("");
   const [modalInfoText, setModalInfoText] = useState("");
-  const history = useHistory();
+  const history = useNavigate();
   return (
     <Form
       style={{
@@ -110,7 +110,7 @@ const AddUserForm = () => {
                     setShowModal(false);
                   }, 1200);
                   setTimeout(() => {
-                    history.go(0);
+                    history(-1);
                   }, 500);
                 }
               }

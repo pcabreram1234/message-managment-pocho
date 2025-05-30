@@ -13,6 +13,7 @@ import {
   SmileOutlined,
   DashboardOutlined,
   NotificationFilled,
+  RocketFilled,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import UserInfo from "../layout/UserInfo";
@@ -44,6 +45,12 @@ const AppLayout = ({ children }) => {
         onCollapse={setCollapsed}
         style={{
           color: "white",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          height: "100vh",
+          zIndex: 100,
+          overflow: "auto",
         }}
       >
         {/* Branding */}
@@ -106,15 +113,21 @@ const AppLayout = ({ children }) => {
             </Link>
           </Menu.Item>
 
+          <Menu.Item key="automations" icon={<RocketFilled />}>
+            <Link to="/automations">
+              <Text style={{ color: "white" }}>Automations</Text>
+            </Link>
+          </Menu.Item>
+
           <Menu.Item key="campaigns" icon={<NotificationFilled />}>
             <Link to="/campaigns">
               <Text style={{ color: "white" }}>Campaigns</Text>
             </Link>
           </Menu.Item>
 
-          <Menu.Item key="Configuration Panel" icon={<SettingFilled />}>
-            <Link to="/configurationPanel">
-              <Text style={{ color: "white" }}>Configuration</Text>
+          <Menu.Item key="Settings Panel" icon={<SettingFilled />}>
+            <Link to="/settings">
+              <Text style={{ color: "white" }}>Settings</Text>
             </Link>
           </Menu.Item>
 
@@ -153,7 +166,7 @@ const AppLayout = ({ children }) => {
       </Sider>
 
       {/* Área de contenido */}
-      <Layout style={{ padding: "10px" }}>
+      <Layout style={{marginLeft: collapsed ? 80 : 200, transition: "margin-left 0.2s", padding:"10px"  }}>
         <Content>{children}</Content>
       </Layout>
     </Layout>

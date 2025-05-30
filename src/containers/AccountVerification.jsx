@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Spin, Result, Button } from "antd";
-import { useLocation, useHistory } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 
 const AccountVerification = () => {
   const location = useLocation();
@@ -8,7 +8,7 @@ const AccountVerification = () => {
   const token = searchParams.get("token");
   const [loading, setLoading] = useState(true);
   const [verificationStatus, setVerificationStatus] = useState("error"); // null, "success", "error", "expired"
-  const navigate = useHistory();
+  const navigate = useNavigate();
   const API_URL =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
@@ -33,7 +33,7 @@ const AccountVerification = () => {
   }, [token]);
 
   const handleRedirect = () => {
-    navigate.push("/login"); // Redirige al login u otra página
+    navigate("/login"); // Redirige al login u otra página
   };
 
   if (loading) {

@@ -3,7 +3,6 @@ import { Form, Input, Button, Layout, Image, Modal, Spin } from "antd";
 import { LoginOutlined } from "@ant-design/icons";
 import useLoginData from "../../hooks/useLogInData";
 import LogoIcon from "../../assets/logo.svg";
-import FooterPage from "../layout/Footer";
 
 const LogInForm = () => {
   const { submitData } = useLoginData();
@@ -106,7 +105,6 @@ const LogInForm = () => {
           </div>
         </Modal>
       </Content>
-      <FooterPage />
     </Layout>
   );
 };
