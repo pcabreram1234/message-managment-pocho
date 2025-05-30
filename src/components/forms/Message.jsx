@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Input, Form } from "antd";
+import { Input, Form, DatePicker } from "antd";
 import CurrentCategories from "../buttons/CurrentCategories";
 import ContactsAssociate from "../buttons/ContactsAsociate";
 import { validateForm } from "../../utility/Funtions";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
 
 const { TextArea } = Input;
 
@@ -105,10 +108,11 @@ const Message = ({ data, handleMessageInfo, config, setFieldsCompleted }) => {
           initialValue={dateOnSend}
           rules={[{ required: true }]}
         >
-          <Input
-            type={"datetime-local"}
+          <DatePicker
+            format="YYYY-MM-DD HH:mm:ss"
+            showTime={{ defaultValue: dayjs("00:00:00", "HH:mm:ss") }}
             onChange={(e) => {
-              handleInput(e, setDateOnSend);
+              setDateOnSend(e.toISOString());
             }}
           />
         </Form.Item>
