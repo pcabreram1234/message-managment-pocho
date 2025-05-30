@@ -1,14 +1,13 @@
 import { useContext } from "react";
 import { openNotification } from "../components/Notification";
 import { AuthContext } from "../context/UserContext";
-import { useHistory } from "react-router";
-import * as jose from "jose";
+import { useNavigate } from "react-router";
 
 const useLogOffData = () => {
   const userState = useContext(AuthContext);
   const { handleUser } = userState;
   const token = window.localStorage.getItem("token");
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const logOffData = async (API, data, METHOD = "POST") => {
     const headers = {
@@ -29,7 +28,7 @@ const useLogOffData = () => {
         if (resp?.message) {
           window.localStorage.clear();
           handleUser(null);
-          history.push("/login");
+          navigate("/login");
           openNotification("Info", resp?.message || "Login failed", "success");
         }
       }

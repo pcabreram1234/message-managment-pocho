@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Modal, Form, Input, Button, Select } from "antd";
 import { SaveOutlined } from "@ant-design/icons";
 import PopUpModal from "./PopUpModal";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import useSubmitData from "../../hooks/useSubmitData";
 
 const AddUserModal = ({ isVisible, cb }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   /* Modals states */
   const [showModal, setShowModal] = useState(isVisible);
   const [showPopUpModal, setShowPopUpModal] = useState(false);
@@ -46,7 +46,7 @@ const AddUserModal = ({ isVisible, cb }) => {
           setShowModal(false);
         }, 1200);
         setTimeout(() => {
-          history.go(0);
+          navigate(0);
         }, 500);
       }
     });

@@ -2,12 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Modal, Form, Input,Select, Spin, Alert, Typography } from "antd";
 import { useHookstate } from "@hookstate/core";
 import { userToEdit } from "../../context/userHookState";
-import { useHistory } from "react-router";
 import { saveDataFuntion } from "../../utility/Funtions";
 const {Text}=Typography
 
 const EditUserModal = ({ isVisible, cb }) => {
-  const history = useHistory();
   /* Modals states */
   const [showModal, setShowModal] = useState(isVisible);
   const [showPopUpModal, setShowPopUpModal] = useState(false);

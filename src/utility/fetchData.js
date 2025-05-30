@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/UserContext";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import * as jose from "jose";
 import * as serviceWorker from "../serviceWorker";
 const fetchData = (API, method = "GET") => {
@@ -8,7 +8,7 @@ const fetchData = (API, method = "GET") => {
   const { handleUser } = userState;
 
   const [data, setData] = useState([]);
-  const location = useHistory();
+  const location = useNavigate();
   const token = window.localStorage.getItem("token");
   const headers = {
     "Content-type": "application/json; charset=UTF-8",
@@ -30,7 +30,7 @@ const fetchData = (API, method = "GET") => {
           return resp.json();
         } else {
           serviceWorker.unregister();
-          location.push("/login");
+          location("/login");
           // window.localStorage.clear();
           handleUser(null);
           setData(null);

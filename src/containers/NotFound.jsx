@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Typography } from "antd";
-import { Redirect } from "react-router";
+import { useNavigate } from "react-router";
 import FooterPage from "../components/layout/Footer";
 
 const NotFound = () => {
   const { Header, Content } = Layout;
   const { Title, Text } = Typography;
   const [counter, setCounter] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setInterval(() => {
@@ -24,7 +25,7 @@ const NotFound = () => {
           This page does not exist in 3 seconds the page will be redirect to the
           main pange: <Text strong>{counter}</Text>
         </Title>
-        {counter === 3 && <Redirect to={"/messages"} />}
+        {counter === 3 && navigate("/messages")}
       </Header>
 
       <Content style={{ display: "flex", justifyContent: "center" }}>

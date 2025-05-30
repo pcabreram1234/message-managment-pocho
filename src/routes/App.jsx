@@ -8,13 +8,7 @@ import MenuBar from "../components/layout/MenuBar";
 import NotFound from "../containers/NotFound";
 import LogInForm from "../components/forms/LoginForm";
 import Users from "../containers/Users";
-import {
-  Route,
-  Switch,
-  Redirect,
-  useLocation,
-  useHistory,
-} from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/UserContext";
 import AccountVerification from "../containers/AccountVerification";
 import { submitData } from "../utility/submitData";
@@ -26,8 +20,8 @@ const App = () => {
   const state = useContext(AuthContext);
   const { user, handleUser } = state; // Obtiene el usuario y la función para manejar el estado del usuario
   const [loading, setLoading] = useState(true); // Estado de carga
-  const location = useLocation();
-  const history = useHistory(); // Hook para redirecciones programáticas
+  const navigate = useNavigate();
+  const location = useLocation(); // Hook para redirecciones programáticas
 
   // useEffect para verificar la autenticación solo al recargar la página
   useEffect(() => {
@@ -62,9 +56,9 @@ const App = () => {
 
   useEffect(() => {
     if (user && location.pathname === "/login") {
-      history.replace("/messages");
+      navigate("/messages");
     }
-  }, [user, location.pathname, history]);
+  }, [user, location.pathname, navigate]);
 
   // Mientras se verifica la autenticación, muestra un indicador de carga
   if (loading)
@@ -86,33 +80,33 @@ const App = () => {
         </div>
       )}
 
-      <Switch>
+      <Routes>
         {/* Rutas públicas */}
-        <Route exact path="/login" children={<LogInForm />} />
-        <Route exact path="/verifyUser" children={<AccountVerification />} />
+        <Route exact path="/login" element={<LogInForm />} />
+        <Route exact path="/verifyUser" element={<AccountVerification />} />
 
         {/* Rutas protegidas */}
         {user ? (
           <>
-            <Route exact path="/messages" children={<MessageTable />} />
-            <Route exact path="/contacts" children={<Contacts />} />
-            <Route exact path="/categories" children={<Categories />} />
-            <Route exact path="/users" children={<Users />} />
+            <Route exact path="/messages" element={<MessageTable />} />
+            <Route exact path="/contacts" element={<Contacts />} />
+            <Route exact path="/categories" element={<Categories />} />
+            <Route exact path="/users" element={<Users />} />
             <Route
               exact
               path="/configurationPanel"
-              children={<ConfigurationPanel />}
+              element={<ConfigurationPanel />}
             />
-            <Route exact path="/historyPanel" children={<HistoRyPanel />} />
+            <Route exact path="/historyPanel" element={<HistoRyPanel />} />
           </>
         ) : (
           // Redirigir al login si el usuario no está autenticado
-          <Redirect to="/login" />
+          navigate("/login")
         )}
 
         {/* Ruta para la página no encontrada */}
-        <Route path="*" children={<NotFound />} />
-      </Switch>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </div>
   );
 };

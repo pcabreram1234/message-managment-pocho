@@ -1,13 +1,13 @@
 import React, { useContext, useEffect } from "react";
 import { openNotification } from "../components/Notification";
 import { AuthContext } from "../context/UserContext";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router";
 import * as jose from "jose";
 
 const useLoginData = () => {
   const userState = useContext(AuthContext);
   const { handleUser, user } = userState;
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const API =
     import.meta.env.VITE_API_URL +
@@ -61,8 +61,7 @@ const useLoginData = () => {
 
   useEffect(() => {
     if (user) {
-
-      history.push("/messages");
+      navigate("/messages");
     }
   }, [user]);
 
