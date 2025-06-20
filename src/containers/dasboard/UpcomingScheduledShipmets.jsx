@@ -44,6 +44,11 @@ const UpcomingScheduledShipmets = () => {
     handleDateFetching
   );
 
+  useActionEffect(
+    { type: "update", target: "dashboard-individual-messages-about-to-sent" },
+    handleDateFetching
+  );
+
   return (
     <Layout>
       <Header style={{ backgroundColor: "transparent" }}>

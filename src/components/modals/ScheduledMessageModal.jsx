@@ -11,6 +11,7 @@ import {
 import useSubimitData from "../../hooks/useSubmitData";
 import dayjs from "dayjs";
 import { openNotification } from "../Notification";
+import { useActionContext } from "../../context/ActionContext";
 
 const { RangePicker } = DatePicker;
 const { Title } = Typography;
@@ -28,6 +29,7 @@ const ScheduleMessageModal = ({
   const [loading, setLoading] = useState(true);
   const [form] = Form.useForm();
   const { submitData } = useSubimitData();
+  const { dispatchAction } = useActionContext;
 
   const API_URL =
     import.meta.env.VITE_API_URL +
@@ -79,6 +81,8 @@ const ScheduleMessageModal = ({
             "success"
           );
           cbShowModal(false);
+          dispatchAction("update", "dashboard-overview");
+          dispatchAction("update", "dashboard-individual-messages-about-to-sent");
           setTimeout(() => {
             cbShowParentModal();
           }, 500);
