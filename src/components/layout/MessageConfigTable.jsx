@@ -17,6 +17,13 @@ const MessageConfigTable = ({
   const messages = fetchData(API_URL);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
+  // Table States
+  const [pagination, setPagination] = useState({
+    pageSize: 10,
+    defaultPageSize: 10,
+    showSizeChanger: true,
+  });
+
   let categoriesFilter = [];
   let categoriesTmpFilter = [];
   let messageTmpFilter = [];
@@ -145,6 +152,11 @@ const MessageConfigTable = ({
       dataSource={dataSource}
       columns={columns}
       rowSelection={rowSelection}
+      pagination={pagination}
+      scroll={{ x: 300, y: 100 * 5 }}
+      onChange={(e) => {
+        setPagination(e);
+      }}
     />
   );
 };

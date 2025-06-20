@@ -3,7 +3,7 @@ import MessageConfigTable from "../components/layout/MessageConfigTable";
 import ConfigMessageModal from "../components/modals/ConfigMessageModal";
 import ConfigurateButton from "../components/buttons/ConfigurateButton";
 import ConfigMessagesModal from "../components/modals/ConfigMessagesModal";
-import { Layout, Typography } from "antd";
+import { Layout, Typography, Row, Col } from "antd";
 import { fetchData } from "../utility/fetchData";
 
 const { Header, Content } = Layout;
@@ -16,6 +16,7 @@ const ConfigurationPanel = () => {
   const [showConfigurationMessagesModal, setShowConfigurationMessagesModal] =
     useState(false);
   const [messages, setMesssages] = useState([]);
+  
 
   const API_GET_DATE =
     import.meta.env.VITE_API_URL +
@@ -30,13 +31,27 @@ const ConfigurationPanel = () => {
   return (
     <Layout>
       <Header style={{ background: "transparent" }}>
-        <Title style={{ textAlign: "center" }}>Schedule messages</Title>
+        <Row
+          gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
+          justify="start"
+          align="middle"
+          style={{ width: "100%", height: "100%" }}
+        >
+          <Col style={{ position: "relative" }}>
+            <Title level={3} style={{ margin: "auto" }}>
+              Messages Automations
+            </Title>
+          </Col>
+
+          <Col style={{ position: "relative" }}>
+            {showConfigurationButton && (
+              <ConfigurateButton cbModal={setShowConfigurationMessagesModal} />
+            )}
+          </Col>
+        </Row>
       </Header>
 
       <Content style={{ margin: "5px 0 5px 5px" }}>
-        {showConfigurationButton && (
-          <ConfigurateButton cbModal={setShowConfigurationMessagesModal} />
-        )}
         <MessageConfigTable
           handleData={handleData}
           setShowModal={setShowConfigurationModal}
