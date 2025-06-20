@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tag, Layout, Typography, Input, Button, Col } from "antd";
+import { Table, Tag, Layout, Typography, Input, Button, Col, Row } from "antd";
 import { fetchData } from "../utility/fetchData";
 import { deleteDuplicateInFilter } from "../utility/Funtions";
 import { DeleteFilled, PlusCircleFilled } from "@ant-design/icons";
@@ -47,6 +47,13 @@ const MessageTable = () => {
   const [modalMessage, setModalMessage] = useState([]);
   const [alertModalType, setAlertModalType] = useState();
   const [modalInfoText, setModalInfoText] = useState();
+
+  // Table States
+  const [pagination, setPagination] = useState({
+    pageSize: 5,
+    defaultPageSize: 5,
+    showSizeChanger: true,
+  });
 
   let categoriesFilter = [];
   let associatedFilter = [];
@@ -273,51 +280,78 @@ const MessageTable = () => {
 
   return (
     <Layout>
-      <Header>
-        <Title style={{ color: "white", textAlign: "center" }}>Messages</Title>
+      <Header
+        style={{
+          backgroundColor: "transparent",
+        }}
+      >
+        <Row
+          gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
+          justify="start"
+          align="middle"
+        >
+          <Col>
+            <Title level={2} style={{ margin: 0 }}>
+              Messages
+            </Title>
+          </Col>
+          <Col>
+            <Row
+              gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
+              align="middle"
+              justify="center"
+            >
+              <Col>
+                <Button
+                  type="primary"
+                  style={{
+                    color: "white",
+                    backgroundColor: "green",
+                    borderColor: "transparent",
+                  }}
+                  onClick={addMessageOnOk}
+                >
+                  <PlusCircleFilled /> Add Message
+                </Button>
+              </Col>
+
+              <Col>
+                {showDeleteButton && (
+                  <Button
+                    type="default"
+                    style={{
+                      color: "white",
+                      backgroundColor: "rgb(237 43 43)",
+                      borderColor: "transparent",
+                    }}
+                    onClick={onkDeleteButton}
+                  >
+                    <DeleteFilled /> Delete Messages
+                  </Button>
+                )}
+              </Col>
+            </Row>
+          </Col>
+
+          <Col>
+            {showSendToButton && (
+              <SendButton setShowModal={setShowSeveralMessagesToSendModal} />
+            )}
+          </Col>
+        </Row>
       </Header>
 
-      <Content
-        style={
-          {
-            // display: "flex",
-            // columnGap: "5px",
-            // margin: "5px 0 5px 5px",
-          }
-        }
-      >
-        <Button
-          type="primary"
-          style={{
-            color: "white",
-            backgroundColor: "green",
-            borderColor: "transparent",
-          }}
-          onClick={addMessageOnOk}
-        >
-          <PlusCircleFilled /> Add Message
-        </Button>
-        {showDeleteButton && (
-          <Button
-            type="default"
-            style={{
-              color: "white",
-              backgroundColor: "rgb(237 43 43)",
-              borderColor: "transparent",
-            }}
-            onClick={onkDeleteButton}
-          >
-            <DeleteFilled /> Delete Messages
-          </Button>
-        )}
-        {showSendToButton && (
-          <SendButton setShowModal={setShowSeveralMessagesToSendModal} />
-        )}
+      <Content>
         <Table
           loading={dataSource?.length > 0 ? false : true}
           dataSource={dataSource}
           columns={columns}
           rowSelection={rowSelection}
+          pagination={pagination}
+          scroll={{ x: "max-content", y: 100 * 5 }}
+          onChange={(e) => {
+            setPagination(e);
+          }}
         />
       </Content>
 
