@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Typography, Table, Tag, Button } from "antd";
+import { Layout, Typography, Table, Row, Col, Button } from "antd";
 import AddCategoryModal from "../components/modals/AddCategoryModal";
 import { fetchData } from "../utility/fetchData";
 import { PlusCircleFilled, DeleteFilled } from "@ant-design/icons";
@@ -27,6 +27,13 @@ const Categories = () => {
   const [associateTo, setAssociateTo] = useState([]);
   let categories = fetchData(API_URL);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+
+  // Table States
+  const [pagination, setPagination] = useState({
+    pageSize: 10,
+    defaultPageSize: 10,
+    showSizeChanger: true,
+  });
 
   let filterValues = [];
   let tableDataSource = [];
@@ -138,10 +145,51 @@ const Categories = () => {
 
   return (
     <Layout>
-      <Header>
-        <Title style={{ color: "white", textAlign: "center" }}>
-          Categories Managment
-        </Title>
+      <Header
+        style={{
+          backgroundColor: "transparent",
+        }}
+      >
+        <Row
+          gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
+          justify="start"
+          align="middle"
+        >
+          <Col>
+            <Title level={3} style={{ margin: "auto" }}>
+              Categories
+            </Title>
+          </Col>
+
+          <Col>
+            <Button
+              type="primary"
+              onClick={handleShowCategoryModal}
+              style={{
+                color: "white",
+                backgroundColor: "green",
+                borderColor: "transparent",
+              }}
+            >
+              <PlusCircleFilled /> Add Category
+            </Button>
+          </Col>
+          <Col>
+            {showDeleteButton && (
+              <Button
+                type="default"
+                onClick={handleDeleteCategories}
+                style={{
+                  color: "white",
+                  backgroundColor: "rgb(237 43 43)",
+                  borderColor: "transparent",
+                }}
+              >
+                <DeleteFilled /> Delete Categories
+              </Button>
+            )}
+          </Col>
+        </Row>
       </Header>
 
       <Content
@@ -149,37 +197,16 @@ const Categories = () => {
           margin: "5px 0 5px 5px",
         }}
       >
-        <Button
-          type="primary"
-          onClick={handleShowCategoryModal}
-          style={{
-            color: "white",
-            backgroundColor: "green",
-            borderColor: "transparent",
-          }}
-        >
-          <PlusCircleFilled /> Add Category
-        </Button>
-
-        {showDeleteButton && (
-          <Button
-            type="default"
-            onClick={handleDeleteCategories}
-            style={{
-              color: "white",
-              backgroundColor: "rgb(237 43 43)",
-              borderColor: "transparent",
-            }}
-          >
-            <DeleteFilled /> Delete Categories
-          </Button>
-        )}
-
         <Table
           loading={tableDataSource?.length > 0 ? false : true}
           dataSource={tableDataSource}
           columns={tableColumns}
           rowSelection={rowSelection}
+          pagination={pagination}
+          scroll={{ x: "max-content", y: 100 * 5 }}
+          onChange={(e) => {
+            setPagination(e);
+          }}
         />
       </Content>
 
