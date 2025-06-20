@@ -11,6 +11,7 @@ import {
   Typography,
 } from "antd";
 import { SearchOutlined, ReloadOutlined } from "@ant-design/icons";
+import { fetchData } from "../utility/fetchData";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -20,9 +21,16 @@ const CampaignFilters = ({ filters, setFilters, onSearch, onReset }) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
+  const API_URL =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "categories";
+
+  const categories = fetchData(API_URL);
+
   return (
     <div style={{ marginBottom: 24 }}>
-      <Typography.Title level={3}>Filters</Typography.Title>
+      <Typography.Title level={4}>Filters</Typography.Title>
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} md={6}>
           <Input
@@ -41,8 +49,9 @@ const CampaignFilters = ({ filters, setFilters, onSearch, onReset }) => {
             allowClear
             style={{ width: "100%" }}
           >
-            <Option value="Activa">Activa</Option>
-            <Option value="Inactiva">Inactiva</Option>
+            <Option value="active">Active</Option>
+            <Option value="pending">Pending</Option>
+            <Option value="paused">Paused</Option>
           </Select>
         </Col>
 
@@ -54,9 +63,11 @@ const CampaignFilters = ({ filters, setFilters, onSearch, onReset }) => {
             allowClear
             style={{ width: "100%" }}
           >
-            <Option value="promo">Promocional</Option>
-            <Option value="informativa">Informativa</Option>
-            <Option value="urgente">Urgente</Option>
+            {categories?.categories?.map((c) => (
+              <Option key={c?.id} value={c?.categorie_name}>
+                {c?.categorie_name}
+              </Option>
+            ))}
           </Select>
         </Col>
 
