@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Typography, Row, Col } from "antd";
 import CamapignsAboutTosent from "../../components/dashboard/CamapignsAboutTosent";
 import PendingMessagesTable from "../../components/dashboard/PendingMessagesTable";
-import { fetchData } from "../../utility/fetchData";
+import { useActionEffect } from "../../hooks/useActionEffect";
+import { submitData } from "../../utility/submitData";
 
 const { Content, Header } = Layout;
 const UpcomingScheduledShipmets = () => {
@@ -16,18 +17,38 @@ const UpcomingScheduledShipmets = () => {
     import.meta.env.VITE_API_URL_ROUTER +
     "configuration/findMessagesAboutToSent";
 
-  const campaignsAboutToSentData = fetchData(
-    API_CAMPAIGNS_ABOUT_TO_SENT,
-    "GET"
+  const [campaignsAboutToSentData, setCampaignsAboutToSentData] = useState([]);
+  const [messagesAboutToSent, setMessagesAboutToSent] = useState([]);
+
+  const handleDateFetching = async () => {
+    const campaignFetching = await submitData(
+      API_CAMPAIGNS_ABOUT_TO_SENT,
+      "",
+      "GET"
+    );
+    const messagesAboutToSentFething = await submitData(
+      API_MESSAGES_ABOUT_TO_SENT,
+      "",
+      "GET"
+    );
+    setCampaignsAboutToSentData(campaignFetching);
+    setMessagesAboutToSent(messagesAboutToSentFething);
+  };
+
+  useEffect(() => {
+    handleDateFetching();
+  }, []);
+
+  useActionEffect(
+    { type: "update", target: "dashboard-overview" },
+    handleDateFetching
   );
 
-  const messagesAboutToSent = fetchData(API_MESSAGES_ABOUT_TO_SENT, "GET");
-
-    return (
+  return (
     <Layout>
       <Header style={{ backgroundColor: "transparent" }}>
         <Typography.Title level={3}>
-        ⏳Upcoming scheduled shipments
+          ⏳Upcoming scheduled shipments
         </Typography.Title>
       </Header>
       <Content>

@@ -102,8 +102,9 @@ const LaunchCampaignModal = ({ visible, onCancel, campaign }) => {
         </Descriptions.Item>
       </Descriptions>
       <Divider />
-      <Text strong>Message preview:</Text>
+      <Text strong>Message(s) preview:</Text>
       {campaignMessages?.length > 0 &&
+        campaignMessages?.length <= 3 &&
         campaignMessages?.map((message) => (
           <Paragraph
             ellipsis={{
@@ -120,6 +121,19 @@ const LaunchCampaignModal = ({ visible, onCancel, campaign }) => {
             {message?.content}
           </Paragraph>
         ))}
+
+      {campaignMessages?.length > 3 && (
+        <Paragraph
+          style={{
+            background: "#00d0ff29",
+            padding: "10px",
+            borderRadius: "4px",
+            fontWeight: "bold",
+          }}
+        >
+          This campaign has more than 3 associated messages
+        </Paragraph>
+      )}
 
       <Alert
         type="warning"

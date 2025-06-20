@@ -18,6 +18,7 @@ import { openNotification } from "../Notification";
 import { fetchData } from "../../utility/fetchData";
 import useSubmitData from "../../hooks/useSubmitData";
 import AddMessageModalToPool from "./AddMessagesToCampaign";
+import { useActionContext } from "../../context/ActionContext";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -33,6 +34,7 @@ const AddCamapignModal = ({
   const [showCreateMessageModal, setShowCreateMessageModal] = useState(false);
 
   const { submitData } = useSubmitData();
+  const { dispatchAction } = useActionContext();
 
   const API_CATEGORY_URL =
     import.meta.env.VITE_API_URL +
@@ -74,7 +76,10 @@ const AddCamapignModal = ({
 
       submitData(API_CAMPAIGNS, newCampaign, "POST")
         .then((resp) => {
-          handleNewTableItem(resp?.result);
+          dispatchAction("update", "dashboard-overview");
+          if (handleNewTableItem) {
+            handleNewTableItem(resp?.result);
+          }
         })
         .then(() => {
           setShowAddcamapginModal(false);

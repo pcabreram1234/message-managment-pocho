@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import StatsCard from "../components/StatsCard";
 import ChartsAndIndicators from "./dasboard/ChartsAndIndicators";
 import UpcomingScheduledShipmets from "./dasboard/UpcomingScheduledShipmets";
 import AlertsAndNotifications from "./dasboard/AlertsAndNotifications";
 import QuickActions from "./dasboard/QuickActions";
 import { fetchData } from "../utility/fetchData";
+import { submitData } from "../utility/submitData";
 import { Row, Col, Layout, Typography, Divider } from "antd";
+
+import { useActionEffect } from "../hooks/useActionEffect";
 
 const API =
   import.meta.env.VITE_API_URL +
@@ -14,7 +17,22 @@ const API =
 
 const Dashboard = () => {
   const { Header, Content } = Layout;
-  const statistics = fetchData(API);
+  const [statistics, setStatistics] = useState([]);
+
+  const fetchDashBoardInfo = () => {
+    submitData(API, "", "GET").then((resp) => {
+      setStatistics(resp);
+    });
+  };
+
+  useEffect(() => {
+    fetchDashBoardInfo();
+  }, []);
+
+  useActionEffect(
+    { type: "update", target: "dashboard-overview" },
+    fetchDashBoardInfo
+  );
 
   return (
     <Layout>
@@ -80,6 +98,9 @@ const Dashboard = () => {
       </Layout>
 
       <Divider />
+      <QuickActions />
+
+      <Divider />
       <ChartsAndIndicators />
 
       <Divider />
@@ -87,9 +108,6 @@ const Dashboard = () => {
 
       <Divider />
       <AlertsAndNotifications />
-
-      <Divider />
-      <QuickActions />
     </Layout>
   );
 };

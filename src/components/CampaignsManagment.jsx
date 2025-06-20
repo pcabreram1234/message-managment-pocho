@@ -40,7 +40,7 @@ const CampaignsManagment = () => {
   };
 
   const handleDelete = (id) => {
-    setCampaigns(campaigns.filter((c) => c.id !== id));
+    setCampaigns(campaings.filter((c) => c.id !== id));
     message.success("Campaña eliminada");
   };
 
