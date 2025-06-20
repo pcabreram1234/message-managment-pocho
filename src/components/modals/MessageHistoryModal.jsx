@@ -21,7 +21,6 @@ import {
   CloseCircleOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { fetchData } from "../../utility/fetchData";
 import { submitData } from "../../utility/submitData";
 import PreviewMessageModal from "./PreviewMessageModal";
 import PopUpModal from "../modals/PopUpModal";
@@ -161,12 +160,11 @@ const MessageHistoryModal = ({ showModal, cbShowModal }) => {
     import.meta.env.VITE_API_URL_ROUTER +
     "failedMessages/getShippmentHistory";
 
-  const messages = fetchData(API_GET_SHIPPMENT_HISTORY, "GET");
-
-  useEffect(() => {
-    setData(messages);
-    setFiltered(messages);
-  }, [messages]);
+  const loadMessages = async () => {
+    const req = await submitData(API_GET_SHIPPMENT_HISTORY, "", "GET");
+    setData(req);
+    setFiltered(req);
+  };
 
   const handleSearch = (val) => {
     setSearch(val);
@@ -292,6 +290,7 @@ const MessageHistoryModal = ({ showModal, cbShowModal }) => {
       open={showModal}
       onCancel={() => handleClose()}
       onClose={() => handleClose()}
+      afterOpenChange={loadMessages}
       onOk={handleOk}
       okText="Ok"
       cancelText="Cancel"
@@ -352,6 +351,7 @@ const MessageHistoryModal = ({ showModal, cbShowModal }) => {
         </Button>
       </Space>
       <Table
+        loading={data.length === 0 ? true : false}
         rowKey="id"
         columns={columns}
         dataSource={filtered}

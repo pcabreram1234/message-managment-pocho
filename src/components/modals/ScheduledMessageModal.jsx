@@ -29,7 +29,7 @@ const ScheduleMessageModal = ({
   const [loading, setLoading] = useState(true);
   const [form] = Form.useForm();
   const { submitData } = useSubimitData();
-  const { dispatchAction } = useActionContext;
+  const { dispatchAction } = useActionContext();
 
   const API_URL =
     import.meta.env.VITE_API_URL +
@@ -82,7 +82,10 @@ const ScheduleMessageModal = ({
           );
           cbShowModal(false);
           dispatchAction("update", "dashboard-overview");
-          dispatchAction("update", "dashboard-individual-messages-about-to-sent");
+          dispatchAction(
+            "update",
+            "dashboard-individual-messages-about-to-sent"
+          );
           setTimeout(() => {
             cbShowParentModal();
           }, 500);
