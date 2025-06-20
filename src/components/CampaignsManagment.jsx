@@ -1,5 +1,5 @@
 // src/containers/CampaignManager.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Table,
   Button,
@@ -9,6 +9,7 @@ import {
   message,
   Typography,
   Tooltip,
+  Layout,
 } from "antd";
 import {
   PlusOutlined,
@@ -20,20 +21,24 @@ import {
 import AddCamapignModal from "./modals/AddCamapignModal";
 import EditCampaignModal from "./modals/EditCampaignModal";
 import LaunchCampaignModal from "./modals/LaunchCampaignModal";
-import useSubmitData from "../hooks/useSubmitData";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
 
-const CampaignsManagment = () => {
-  const { submitData } = useSubmitData();
+const CampaignsManagment = ({ campaings, setCampaigns }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [showEditCamapignModal, setShowEditCampaignModal] = useState(false);
   const [showLaunchCampaignModal, setShowLaunchCampaignModal] = useState(false);
   const [campaignToUpdate, setCamapignToUpdate] = useState([]);
   const [campaignToLaunch, setCampaignToLaunch] = useState([]);
-  const [campaings, setCampaigns] = useState([]);
   const { Paragraph } = Typography;
+
+  // Table States
+  const [pagination, setPagination] = useState({
+    pageSize: 10,
+    defaultPageSize: 10,
+    showSizeChanger: true,
+  });
 
   const openCreateModal = () => {
     setModalVisible(true);
@@ -42,18 +47,6 @@ const CampaignsManagment = () => {
   const handleDelete = (id) => {
     setCampaigns(campaings.filter((c) => c.id !== id));
     message.success("Campaña eliminada");
-  };
-
-  const API_URL =
-    import.meta.env.VITE_API_URL +
-    import.meta.env.VITE_API_URL_ROUTER +
-    "campaigns/getCampaingsAndRecipients";
-
-  const loadCampaigns = () => {
-    submitData(API_URL, "", "GET").then((resp) => {
-      console.log(resp);
-      setCampaigns(resp);
-    });
   };
 
   const updateCampaignsTable = (data) => {
@@ -92,21 +85,16 @@ const CampaignsManagment = () => {
   };
 
   const handleNewTableItem = (data) => {
-    // console.log(data)
     const newCampaigns = [data, campaings].flat();
-    // console.log(newCampaigns);
     setCampaigns(newCampaigns);
   };
-
-  useEffect(() => {
-    loadCampaigns();
-  }, [API_URL]);
 
   const columns = [
     {
       title: "Id",
       dataIndex: "id",
       key: "id",
+      // width: 50,
     },
     {
       title: "Name  ",
@@ -144,17 +132,19 @@ const CampaignsManagment = () => {
       render: (status) => (
         <Tag color={status === "completed" ? "green" : "red"}>{status}</Tag>
       ),
+      // width: 80,
     },
     {
       title: "Recipients",
       dataIndex: "contacts",
       render: (count) => `${count} Contacts`,
+      width: 120,
     },
     {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
-        <Space>
+        <Space align="center">
           <Tooltip title="Edit Campaign">
             <Button
               icon={<EditOutlined />}
@@ -190,64 +180,67 @@ const CampaignsManagment = () => {
             </Popconfirm>
           </Tooltip>
           <Tooltip title="Duplicate Campaign">
-            <Button icon={<CopyOutlined />}>Duplicate</Button>
+            <Button icon={<CopyOutlined />}></Button>
           </Tooltip>
         </Space>
       ),
+      // width: 90,
     },
   ];
 
   return (
-    <div style={{ padding: 24 }}>
-      {/* Header */}
-      <div className="flex justify-between items-center mb-4">
-        <Typography.Title>Campaigns Management</Typography.Title>
+    <Layout>
+      <Layout.Content>
         <Button
           type="primary"
           icon={<PlusOutlined />}
           onClick={openCreateModal}
+          style={{ margin: "10px 0" }}
         >
           New campaign
         </Button>
-      </div>
-
-      {/* Tabla de campañas */}
-      <Table
-        dataSource={campaings}
-        columns={columns}
-        rowKey="id"
-        bordered
-        pagination={{ pageSize: 5 }}
-      />
-
-      {/* Modal de creación/edición */}
-      {modalVisible && (
-        <AddCamapignModal
-          setShowAddcamapginModal={setModalVisible}
-          showAddCampaignModal={modalVisible}
-          handleNewTableItem={handleNewTableItem}
-        />
-      )}
-
-      {showEditCamapignModal && (
-        <EditCampaignModal
-          campaignData={campaignToUpdate}
-          setShowEditCampaignModal={setShowEditCampaignModal}
-          showEditCampaignModal={showEditCamapignModal}
-          updateCampaignsTable={updateCampaignsTable}
-        />
-      )}
-
-      {showLaunchCampaignModal && (
-        <LaunchCampaignModal
-          campaign={campaignToLaunch}
-          visible={showLaunchCampaignModal}
-          onCancel={() => {
-            setShowLaunchCampaignModal(false);
+        {/* Tabla de campañas */}
+        <Table
+          dataSource={campaings}
+          columns={columns}
+          rowKey="id"
+          bordered
+          pagination={pagination}
+          scroll={{ x:'max-content', y: 500 }}
+          onChange={(e) => {
+            setPagination(e);
           }}
         />
-      )}
-    </div>
+
+        {/* Modal de creación/edición */}
+        {modalVisible && (
+          <AddCamapignModal
+            setShowAddcamapginModal={setModalVisible}
+            showAddCampaignModal={modalVisible}
+            handleNewTableItem={handleNewTableItem}
+          />
+        )}
+
+        {showEditCamapignModal && (
+          <EditCampaignModal
+            campaignData={campaignToUpdate}
+            setShowEditCampaignModal={setShowEditCampaignModal}
+            showEditCampaignModal={showEditCamapignModal}
+            updateCampaignsTable={updateCampaignsTable}
+          />
+        )}
+
+        {showLaunchCampaignModal && (
+          <LaunchCampaignModal
+            campaign={campaignToLaunch}
+            visible={showLaunchCampaignModal}
+            onCancel={() => {
+              setShowLaunchCampaignModal(false);
+            }}
+          />
+        )}
+      </Layout.Content>
+    </Layout>
   );
 };
 
