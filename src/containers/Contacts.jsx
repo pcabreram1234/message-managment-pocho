@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Typography, Table, Tag, Button } from "antd";
+import { Layout, Typography, Table, Button, Col, Row } from "antd";
 import EditButton from "../components/buttons/EditButton";
 import DeleteButton from "../components/buttons/DeleteButton";
 import EditContactModal from "../components/modals/EditContactModal";
@@ -32,6 +32,13 @@ const Contacts = () => {
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [showMessagesAssociatedModal, setShowAssociatedModal] = useState(false);
   let filterValues = [];
+
+  // Table States
+  const [pagination, setPagination] = useState({
+    pageSize: 10,
+    defaultPageSize: 10,
+    showSizeChanger: true,
+  });
 
   /* Renderizada que muestra o no el boton para borrar contacto en caso
   de que se seleccione alguna fila */
@@ -158,43 +165,64 @@ const Contacts = () => {
 
   return (
     <Layout>
-      <Header>
-        <Content>
-          <Title style={{ color: "white", textAlign: "center" }}>
-            Contact Managment
-          </Title>
-        </Content>
+      <Header
+        style={{
+          backgroundColor: "transparent",
+        }}
+      >
+        <Row
+          gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
+          justify="start"
+          align="middle"
+        >
+          <Col>
+            <Title level={3} style={{ margin: "auto" }}>
+              Contacts
+            </Title>
+          </Col>
+
+          <Col>
+            <Button
+              type="primary"
+              onClick={handleShowAddContactModal}
+              style={{
+                color: "white",
+                backgroundColor: "green",
+                borderColor: "transparent",
+              }}
+            >
+              <PlusCircleFilled /> Add Contact
+            </Button>
+          </Col>
+
+          <Col>
+            {showDeleteButton && (
+              <Button
+                type="default"
+                onClick={handleDeleteContact}
+                style={{
+                  color: "white",
+                  backgroundColor: "rgb(237 43 43)",
+                  borderColor: "transparent",
+                }}
+              >
+                <DeleteFilled /> Delete Contacts
+              </Button>
+            )}
+          </Col>
+        </Row>
       </Header>
       <Content style={{ margin: "5px 0 5px 5px" }}>
-        <Button
-          type="primary"
-          onClick={handleShowAddContactModal}
-          style={{
-            color: "white",
-            backgroundColor: "green",
-            borderColor: "transparent",
-          }}
-        >
-          <PlusCircleFilled /> Add Contact
-        </Button>
-        {showDeleteButton && (
-          <Button
-            type="default"
-            onClick={handleDeleteContact}
-            style={{
-              color: "white",
-              backgroundColor: "rgb(237 43 43)",
-              borderColor: "transparent",
-            }}
-          >
-            <DeleteFilled /> Delete Contacts
-          </Button>
-        )}
         <Table
           loading={tableDataSource?.length > 0 ? false : true}
           dataSource={tableDataSource}
           columns={tableColumns}
           rowSelection={rowSelection}
+          pagination={pagination}
+          scroll={{ x: "max-content", y: 100 * 5 }}
+          onChange={(e) => {
+            setPagination(e);
+          }}
         />
       </Content>
 
