@@ -1,64 +1,54 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Modal,
-  Select,
   Typography,
   Divider,
   Checkbox,
   Descriptions,
   Alert,
-  DatePicker,
+  message,
 } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
-import useSubmitData from "../../hooks/useSubmitData";
+import EmailProgressModal from "./EmailProgressModal";
+import { useActionEffect } from "../../hooks/useActionEffect";
+import { useActionContext } from "../../context/ActionContext";
 
 const { Title, Text, Paragraph } = Typography;
-const { RangePicker } = DatePicker;
 
-const LaunchCampaignModal = ({ visible, onCancel, campaign }) => {
-  const { submitData } = useSubmitData();
+const LaunchCampaignModal = ({
+  visible,
+  onCancel,
+  campaign,
+  messagesToSend,
+}) => {
   const [confirmed, setConfirmed] = useState(false);
-  const [campaignMessages, setCampaignMessages] = useState([]);
-  const { Option } = Select;
+  const [showEmailProgressModal, setShowEmailProgressModal] = useState(false);
+  const { dispatchAction } = useActionContext();
+
   const handleConfirmChange = (e) => {
     setConfirmed(e.target.checked);
   };
 
-  const API_URL =
-    import.meta.env.VITE_API_URL +
-    import.meta.env.VITE_API_URL_ROUTER +
-    "campaigns/getCampaignMessages";
-
-  const API_URL_LAUNCH_CAMPAIGN =
-    import.meta.env.VITE_API_URL +
-    import.meta.env.VITE_API_URL_ROUTER +
-    "campaigns/launchCampaing";
-
-  useEffect(() => {
-    getCampaignMessages(campaign?.id);
-  }, [API_URL]);
-
-  const getCampaignMessages = (campaign_id) => {
-    submitData(`${API_URL}/${campaign_id}`, "", "GET")
-      .then((resp) => {
-        setCampaignMessages(resp);
-      })
-      .then(() => console.log(campaignMessages));
-  };
-
   const handleLaunch = () => {
     if (confirmed) {
-      submitData(
-        `${API_URL_LAUNCH_CAMPAIGN}/${campaign?.id}`,
-        "",
-        "PATCH"
-      ).then((res) => {
-        console.log(res);
-      });
+      setShowEmailProgressModal(true);
     }
   };
+
+  const handleCampaingLaunchedSuccess = () => {
+    message.success("Campaign Launched!!");
+    setTimeout(() => {
+      onCancel();
+      dispatchAction("", "", "");
+    }, 500);
+  };
+
+  useActionEffect(
+    { type: "campaing_launched", target: "LaunchCampaignModal" },
+    handleCampaingLaunchedSuccess
+  );
 
   return (
     <Modal
@@ -75,27 +65,6 @@ const LaunchCampaignModal = ({ visible, onCancel, campaign }) => {
         <Descriptions.Item label="Description">
           {campaign.description}
         </Descriptions.Item>
-        <Descriptions.Item label="Shipping date">
-          <RangePicker
-            format="YYYY-MM-DD"
-            defaultValue={[
-              dayjs(campaign?.start_date),
-              dayjs(campaign?.end_date),
-            ]}
-          />
-        </Descriptions.Item>
-        <Descriptions.Item label="Channel">
-          <Select
-            placeholder={"Channel"}
-            allowClear
-            style={{ width: "100%" }}
-            defaultValue={"Email"}
-          >
-            <Option value="Email">Email</Option>
-            <Option value="SMS">SMS</Option>
-            <Option value="WhatsApp">WhatsApp</Option>
-          </Select>
-        </Descriptions.Item>
 
         <Descriptions.Item label="Recipients">
           {campaign.contacts} contacts
@@ -103,14 +72,14 @@ const LaunchCampaignModal = ({ visible, onCancel, campaign }) => {
       </Descriptions>
       <Divider />
       <Text strong>Message(s) preview:</Text>
-      {campaignMessages?.length > 0 &&
-        campaignMessages?.length <= 3 &&
-        campaignMessages?.map((message) => (
+      {messagesToSend?.length > 0 &&
+        messagesToSend?.length <= 3 &&
+        messagesToSend?.map((message) => (
           <Paragraph
             ellipsis={{
               expandable: "collapsible",
               rows: 2,
-              tooltip: message?.content,
+              tooltip: message?.message_content,
             }}
             style={{
               background: "#f5f5f5",
@@ -118,11 +87,11 @@ const LaunchCampaignModal = ({ visible, onCancel, campaign }) => {
               borderRadius: "4px",
             }}
           >
-            {message?.content}
+            {message?.message_content}
           </Paragraph>
         ))}
 
-      {campaignMessages?.length > 3 && (
+      {messagesToSend?.length > 3 && (
         <Paragraph
           style={{
             background: "#00d0ff29",
@@ -144,6 +113,14 @@ const LaunchCampaignModal = ({ visible, onCancel, campaign }) => {
       <Checkbox onChange={handleConfirmChange}>
         I confirm that I wish to launch this messaging campaign
       </Checkbox>
+
+      {showEmailProgressModal && (
+        <EmailProgressModal
+          visible={showEmailProgressModal}
+          messages={messagesToSend}
+          onClose={() => setShowEmailProgressModal(false)}
+        />
+      )}
     </Modal>
   );
 };
