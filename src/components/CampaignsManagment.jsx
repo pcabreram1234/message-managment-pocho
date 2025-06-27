@@ -23,15 +23,23 @@ import EditCampaignModal from "./modals/EditCampaignModal";
 import LaunchCampaignModal from "./modals/LaunchCampaignModal";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import useSubmitData from "../hooks/useSubmitData";
 dayjs.extend(customParseFormat);
 
 const CampaignsManagment = ({ campaings, setCampaigns }) => {
+  const { submitData } = useSubmitData();
   const [modalVisible, setModalVisible] = useState(false);
   const [showEditCamapignModal, setShowEditCampaignModal] = useState(false);
   const [showLaunchCampaignModal, setShowLaunchCampaignModal] = useState(false);
   const [campaignToUpdate, setCamapignToUpdate] = useState([]);
   const [campaignToLaunch, setCampaignToLaunch] = useState([]);
+  const [messagesToSend, setMessagesToSend] = useState([]);
   const { Paragraph } = Typography;
+
+  const API_URL =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "campaigns/getCampaignMessages";
 
   // Table States
   const [pagination, setPagination] = useState({
@@ -81,7 +89,7 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
 
   const handleCampaignToLaunch = (campaign) => {
     setCampaignToLaunch(campaign);
-    setShowLaunchCampaignModal(true);
+    getCampaignMessagesToLaunch(campaign?.id);
   };
 
   const handleNewTableItem = (data) => {
@@ -130,7 +138,19 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
       title: "Status",
       dataIndex: "status",
       render: (status) => (
-        <Tag color={status === "completed" ? "green" : "red"}>{status}</Tag>
+        <Tag
+          color={
+            status === "completed"
+              ? "green"
+              : status === "active"
+              ? "blue"
+              : status === "pending" || status === "paused"
+              ? "gray"
+              : "red"
+          }
+        >
+          {status}
+        </Tag>
       ),
       // width: 80,
     },
@@ -188,6 +208,18 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
     },
   ];
 
+  const getCampaignMessagesToLaunch = (id) => {
+    submitData(`${API_URL}/${id}`, "", "GET").then((resp) => {
+      if (resp?.message) {
+        console.log("Ha aparecido el error ");
+        message.error(`Error: ${resp?.message}`);
+      } else {
+        setMessagesToSend(resp);
+        setShowLaunchCampaignModal(true);
+      }
+    });
+  };
+
   return (
     <Layout>
       <Layout.Content>
@@ -206,7 +238,7 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
           rowKey="id"
           bordered
           pagination={pagination}
-          scroll={{ x:'max-content', y: 500 }}
+          scroll={{ x: "max-content", y: 500 }}
           onChange={(e) => {
             setPagination(e);
           }}
@@ -235,8 +267,10 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
             campaign={campaignToLaunch}
             visible={showLaunchCampaignModal}
             onCancel={() => {
+              setMessagesToSend(null);
               setShowLaunchCampaignModal(false);
             }}
+            messagesToSend={messagesToSend}
           />
         )}
       </Layout.Content>
