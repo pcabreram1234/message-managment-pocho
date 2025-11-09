@@ -58,6 +58,10 @@ const App = () => {
     if (user && location.pathname === "/login") {
       navigate("/messages");
     }
+    // Con esto se evita el loop infinito de navegación a la pagina /login
+    if (!user && location.pathname !== "/login" && location.pathname !== "/verifyUser") {
+      navigate("/login", { replace: true });
+  }
   }, [user, location.pathname, navigate]);
 
   // Mientras se verifica la autenticación, muestra un indicador de carga
@@ -86,7 +90,7 @@ const App = () => {
         <Route exact path="/verifyUser" element={<AccountVerification />} />
 
         {/* Rutas protegidas */}
-        {user ? (
+        {user && (
           <>
             <Route exact path="/messages" element={<MessageTable />} />
             <Route exact path="/contacts" element={<Contacts />} />
@@ -99,10 +103,12 @@ const App = () => {
             />
             <Route exact path="/historyPanel" element={<HistoRyPanel />} />
           </>
-        ) : (
-          // Redirigir al login si el usuario no está autenticado
-          navigate("/login")
-        )}
+        ) 
+        // : (
+        //   // Redirigir al login si el usuario no está autenticado
+        //   navigate("/login")
+        // )
+        }
 
         {/* Ruta para la página no encontrada */}
         <Route path="*" element={<NotFound />} />
