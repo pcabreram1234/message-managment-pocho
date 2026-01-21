@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Modal, Typography, Spin } from "antd";
 import useSubmitData from "../../hooks/useSubmitData";
 import { useActionContext } from "../../context/ActionContext";
@@ -6,9 +6,10 @@ import { useActionContext } from "../../context/ActionContext";
 const { Paragraph } = Typography;
 
 const EmailProgressModal = ({ visible, onClose, messages }) => {
+  const hasRun = useRef(false);
   const [loading, setLoading] = useState(false);
   const [loadingMessage, setLoadingMessage] = useState(
-    "Saving messages to the queue..."
+    "Saving messages to the queue...",
   );
   const { submitData } = useSubmitData();
   const { dispatchAction } = useActionContext();
@@ -19,6 +20,8 @@ const EmailProgressModal = ({ visible, onClose, messages }) => {
     "campaigns/queueCampaignMessages";
 
   useEffect(() => {
+    if (!hasRun || hasRun.current) return;
+    hasRun.current = true;
     const enqueueMessages = async () => {
       try {
         const response = await submitData(API_URL, messages, "POST");
