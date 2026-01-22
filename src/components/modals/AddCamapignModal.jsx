@@ -32,6 +32,7 @@ const AddCamapignModal = ({
   const [form] = Form.useForm();
   const [messages, setMessages] = useState([]); // Lista de plantillas asociadas
   const [showCreateMessageModal, setShowCreateMessageModal] = useState(false);
+  const [sendStrategy, setSendStrategy] = useState("ONCE");
 
   const { submitData } = useSubmitData();
   const { dispatchAction } = useActionContext();
@@ -72,6 +73,12 @@ const AddCamapignModal = ({
         status: values.status,
         recipients: values.recipients,
         messages: messages.map((m) => m.value),
+
+        send_strategy: values.send_strategy,
+        send_interval_value: values.send_interval_value || null,
+        send_interval_unit: values.send_interval_unit || null,
+        max_retries: values.max_retries ?? 3,
+        retry_delay_minutes: values.retry_delay_minutes ?? 15,
       };
 
       submitData(API_CAMPAIGNS, newCampaign, "POST")
@@ -95,6 +102,7 @@ const AddCamapignModal = ({
   useEffect(() => {
     form.resetFields();
     setMessages([]);
+    setSendStrategy("ONCE");
   }, [showAddCampaignModal]);
 
   const handleAddMessage = (value) => {
@@ -127,6 +135,64 @@ const AddCamapignModal = ({
         <Form.Item name="description" label="Description">
           <Input.TextArea rows={2} />
         </Form.Item>
+
+        <Form.Item
+          name="send_strategy"
+          label="Send strategy"
+          initialValue="ONCE"
+          rules={[{ required: true }]}
+        >
+          <Select onChange={(value) => setSendStrategy(value)}>
+            <Option value="ONCE">Once (single send)</Option>
+            <Option value="DAILY">Daily</Option>
+            <Option value="INTERVAL">Interval</Option>
+            <Option value="CUSTOM" disabled>
+              Custom (coming soon)
+            </Option>
+          </Select>
+        </Form.Item>
+
+        {sendStrategy === "INTERVAL" && (
+          <Space style={{ display: "flex" }}>
+            <Form.Item
+              name="send_interval_value"
+              label="Interval value"
+              rules={[{ required: true, message: "Required interval value" }]}
+            >
+              <Input type="number" min={1} placeholder="e.g. 2" />
+            </Form.Item>
+
+            <Form.Item
+              name="send_interval_unit"
+              label="Interval unit"
+              rules={[{ required: true, message: "Required interval unit" }]}
+            >
+              <Select>
+                <Option value="HOUR">Hour(s)</Option>
+                <Option value="DAY">Day(s)</Option>
+              </Select>
+            </Form.Item>
+          </Space>
+        )}
+
+        <Divider />
+
+        <Text strong>Retry configuration</Text>
+
+        <Space style={{ display: "flex" }}>
+          <Form.Item name="max_retries" label="Max retries" initialValue={3}>
+            <Input type="number" min={0} />
+          </Form.Item>
+
+          <Form.Item
+            name="retry_delay_minutes"
+            label="Retry delay (minutes)"
+            initialValue={15}
+          >
+            <Input type="number" min={1} />
+          </Form.Item>
+        </Space>
+
         <Form.Item
           name="dates"
           label="Dates Range"

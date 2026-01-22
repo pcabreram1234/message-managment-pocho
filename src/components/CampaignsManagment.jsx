@@ -67,6 +67,11 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
       status,
       contacts,
       category,
+      send_strategy,
+      send_interval_value,
+      send_interval_unit,
+      max_retries,
+      retry_delay_minutes,
     } = data;
     const othersCampaigns = campaings?.filter((c) => c.id !== id);
     const campaignUpdated = [
@@ -79,6 +84,11 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
         id: id,
         start_date: start_date,
         status: status,
+        send_strategy: send_strategy,
+        send_interval_value: send_interval_value,
+        send_interval_unit: send_interval_unit,
+        max_retries: max_retries,
+        retry_delay_minutes: retry_delay_minutes,
       },
     ];
     const newCampaigns = [othersCampaigns, campaignUpdated]
@@ -131,7 +141,7 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
       key: "dates",
       render: (_, record) =>
         `${dayjs(record?.start_date).format("DD/MM/YYYY HH:mm:ss")} → ${dayjs(
-          record.end_date
+          record.end_date,
         ).format("DD/MM/YYYY HH:mm:ss")}`,
     },
     {
@@ -143,10 +153,10 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
             status === "completed"
               ? "green"
               : status === "active"
-              ? "blue"
-              : status === "pending" || status === "paused"
-              ? "gray"
-              : "red"
+                ? "blue"
+                : status === "pending" || status === "paused"
+                  ? "gray"
+                  : "red"
           }
         >
           {status}
@@ -178,6 +188,16 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
                   start_date: record?.start_date,
                   end_date: record?.end_date,
                   category: record?.category,
+                  send_strategy: campaings.find((c) => c.id === record.id)
+                    ?.send_strategy,
+                  send_interval_value: campaings.find((c) => c.id === record.id)
+                    ?.send_interval_valu,
+                  send_interval_unit: campaings.find((c) => c.id === record.id)
+                    ?.send_interval_unit,
+                  max_retries: campaings.find((c) => c.id === record.id)
+                    ?.max_retries,
+                  retry_delay_minutes: campaings.find((c) => c.id === record.id)
+                    ?.retry_delay_minutes,
                 });
               }}
             />

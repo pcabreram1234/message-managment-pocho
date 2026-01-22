@@ -1,4 +1,4 @@
-import React, { useImperativeHandle, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Form,
@@ -9,7 +9,6 @@ import {
   Button,
 } from "antd";
 import { openNotification } from "../Notification";
-import { fetchData } from "../../utility/fetchData";
 import useSubmitData from "../../hooks/useSubmitData";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -26,6 +25,7 @@ const EditCampaignModal = ({
 }) => {
   const [form] = Form.useForm();
   const { submitData } = useSubmitData();
+  const [sendStrategy, setSendStrategy] = useState("ONCE");
   const [loading, setLoading] = useState(true);
   const [contacts, setContacts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -66,7 +66,7 @@ const EditCampaignModal = ({
         submitData(
           `${API_RECIPIENTS_BY_CAMPAIGNS}/${campaignData?.id}`,
           "",
-          "GET"
+          "GET",
         ).then((rbc) => {
           setSelectedContacs(rbc);
           form.setFieldValue("recipients", rbc);
@@ -93,6 +93,11 @@ const EditCampaignModal = ({
         status: values.status,
         recipients: values.recipients,
         id: campaignData?.id,
+        send_strategy: values.send_strategy,
+        send_interval_value: values.send_interval_value || null,
+        send_interval_unit: values.send_interval_unit || null,
+        max_retries: values.max_retries ?? 3,
+        retry_delay_minutes: values.retry_delay_minutes ?? 15,
       };
 
       submitData(API_CAMPAIGNS_UPDATE, updatedCampaign, "POST")
@@ -102,7 +107,7 @@ const EditCampaignModal = ({
             openNotification(
               "Success",
               "Campaign updated successfully",
-              "success"
+              "success",
             );
             const campaignUpdate = {
               ...updatedCampaign,
@@ -118,6 +123,7 @@ const EditCampaignModal = ({
   };
 
   useEffect(() => {
+    console.log(campaignData);
     if (campaignData && showEditCampaignModal) {
       form.setFieldsValue({
         name: campaignData.name,
@@ -132,7 +138,13 @@ const EditCampaignModal = ({
           label: r.email,
           value: r.id,
         })),
+        send_strategy: campaignData.send_strategy || "ONCE",
+        send_interval_value: campaignData.send_interval_value,
+        send_interval_unit: campaignData.send_interval_unit,
+        max_retries: campaignData.max_retries ?? 3,
+        retry_delay_minutes: campaignData.retry_delay_minutes ?? 15,
       });
+      setSendStrategy(campaignData.send_strategy || "ONCE");
     }
   }, [campaignData, showEditCampaignModal]);
 
@@ -159,6 +171,53 @@ const EditCampaignModal = ({
         <Form.Item name="description" label="Description">
           <Input.TextArea rows={4} />
         </Form.Item>
+
+        <Form.Item
+          name="send_strategy"
+          label="Send strategy"
+          rules={[{ required: true }]}
+        >
+          <Select onChange={(value) => setSendStrategy(value)}>
+            <Option value="ONCE">Once (single send)</Option>
+            <Option value="DAILY">Daily</Option>
+            <Option value="INTERVAL">Interval</Option>
+            <Option value="CUSTOM" disabled>
+              Custom (coming soon)
+            </Option>
+          </Select>
+        </Form.Item>
+
+        {sendStrategy === "INTERVAL" && (
+          <Space style={{ display: "flex" }}>
+            <Form.Item
+              name="send_interval_value"
+              label="Interval value"
+              rules={[{ required: true }]}
+            >
+              <Input type="number" min={1} />
+            </Form.Item>
+
+            <Form.Item
+              name="send_interval_unit"
+              label="Interval unit"
+              rules={[{ required: true }]}
+            >
+              <Select>
+                <Option value="HOUR">Hour(s)</Option>
+                <Option value="DAY">Day(s)</Option>
+              </Select>
+            </Form.Item>
+          </Space>
+        )}
+
+        <Form.Item name="max_retries" label="Max retries">
+          <Input type="number" min={0} />
+        </Form.Item>
+
+        <Form.Item name="retry_delay_minutes" label="Retry delay (minutes)">
+          <Input type="number" min={1} />
+        </Form.Item>
+
         <Form.Item name="dates" label="Date Range" rules={[{ required: true }]}>
           <RangePicker format="YYYY-MM-DD" />
         </Form.Item>
