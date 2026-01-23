@@ -21,7 +21,7 @@ const LaunchCampaignModal = ({
   visible,
   onCancel,
   campaign,
-  messagesToSend,
+  // messagesToSend,
 }) => {
   const [confirmed, setConfirmed] = useState(false);
   const [showEmailProgressModal, setShowEmailProgressModal] = useState(false);
@@ -45,9 +45,21 @@ const LaunchCampaignModal = ({
     }, 500);
   };
 
+  const handleErrorCampaingLaunched = () => {
+    message.error("Error Launching Campaign!!");
+    setTimeout(() => {
+      dispatchAction("", "", "");
+    }, 500);
+  };
+
   useActionEffect(
     { type: "campaing_launched", target: "LaunchCampaignModal" },
-    handleCampaingLaunchedSuccess
+    handleCampaingLaunchedSuccess,
+  );
+
+  useActionEffect(
+    { type: "error_launching_campaign", target: "LaunchCampaignModal" },
+    handleErrorCampaingLaunched,
   );
 
   return (
@@ -70,7 +82,7 @@ const LaunchCampaignModal = ({
           {campaign.contacts} contacts
         </Descriptions.Item>
       </Descriptions>
-      <Divider />
+      {/* <Divider />
       <Text strong>Message(s) preview:</Text>
       {messagesToSend?.length > 0 &&
         messagesToSend?.length <= 3 &&
@@ -102,7 +114,7 @@ const LaunchCampaignModal = ({
         >
           This campaign has more than 3 associated messages
         </Paragraph>
-      )}
+      )} */}
 
       <Alert
         type="warning"
@@ -117,7 +129,7 @@ const LaunchCampaignModal = ({
       {showEmailProgressModal && (
         <EmailProgressModal
           visible={showEmailProgressModal}
-          messages={messagesToSend}
+          campaignId={campaign?.id}
           onClose={() => setShowEmailProgressModal(false)}
         />
       )}

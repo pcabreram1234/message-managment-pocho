@@ -7,11 +7,15 @@ import {
   Select,
   Descriptions,
   Button,
+  Tabs,
+  List,
+  Popconfirm,
 } from "antd";
 import { openNotification } from "../Notification";
 import useSubmitData from "../../hooks/useSubmitData";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import CampaignMessagesTab from "../CampaignMessagesTab";
 dayjs.extend(customParseFormat);
 
 const { RangePicker } = DatePicker;
@@ -29,8 +33,8 @@ const EditCampaignModal = ({
   const [loading, setLoading] = useState(true);
   const [contacts, setContacts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedContacts, setSelectedContacs] = useState([]);
+  const { TabPane } = Tabs;
 
   const API_CATEGORY_URL =
     import.meta.env.VITE_API_URL +
@@ -160,139 +164,152 @@ const EditCampaignModal = ({
       loading={loading}
       afterOpenChange={() => loadContacsAndCategorires()}
     >
-      <Form layout="vertical" form={form}>
-        <Form.Item
-          name="name"
-          label="Campaign Name"
-          rules={[{ required: true }]}
-        >
-          <Input placeholder="Campaign name" />
-        </Form.Item>
-        <Form.Item name="description" label="Description">
-          <Input.TextArea rows={4} />
-        </Form.Item>
-
-        <Form.Item
-          name="send_strategy"
-          label="Send strategy"
-          rules={[{ required: true }]}
-        >
-          <Select onChange={(value) => setSendStrategy(value)}>
-            <Option value="ONCE">Once (single send)</Option>
-            <Option value="DAILY">Daily</Option>
-            <Option value="INTERVAL">Interval</Option>
-            <Option value="CUSTOM" disabled>
-              Custom (coming soon)
-            </Option>
-          </Select>
-        </Form.Item>
-
-        {sendStrategy === "INTERVAL" && (
-          <Space style={{ display: "flex" }}>
+      <Tabs defaultActiveKey="general">
+        <TabPane tab="General" key="general">
+          <Form layout="vertical" form={form}>
             <Form.Item
-              name="send_interval_value"
-              label="Interval value"
+              name="name"
+              label="Campaign Name"
               rules={[{ required: true }]}
             >
+              <Input placeholder="Campaign name" />
+            </Form.Item>
+            <Form.Item name="description" label="Description">
+              <Input.TextArea rows={4} />
+            </Form.Item>
+
+            <Form.Item
+              name="send_strategy"
+              label="Send strategy"
+              rules={[{ required: true }]}
+            >
+              <Select onChange={(value) => setSendStrategy(value)}>
+                <Option value="ONCE">Once (single send)</Option>
+                <Option value="DAILY">Daily</Option>
+                <Option value="INTERVAL">Interval</Option>
+                <Option value="CUSTOM" disabled>
+                  Custom (coming soon)
+                </Option>
+              </Select>
+            </Form.Item>
+
+            {sendStrategy === "INTERVAL" && (
+              <Space style={{ display: "flex" }}>
+                <Form.Item
+                  name="send_interval_value"
+                  label="Interval value"
+                  rules={[{ required: true }]}
+                >
+                  <Input type="number" min={1} />
+                </Form.Item>
+
+                <Form.Item
+                  name="send_interval_unit"
+                  label="Interval unit"
+                  rules={[{ required: true }]}
+                >
+                  <Select>
+                    <Option value="HOUR">Hour(s)</Option>
+                    <Option value="DAY">Day(s)</Option>
+                  </Select>
+                </Form.Item>
+              </Space>
+            )}
+
+            <Form.Item name="max_retries" label="Max retries">
+              <Input type="number" min={0} />
+            </Form.Item>
+
+            <Form.Item name="retry_delay_minutes" label="Retry delay (minutes)">
               <Input type="number" min={1} />
             </Form.Item>
 
             <Form.Item
-              name="send_interval_unit"
-              label="Interval unit"
+              name="dates"
+              label="Date Range"
               rules={[{ required: true }]}
             >
-              <Select>
-                <Option value="HOUR">Hour(s)</Option>
-                <Option value="DAY">Day(s)</Option>
+              <RangePicker format="YYYY-MM-DD" />
+            </Form.Item>
+            <Form.Item
+              name="recipients"
+              label="Contacts"
+              rules={[{ required: true }]}
+            >
+              <Select
+                mode="multiple"
+                style={{ width: "100%" }}
+                allowClear
+                labelInValue
+                value={selectedContacts}
+                options={contacts?.map((contact) => ({
+                  label: contact?.email,
+                  value: contact?.id,
+                }))}
+              />
+            </Form.Item>
+            <Form.Item
+              name="category"
+              label="Category"
+              rules={[{ required: true }]}
+            >
+              <Select
+                placeholder="Select a Category"
+                // value={campaignData?.category}
+                defaultValue={campaignData?.category}
+              >
+                {categories?.categories?.map((category) => (
+                  <Option
+                    key={category?.categorie_name}
+                    value={category?.categorie_name}
+                  >
+                    {category?.categorie_name}
+                  </Option>
+                ))}
               </Select>
             </Form.Item>
-          </Space>
-        )}
+            <Form.Item name="status" label="Status">
+              <Select placeholder="Select a status">
+                <Option value="pending">Pending</Option>
+                <Option value="active">Active</Option>
+                <Option value="paused">Paused</Option>
+              </Select>
+            </Form.Item>
 
-        <Form.Item name="max_retries" label="Max retries">
-          <Input type="number" min={0} />
-        </Form.Item>
-
-        <Form.Item name="retry_delay_minutes" label="Retry delay (minutes)">
-          <Input type="number" min={1} />
-        </Form.Item>
-
-        <Form.Item name="dates" label="Date Range" rules={[{ required: true }]}>
-          <RangePicker format="YYYY-MM-DD" />
-        </Form.Item>
-        <Form.Item
-          name="recipients"
-          label="Contacts"
-          rules={[{ required: true }]}
-        >
-          <Select
-            mode="multiple"
-            style={{ width: "100%" }}
-            allowClear
-            labelInValue
-            value={selectedContacts}
-            options={contacts?.map((contact) => ({
-              label: contact?.email,
-              value: contact?.id,
-            }))}
-          />
-        </Form.Item>
-        <Form.Item
-          name="category"
-          label="Category"
-          rules={[{ required: true }]}
-        >
-          <Select
-            placeholder="Select a Category"
-            // value={campaignData?.category}
-            defaultValue={campaignData?.category}
-          >
-            {categories?.categories?.map((category) => (
-              <Option
-                key={category?.categorie_name}
-                value={category?.categorie_name}
+            <Form.Item label={null}>
+              <Button
+                onClick={() => setShowEditCampaignModal(false)}
+                style={{ margin: "0 10px" }}
               >
-                {category?.categorie_name}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
-        <Form.Item name="status" label="Status">
-          <Select placeholder="Select a status">
-            <Option value="pending">Pending</Option>
-            <Option value="active">Active</Option>
-            <Option value="paused">Paused</Option>
-          </Select>
-        </Form.Item>
+                Cancel
+              </Button>
+              <Button
+                style={{ margin: "0 10px" }}
+                type="primary"
+                htmlType="submit"
+                onClick={() => handleSubmit()}
+              >
+                Update
+              </Button>
+            </Form.Item>
+          </Form>
 
-        <Form.Item label={null}>
-          <Button
-            onClick={() => setShowEditCampaignModal(false)}
-            style={{ margin: "0 10px" }}
-          >
-            Cancel
-          </Button>
-          <Button
-            style={{ margin: "0 10px" }}
-            type="primary"
-            htmlType="submit"
-            onClick={() => handleSubmit()}
-          >
-            Update
-          </Button>
-        </Form.Item>
-      </Form>
+          <Descriptions title="More Info" column={1}>
+            <Descriptions.Item label="Campaigns">
+              The status defaults to "pending" if not specified. You can modify
+              it using the dropdown.
+            </Descriptions.Item>
+            <Descriptions.Item label="Contacts">
+              Contacts can be added or removed even after the campaign is
+              created.
+            </Descriptions.Item>
+          </Descriptions>
+        </TabPane>
 
-      <Descriptions title="More Info" column={1}>
-        <Descriptions.Item label="Campaigns">
-          The status defaults to "pending" if not specified. You can modify it
-          using the dropdown.
-        </Descriptions.Item>
-        <Descriptions.Item label="Contacts">
-          Contacts can be added or removed even after the campaign is created.
-        </Descriptions.Item>
-      </Descriptions>
+        <TabPane tab="Messages" key="messages">
+          <CampaignMessagesTab campaignId={campaignData?.id} />
+        </TabPane>
+      </Tabs>
     </Modal>
   );
 };

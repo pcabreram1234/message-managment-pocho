@@ -33,13 +33,26 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
   const [showLaunchCampaignModal, setShowLaunchCampaignModal] = useState(false);
   const [campaignToUpdate, setCamapignToUpdate] = useState([]);
   const [campaignToLaunch, setCampaignToLaunch] = useState([]);
-  const [messagesToSend, setMessagesToSend] = useState([]);
   const { Paragraph } = Typography;
 
-  const API_URL =
-    import.meta.env.VITE_API_URL +
-    import.meta.env.VITE_API_URL_ROUTER +
-    "campaigns/getCampaignMessages";
+  const duplicateCampaign = async (campaignId) => {
+    const API_URL =
+      import.meta.env.VITE_API_URL +
+      import.meta.env.VITE_API_URL_ROUTER +
+      `campaigns/duplicate/${campaignId}`;
+
+    submitData(API_URL, null, "POST").then((resp) => {
+      if (resp?.success) {
+        if (resp?.success === true) {
+          console.log(resp);
+          message.success("Campaign duplicated");
+          updateCampaignsTable(resp?.result);
+        } else {
+          message.error("Error: " + resp?.message);
+        }
+      }
+    });
+  };
 
   // Table States
   const [pagination, setPagination] = useState({
@@ -54,7 +67,7 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
 
   const handleDelete = (id) => {
     setCampaigns(campaings.filter((c) => c.id !== id));
-    message.success("Campaña eliminada");
+    message.success("Campaign deleted");
   };
 
   const updateCampaignsTable = (data) => {
@@ -99,7 +112,8 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
 
   const handleCampaignToLaunch = (campaign) => {
     setCampaignToLaunch(campaign);
-    getCampaignMessagesToLaunch(campaign?.id);
+    setShowLaunchCampaignModal(true);
+    // getCampaignMessagesToLaunch(campaign?.id);
   };
 
   const handleNewTableItem = (data) => {
@@ -112,6 +126,7 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
       title: "Id",
       dataIndex: "id",
       key: "id",
+      sorter: (a, b) => a.id > b.id,
       // width: 50,
     },
     {
@@ -119,6 +134,7 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
       dataIndex: "name",
       key: "name",
       render: (text) => <strong>{text}</strong>,
+      sorter: (a, b) => a.name.length - b.name.length,
     },
     {
       title: "Description",
@@ -143,6 +159,8 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
         `${dayjs(record?.start_date).format("DD/MM/YYYY HH:mm:ss")} → ${dayjs(
           record.end_date,
         ).format("DD/MM/YYYY HH:mm:ss")}`,
+      sorter: (a, b) =>
+        dayjs(a?.start_date).valueOf() - dayjs(b.end_date).valueOf(),
     },
     {
       title: "Status",
@@ -162,6 +180,7 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
           {status}
         </Tag>
       ),
+      sorter: (a, b) => a.status.length - b.status.length,
       // width: 80,
     },
     {
@@ -209,6 +228,7 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
               onClick={() => handleCampaignToLaunch(record)}
             />
           </Tooltip>
+
           <Tooltip title="Delete Campaign">
             <Popconfirm
               title="Are you sure you want to delete this campaign?"
@@ -219,8 +239,16 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
               <Button danger icon={<DeleteOutlined />} />
             </Popconfirm>
           </Tooltip>
+
           <Tooltip title="Duplicate Campaign">
-            <Button icon={<CopyOutlined />}></Button>
+            <Popconfirm
+              title="Are you sure you want to duplicate this campaign?"
+              onConfirm={() => duplicateCampaign(record.id)}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button icon={<CopyOutlined />}></Button>
+            </Popconfirm>
           </Tooltip>
         </Space>
       ),
@@ -228,17 +256,17 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
     },
   ];
 
-  const getCampaignMessagesToLaunch = (id) => {
-    submitData(`${API_URL}/${id}`, "", "GET").then((resp) => {
-      if (resp?.message) {
-        console.log("Ha aparecido el error ");
-        message.error(`Error: ${resp?.message}`);
-      } else {
-        setMessagesToSend(resp);
-        setShowLaunchCampaignModal(true);
-      }
-    });
-  };
+  // const getCampaignMessagesToLaunch = (id) => {
+  //   submitData(`${API_URL}/${id}`, "", "GET").then((resp) => {
+  //     if (resp?.message) {
+  //       console.log("Ha aparecido el error ");
+  //       message.error(`Error: ${resp?.message}`);
+  //     } else {
+  //       setMessagesToSend(resp);
+  //       setShowLaunchCampaignModal(true);
+  //     }
+  //   });
+  // };
 
   return (
     <Layout>
@@ -287,10 +315,8 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
             campaign={campaignToLaunch}
             visible={showLaunchCampaignModal}
             onCancel={() => {
-              setMessagesToSend(null);
               setShowLaunchCampaignModal(false);
             }}
-            messagesToSend={messagesToSend}
           />
         )}
       </Layout.Content>
