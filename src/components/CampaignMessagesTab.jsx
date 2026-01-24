@@ -75,10 +75,23 @@ const CampaignMessagesTab = ({ campaignId }) => {
     });
   };
 
-  const handleDeleteMessage = async (id) => {
-    await submitData(API_DELETE_MESSAGE, { id }, "DELETE");
-    openNotification("Removed", "Message removed from campaign", "success");
-    loadData();
+  const handleDeleteMessage = async (cId, mId) => {
+    await submitData(
+      API_DELETE_MESSAGE,
+      { campaign_id: cId, message_ids: mId },
+      "DELETE",
+    ).then((resp) => {
+      if (resp?.success === true) {
+        openNotification("Removed", "Message removed from campaign", "success");
+        loadData();
+      } else {
+        openNotification(
+          "Error",
+          "Error trying to add messages to campaign",
+          "error",
+        );
+      }
+    });
   };
 
   return (
@@ -94,7 +107,7 @@ const CampaignMessagesTab = ({ campaignId }) => {
             actions={[
               <Popconfirm
                 title="Remove this message?"
-                onConfirm={() => handleDeleteMessage(item.id)}
+                onConfirm={() => handleDeleteMessage(campaignId, item.id)}
               >
                 <Button type="link" danger icon={<DeleteOutlined />} />
               </Popconfirm>,
