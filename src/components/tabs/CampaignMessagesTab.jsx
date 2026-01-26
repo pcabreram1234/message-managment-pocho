@@ -9,8 +9,8 @@ import {
   Divider,
 } from "antd";
 import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
-import { openNotification } from "../components/Notification";
-import useSubmitData from "../hooks/useSubmitData";
+import { openNotification } from "../Notification";
+import useSubmitData from "../../hooks/useSubmitData";
 
 const { Text } = Typography;
 const { Option } = Select;
@@ -59,7 +59,7 @@ const CampaignMessagesTab = ({ campaignId }) => {
   const handleAddMessage = async () => {
     if (!selectedMessage) return;
     submitData(API_ADD_MESSAGE, {
-      messageIds: selectedMessage,
+      messageIds: [selectedMessage],
     }).then((resp) => {
       if (resp?.result) {
         openNotification("Success", "Message added to campaign", "success");
@@ -126,7 +126,7 @@ const CampaignMessagesTab = ({ campaignId }) => {
           placeholder="Add existing message"
           value={selectedMessage}
           onChange={setSelectedMessage}
-          optionLabelProp="label"
+          optionLabelProp="name"
         >
           {availableMessages.map((m) => (
             <Option key={m.id} value={m.id}>

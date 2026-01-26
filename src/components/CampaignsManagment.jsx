@@ -17,23 +17,32 @@ import {
   DeleteOutlined,
   CopyOutlined,
   RocketOutlined,
+  ExperimentOutlined,
 } from "@ant-design/icons";
 import AddCamapignModal from "./modals/AddCamapignModal";
 import EditCampaignModal from "./modals/EditCampaignModal";
 import LaunchCampaignModal from "./modals/LaunchCampaignModal";
+import CampaignSimulationModal from "./modals/CampaignSimulationModal";
+import EmailProgressModal from "./modals/EmailProgressModal";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import useSubmitData from "../hooks/useSubmitData";
+import { useActionContext } from "../context/ActionContext";
 dayjs.extend(customParseFormat);
 
-const CampaignsManagment = ({ campaings, setCampaigns }) => {
+const CampaignsManagment = ({ campaings }) => {
   const { submitData } = useSubmitData();
   const [modalVisible, setModalVisible] = useState(false);
   const [showEditCamapignModal, setShowEditCampaignModal] = useState(false);
   const [showLaunchCampaignModal, setShowLaunchCampaignModal] = useState(false);
+  const [showcampaignSimulationModal, setShowCampaignSimulationModal] =
+    useState(false);
+  const [showEmailProgressModal, setShowEmailProgressModal] = useState(false);
   const [campaignToUpdate, setCamapignToUpdate] = useState([]);
   const [campaignToLaunch, setCampaignToLaunch] = useState([]);
+  const [campaignToSimulate, setCampaignToSimulate] = useState([]);
   const { Paragraph } = Typography;
+  const { dispatchAction } = useActionContext();
 
   const duplicateCampaign = async (campaignId) => {
     const API_URL =
@@ -46,7 +55,7 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
         if (resp?.success === true) {
           console.log(resp);
           message.success("Campaign duplicated");
-          updateCampaignsTable(resp?.result);
+          dispatchAction("refresh", "campaignsTable");
         } else {
           message.error("Error: " + resp?.message);
         }
@@ -66,48 +75,8 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
   };
 
   const handleDelete = (id) => {
-    setCampaigns(campaings.filter((c) => c.id !== id));
+    dispatchAction("refresh", "campaignsTable");
     message.success("Campaign deleted");
-  };
-
-  const updateCampaignsTable = (data) => {
-    const {
-      id,
-      name,
-      description,
-      start_date,
-      end_date,
-      status,
-      contacts,
-      category,
-      send_strategy,
-      send_interval_value,
-      send_interval_unit,
-      max_retries,
-      retry_delay_minutes,
-    } = data;
-    const othersCampaigns = campaings?.filter((c) => c.id !== id);
-    const campaignUpdated = [
-      {
-        category: category,
-        name: name,
-        contacts: contacts,
-        description: description,
-        end_date: end_date,
-        id: id,
-        start_date: start_date,
-        status: status,
-        send_strategy: send_strategy,
-        send_interval_value: send_interval_value,
-        send_interval_unit: send_interval_unit,
-        max_retries: max_retries,
-        retry_delay_minutes: retry_delay_minutes,
-      },
-    ];
-    const newCampaigns = [othersCampaigns, campaignUpdated]
-      .flat()
-      .sort((a, b) => a.id - b.id);
-    setCampaigns(newCampaigns);
   };
 
   const handleCampaignToLaunch = (campaign) => {
@@ -116,9 +85,14 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
     // getCampaignMessagesToLaunch(campaign?.id);
   };
 
-  const handleNewTableItem = (data) => {
-    const newCampaigns = [data, campaings].flat();
-    setCampaigns(newCampaigns);
+  const handleSimulationCampaign = (campaignId) => {
+    console.log(campaignId);
+    setShowCampaignSimulationModal(true);
+    setCampaignToSimulate(campaignId);
+  };
+
+  const handleCloseCampaignSimulation = () => {
+    setShowCampaignSimulationModal(false);
   };
 
   const columns = [
@@ -250,23 +224,20 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
               <Button icon={<CopyOutlined />}></Button>
             </Popconfirm>
           </Tooltip>
+
+          <Tooltip title="View Campaign Simulation">
+            <Button
+              icon={<ExperimentOutlined />}
+              onClick={() => {
+                handleSimulationCampaign(record.id);
+              }}
+            ></Button>
+          </Tooltip>
         </Space>
       ),
       // width: 90,
     },
   ];
-
-  // const getCampaignMessagesToLaunch = (id) => {
-  //   submitData(`${API_URL}/${id}`, "", "GET").then((resp) => {
-  //     if (resp?.message) {
-  //       console.log("Ha aparecido el error ");
-  //       message.error(`Error: ${resp?.message}`);
-  //     } else {
-  //       setMessagesToSend(resp);
-  //       setShowLaunchCampaignModal(true);
-  //     }
-  //   });
-  // };
 
   return (
     <Layout>
@@ -279,6 +250,7 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
         >
           New campaign
         </Button>
+        CampaignSimulationModal
         {/* Tabla de campañas */}
         <Table
           dataSource={campaings}
@@ -291,31 +263,44 @@ const CampaignsManagment = ({ campaings, setCampaigns }) => {
             setPagination(e);
           }}
         />
-
         {/* Modal de creación/edición */}
         {modalVisible && (
           <AddCamapignModal
             setShowAddcamapginModal={setModalVisible}
             showAddCampaignModal={modalVisible}
-            handleNewTableItem={handleNewTableItem}
           />
         )}
-
         {showEditCamapignModal && (
           <EditCampaignModal
             campaignData={campaignToUpdate}
             setShowEditCampaignModal={setShowEditCampaignModal}
             showEditCampaignModal={showEditCamapignModal}
-            updateCampaignsTable={updateCampaignsTable}
           />
         )}
-
         {showLaunchCampaignModal && (
           <LaunchCampaignModal
             campaign={campaignToLaunch}
             visible={showLaunchCampaignModal}
+            launchModalCb={setShowEmailProgressModal}
             onCancel={() => {
               setShowLaunchCampaignModal(false);
+            }}
+          />
+        )}
+        {showcampaignSimulationModal && (
+          <CampaignSimulationModal
+            campaignId={campaignToSimulate}
+            onClose={handleCloseCampaignSimulation}
+            open={showcampaignSimulationModal}
+            launchModalCb={setShowEmailProgressModal}
+          />
+        )}
+        {showEmailProgressModal && (
+          <EmailProgressModal
+            campaignId={campaignToLaunch?.id}
+            visible={showEmailProgressModal}
+            onClose={() => {
+              setShowEmailProgressModal(false);
             }}
           />
         )}

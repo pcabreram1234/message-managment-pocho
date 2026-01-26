@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Divider, Typography } from "antd";
+import { Layout, Divider, Typography, message } from "antd";
 import useSubmitData from "../hooks/useSubmitData";
 import CampaignsManagment from "../components/CampaignsManagment";
 import CampaignStats from "../components/CampaignStats";
 import CampaignFilters from "../components/CampaignFilters";
 import CampaignsChart from "../components/CampaignsChart";
-import CampaignSimulation from "../components/SimulationCampaign";
+import { useActionContext } from "../context/ActionContext";
+import { useActionEffect } from "../hooks/useActionEffect";
 
 const Campaigns = () => {
   const [campaings, setCampaigns] = useState([]);
+  const [campaignStats, setCampaingStat] = useState([]);
   const [prevFilteredCampaigns, setPrevFilteredCampaigns] = useState([]);
   const [filters, setFilters] = useState({
     name: "",
@@ -17,6 +19,7 @@ const Campaigns = () => {
     dateRange: null,
   });
   const { submitData } = useSubmitData();
+  const { dispatchAction } = useActionContext();
 
   const onSearch = () => {
     const filtered = campaings.filter((c) => {
@@ -49,6 +52,11 @@ const Campaigns = () => {
     import.meta.env.VITE_API_URL_ROUTER +
     "campaigns/getCampaingsAndRecipients";
 
+  const API_URL_CAMPAIGNS_STATS =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "campaigns/getCampaignStats";
+
   const loadCampaigns = () => {
     submitData(API_URL, "", "GET").then((resp) => {
       setCampaigns(resp);
@@ -56,13 +64,49 @@ const Campaigns = () => {
     });
   };
 
-  useEffect(() => {
-    console.log(filters);
-  }, [filters]);
+  const locadCampaignStats = () => {
+    submitData(API_URL_CAMPAIGNS_STATS, "", "GET").then((resp) => {
+      setCampaingStat(resp?.result);
+    });
+  };
 
   useEffect(() => {
     loadCampaigns();
   }, [API_URL]);
+
+  useEffect(() => {
+    locadCampaignStats();
+  }, [API_URL_CAMPAIGNS_STATS]);
+
+  // listener de estados
+
+  useActionEffect({ type: "refresh", target: "campaignsTable" }, loadCampaigns);
+
+  const handleCampaingLaunchedSuccess = () => {
+    message.success("Campaign Launched!!");
+    setTimeout(() => {
+      onCancel();
+      dispatchAction("refresh", "campaignsTable");
+    }, 500);
+    dispatchAction("", "", "");
+  };
+
+  const handleErrorCampaingLaunched = () => {
+    message.error("Error Launching Campaign!!");
+    setTimeout(() => {
+      dispatchAction("", "", "");
+    }, 500);
+  };
+
+  useActionEffect(
+    { type: "campaing_launched", target: "campaignsTable" },
+    handleCampaingLaunchedSuccess,
+  );
+
+  useActionEffect(
+    { type: "error_launching_campaign", target: "campaignsTable" },
+    handleErrorCampaingLaunched,
+  );
 
   return (
     <Layout>
@@ -76,21 +120,12 @@ const Campaigns = () => {
           onSearch={onSearch}
           setFilters={setFilters}
         />
-        <CampaignsManagment campaings={campaings} setCampaigns={setCampaigns} />
+        <CampaignsManagment campaings={campaings} />
         <Divider />
         <Typography.Title level={2}>Statistics</Typography.Title>
-        <CampaignStats
-          stats={{
-            total: 1,
-            active: "2",
-            scheduledToday: 1,
-            totalRecipients: 2,
-          }}
-        />
+        <CampaignStats stats={campaignStats} />
         <Divider />
         <CampaignsChart />
-        <Divider />
-        <CampaignSimulation />
       </Layout.Content>
     </Layout>
   );

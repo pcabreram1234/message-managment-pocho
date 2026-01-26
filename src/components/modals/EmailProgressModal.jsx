@@ -25,30 +25,29 @@ const EmailProgressModal = ({ visible, onClose, campaignId }) => {
     hasRun.current = true;
     const launchCampaign = async () => {
       try {
-        const response = await submitData(
-          API_URL,
-          { campaignId: campaignId },
-          "POST",
-        );
-        if (response?.result) {
-          if (response?.result > 0) {
-            setTimeout(() => {
-              onClose();
-              setLoadingMessage("Campaign launched successfully");
-              dispatchAction("campaing_launched", "LaunchCampaignModal");
-              setLoading(true);
-            }, 1000);
-          }
-        }
+        await submitData(API_URL, { campaignId: campaignId }, "POST").then(
+          (resp) => {
+            if (resp?.result) {
+              if (resp?.result?.id) {
+                setLoadingMessage("Campaign launched successfully");
+                dispatchAction("campaing_launched", "campaignsTable");
+                setLoading(true);
+                setTimeout(() => {
+                  onClose();
+                }, 1000);
+              }
+            }
 
-        if (response?.message) {
-          setTimeout(() => {
-            setLoadingMessage(`Error: ${response.message}`);
-            setShowSpinner(false);
-            // onClose();
-            dispatchAction("error_launching_campaign", "LaunchCampaignModal");
-          }, 1000);
-        }
+            if (resp?.message) {
+              setTimeout(() => {
+                setLoadingMessage(`Error: ${resp.message}`);
+                setShowSpinner(false);
+                // onClose();
+                dispatchAction("error_launching_campaign", "campaignsTable");
+              }, 1000);
+            }
+          },
+        );
       } catch (err) {
         console.error("Error al registrar mensajes:", err.message);
         setLoadingMessage(`Error: ${err?.message}`);

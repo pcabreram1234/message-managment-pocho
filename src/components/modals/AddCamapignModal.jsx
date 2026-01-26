@@ -27,7 +27,6 @@ const { Text } = Typography;
 const AddCamapignModal = ({
   showAddCampaignModal,
   setShowAddcamapginModal,
-  handleNewTableItem,
 }) => {
   const [form] = Form.useForm();
   const [messages, setMessages] = useState([]); // Lista de plantillas asociadas
@@ -83,9 +82,8 @@ const AddCamapignModal = ({
 
       submitData(API_CAMPAIGNS, newCampaign, "POST")
         .then((resp) => {
-          dispatchAction("update", "dashboard-overview");
-          if (handleNewTableItem) {
-            handleNewTableItem(resp?.result);
+          if (resp?.id) {
+            dispatchAction("refresh", "campaignsTable");
           }
         })
         .then(() => {

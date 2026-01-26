@@ -6,8 +6,6 @@ export const useActionEffect = ({ type, target }, callback) => {
   const lastTimestamp = useRef(null);
 
   useEffect(() => {
-    console.log(type);
-    console.log(target);
     if (
       lastAction &&
       lastAction.type === type &&

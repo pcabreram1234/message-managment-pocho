@@ -15,7 +15,8 @@ import { openNotification } from "../Notification";
 import useSubmitData from "../../hooks/useSubmitData";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
-import CampaignMessagesTab from "../CampaignMessagesTab";
+import CampaignMessagesTab from "../tabs/CampaignMessagesTab";
+import { useActionContext } from "../../context/ActionContext";
 dayjs.extend(customParseFormat);
 
 const { RangePicker } = DatePicker;
@@ -24,7 +25,7 @@ const { Option } = Select;
 const EditCampaignModal = ({
   showEditCampaignModal,
   setShowEditCampaignModal,
-  updateCampaignsTable,
+
   campaignData,
 }) => {
   const [form] = Form.useForm();
@@ -35,6 +36,7 @@ const EditCampaignModal = ({
   const [categories, setCategories] = useState([]);
   const [selectedContacts, setSelectedContacs] = useState([]);
   const { TabPane } = Tabs;
+  const { dispatchAction } = useActionContext();
 
   const API_CATEGORY_URL =
     import.meta.env.VITE_API_URL +
@@ -113,11 +115,7 @@ const EditCampaignModal = ({
               "Campaign updated successfully",
               "success",
             );
-            const campaignUpdate = {
-              ...updatedCampaign,
-              contacts: form.getFieldValue("recipients")?.length,
-            };
-            updateCampaignsTable(campaignUpdate);
+            dispatchAction("refresh", "campaignsTable");
           }
         })
         .catch((err) => {

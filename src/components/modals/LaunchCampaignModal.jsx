@@ -1,66 +1,28 @@
 import React, { useState } from "react";
-import {
-  Modal,
-  Typography,
-  Divider,
-  Checkbox,
-  Descriptions,
-  Alert,
-  message,
-} from "antd";
+import { Modal, Typography, Checkbox, Descriptions, Alert } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
-import EmailProgressModal from "./EmailProgressModal";
-import { useActionEffect } from "../../hooks/useActionEffect";
-import { useActionContext } from "../../context/ActionContext";
 
-const { Title, Text, Paragraph } = Typography;
+const { Title } = Typography;
 
 const LaunchCampaignModal = ({
   visible,
   onCancel,
   campaign,
-  // messagesToSend,
+  launchModalCb,
 }) => {
   const [confirmed, setConfirmed] = useState(false);
-  const [showEmailProgressModal, setShowEmailProgressModal] = useState(false);
-  const { dispatchAction } = useActionContext();
 
   const handleConfirmChange = (e) => {
     setConfirmed(e.target.checked);
   };
 
   const handleLaunch = () => {
-    if (confirmed) {
-      setShowEmailProgressModal(true);
-    }
+    if (!confirmed) return;
+    launchModalCb(true);
+    onCancel();
   };
-
-  const handleCampaingLaunchedSuccess = () => {
-    message.success("Campaign Launched!!");
-    setTimeout(() => {
-      onCancel();
-      dispatchAction("", "", "");
-    }, 500);
-  };
-
-  const handleErrorCampaingLaunched = () => {
-    message.error("Error Launching Campaign!!");
-    setTimeout(() => {
-      dispatchAction("", "", "");
-    }, 500);
-  };
-
-  useActionEffect(
-    { type: "campaing_launched", target: "LaunchCampaignModal" },
-    handleCampaingLaunchedSuccess,
-  );
-
-  useActionEffect(
-    { type: "error_launching_campaign", target: "LaunchCampaignModal" },
-    handleErrorCampaingLaunched,
-  );
 
   return (
     <Modal
@@ -68,6 +30,7 @@ const LaunchCampaignModal = ({
       open={visible}
       onCancel={onCancel}
       onOk={handleLaunch}
+      destroyOnClose
       okText="Launch Campaign"
       okButtonProps={{ disabled: !confirmed }}
       cancelText="Cancel"
@@ -82,39 +45,6 @@ const LaunchCampaignModal = ({
           {campaign.contacts} contacts
         </Descriptions.Item>
       </Descriptions>
-      {/* <Divider />
-      <Text strong>Message(s) preview:</Text>
-      {messagesToSend?.length > 0 &&
-        messagesToSend?.length <= 3 &&
-        messagesToSend?.map((message) => (
-          <Paragraph
-            ellipsis={{
-              expandable: "collapsible",
-              rows: 2,
-              tooltip: message?.message_content,
-            }}
-            style={{
-              background: "#f5f5f5",
-              padding: "10px",
-              borderRadius: "4px",
-            }}
-          >
-            {message?.message_content}
-          </Paragraph>
-        ))}
-
-      {messagesToSend?.length > 3 && (
-        <Paragraph
-          style={{
-            background: "#00d0ff29",
-            padding: "10px",
-            borderRadius: "4px",
-            fontWeight: "bold",
-          }}
-        >
-          This campaign has more than 3 associated messages
-        </Paragraph>
-      )} */}
 
       <Alert
         type="warning"
@@ -125,14 +55,6 @@ const LaunchCampaignModal = ({
       <Checkbox onChange={handleConfirmChange}>
         I confirm that I wish to launch this messaging campaign
       </Checkbox>
-
-      {showEmailProgressModal && (
-        <EmailProgressModal
-          visible={showEmailProgressModal}
-          campaignId={campaign?.id}
-          onClose={() => setShowEmailProgressModal(false)}
-        />
-      )}
     </Modal>
   );
 };
