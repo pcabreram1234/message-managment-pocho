@@ -74,9 +74,19 @@ const CampaignsManagment = ({ campaings }) => {
     setModalVisible(true);
   };
 
-  const handleDelete = (id) => {
-    dispatchAction("refresh", "campaignsTable");
-    message.success("Campaign deleted");
+  const handleDelete = (campaignId) => {
+    const API_URL =
+      import.meta.env.VITE_API_URL +
+      import.meta.env.VITE_API_URL_ROUTER +
+      `campaigns/delete/${campaignId}`;
+    submitData(API_URL, null, "DELETE").then((resp) => {
+      if (resp?.success === true) {
+        dispatchAction("refresh", "campaignsTable");
+        message.success("Campaign deleted");
+      } else {
+        message.error("Error: " + resp?.message);
+      }
+    });
   };
 
   const handleCampaignToLaunch = (campaign) => {
@@ -250,7 +260,6 @@ const CampaignsManagment = ({ campaings }) => {
         >
           New campaign
         </Button>
-        CampaignSimulationModal
         {/* Tabla de campañas */}
         <Table
           dataSource={campaings}

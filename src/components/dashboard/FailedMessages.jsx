@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Card, Table, Typography, Space, Tag, Spin, message } from "antd";
+import React from "react";
+import { Card, Table, Typography, Space, Tag } from "antd";
 import { WarningOutlined } from "@ant-design/icons";
-// import axios from "axios";
 
 const { Title, Text } = Typography;
 
