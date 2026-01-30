@@ -48,6 +48,7 @@ const AddContactModal = ({ setShowAddContactmodal }) => {
       email: email,
       phone_number: phone,
       UserId: userInfo.id,
+      email_validation_source: "user",
     });
   };
 
@@ -131,8 +132,8 @@ const AddContactModal = ({ setShowAddContactmodal }) => {
             { required: true },
             { type: "regexp" },
             {
-              pattern: /[0-9]{3}[\-]{1}[0-9]{3}[\-]{1}[0-9]{4}/,
-              message: "Allowed format 888-222-4444",
+              pattern:/^[\d\s\-\(\).]{10,15}$/,
+              message: "Enter at least 10 numbers",
             },
           ]}
         >

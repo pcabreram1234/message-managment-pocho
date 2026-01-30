@@ -23,7 +23,7 @@ const BulkContactUploader = ({ showModal, cbShowModal }) => {
     },
     {
       title: "Phone",
-      dataIndex: "phone",
+      dataIndex: "phone_number",
     },
   ];
 
@@ -33,13 +33,14 @@ const BulkContactUploader = ({ showModal, cbShowModal }) => {
       skipEmptyLines: true,
       complete: function (results) {
         const validContacts = results.data.filter(
-          (row) => row.name && (row.email || row.phone)
+          (row) => row.name && (row.email || row.phone_number),
         );
 
         if (validContacts.length === 0) {
           message.error("No valid contacts were found in the file.");
           return;
         }
+        console.log(validContacts);
 
         setContacts(validContacts);
         setModalVisible(true);
@@ -48,17 +49,26 @@ const BulkContactUploader = ({ showModal, cbShowModal }) => {
     return false; // prevent default upload behavior
   };
 
-  const handleImport = (data) => {
+  const handleImport = () => {
     const API_UPLOAD_CONTACTS =
       import.meta.env.VITE_API_URL +
       import.meta.env.VITE_API_URL_ROUTER +
       "contacts/uploadContacts";
     // Aquí llamarías a tu backend para guardar los contactos
 
-    submitData(API_UPLOAD_CONTACTS, contacts, "POST");
-    // message.success(`${contacts.length} contacts imported successfully.`);
-    // setModalVisible(false);
-    // setContacts([]);
+    submitData(API_UPLOAD_CONTACTS, contacts, "POST")
+      .then((resp) => {
+        if (resp?.success === true) {
+          message.success(
+            `${resp?.result?.newContacts?.length} contacts imported successfully.`,
+          );
+          setModalVisible(false);
+          cbShowModal(false);
+        }
+      })
+      .catch((error) => {
+        message.error(`Error: ${error?.message}`);
+      });
   };
 
   return (
@@ -68,10 +78,11 @@ const BulkContactUploader = ({ showModal, cbShowModal }) => {
         onCancel={() => cbShowModal(false)}
         okButtonProps={{ style: { display: "none" } }}
         cancelButtonProps={{ style: { display: "none" } }}
+        destroyOnClose
       >
         <Title level={4}>Upload contacts in bulk</Title>
         <Text type="secondary">
-          Accepted format: CSV with columns name, email, phone
+          Accepted format: CSV with columns name, email, phone_number
         </Text>
 
         <Dragger

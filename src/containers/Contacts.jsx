@@ -1,14 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Typography, Table, Button, Col, Row } from "antd";
-import EditButton from "../components/buttons/EditButton";
-import DeleteButton from "../components/buttons/DeleteButton";
+import {
+  Alert,
+  Layout,
+  Typography,
+  Table,
+  Button,
+  Col,
+  Row,
+  Tag,
+  Tooltip,
+  Space,
+} from "antd";
 import EditContactModal from "../components/modals/EditContactModal";
 import DeleteContactModal from "../components/modals/DeleteContactModal";
 import DeleteContacstModal from "../components/modals/DelectContactsModal";
 import AddContactModal from "../components/modals/AddContactModal";
-import ShowMessagesButton from "../components/buttons/ShowMessagesButton";
-import MessagesAssociatedModal from "../components/modals/MessagesAssociatedModal";
-import { PlusCircleFilled, DeleteFilled } from "@ant-design/icons";
+import ViewMessagesButton from "../components/buttons/ViewMessagesButton";
+import ContactMessagesModal from "../components/modals/ContactMessagesModal";
+import {
+  PlusCircleFilled,
+  DeleteFilled,
+  EditOutlined,
+  DeleteOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
 import { fetchData } from "../utility/fetchData";
 
 const { Header, Content } = Layout;
@@ -31,7 +46,8 @@ const Contacts = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [showMessagesAssociatedModal, setShowAssociatedModal] = useState(false);
-  let filterValues = [];
+  const [showMessagesModal, setShowMessagesModal] = useState(false);
+  const [selectedContactId, setSelectedContactId] = useState(null);
 
   // Table States
   const [pagination, setPagination] = useState({
@@ -39,6 +55,14 @@ const Contacts = () => {
     defaultPageSize: 10,
     showSizeChanger: true,
   });
+
+  const EMAIL_STATUS_MAP = {
+    valid: { color: "green", label: "Valid" },
+    pending: { color: "gold", label: "Pending" },
+    invalid: { color: "red", label: "Invalid domain" },
+    bounced: { color: "volcano", label: "Bounced" },
+    blocked: { color: "default", label: "Blocked" },
+  };
 
   /* Renderizada que muestra o no el boton para borrar contacto en caso
   de que se seleccione alguna fila */
@@ -53,78 +77,144 @@ const Contacts = () => {
 
   const ContactsCards = fetchData(API_URL);
 
-  let tableDataSource = [];
-  let tableColumns = [
+  // let tableDataSource = [];
+  const tableColumns = [
+    /* ===============================
+     Name
+  =============================== */
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      filtered: true,
-      sorter: (a, b) =>
-        a.name.toString().charCodeAt(0) < b.name.toString().charCodeAt(0),
-      sortDirections: ["ascend", "descend"],
-      filterSearch: true,
-      filters: filterValues,
-      onFilter: (value, record) => record.name.indexOf(value) === 0,
+      ellipsis: true,
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
+
+    /* ===============================
+     Email
+  =============================== */
     {
-      title: "Phone Number",
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      ellipsis: true,
+      render: (email) => (
+        <Tooltip title={email}>
+          <span>{email}</span>
+        </Tooltip>
+      ),
+    },
+
+    /* ===============================
+     Email Status
+  =============================== */
+    {
+      title: "Email Status",
+      dataIndex: "email_status",
+      key: "email_status",
+      filters: Object.entries(EMAIL_STATUS_MAP).map(([value, { label }]) => ({
+        text: label,
+        value,
+      })),
+      onFilter: (value, record) => record.email_status === value,
+      render: (status) => {
+        const config = EMAIL_STATUS_MAP[status] || {
+          color: "default",
+          label: "Unknown",
+        };
+
+        return (
+          <Tooltip title={`Email status: ${config.label}`}>
+            <Tag color={config.color}>{config.label}</Tag>
+          </Tooltip>
+        );
+      },
+    },
+
+    /* ===============================
+     Phone
+  =============================== */
+    {
+      title: "Phone",
       dataIndex: "phone_number",
       key: "phone_number",
+      width: 150,
     },
-    { title: "Email", dataIndex: "email", key: "email" },
-    {
-      title: "Edit",
-      dataIndex: "editButton",
-      key: "editButton",
-    },
-    {
-      title: "Delete",
-      dataIndex: "deleteButton",
-      key: "delete",
-    },
+
+    /* ===============================
+     Messages
+  =============================== */
     {
       title: "Messages",
       dataIndex: "messages",
       key: "messages",
+      width: 110,
+      align: "center",
+    },
+
+    /* ===============================
+     Actions
+  =============================== */
+    {
+      title: "Actions",
+      key: "actions",
+      width: 180,
+      render: (_, contact) => (
+        <Space>
+          <Tooltip title="Edit contact">
+            <Button
+              size="small"
+              icon={<EditOutlined />}
+              onClick={() => {
+                setContactInfo(contact);
+                setShowEditModal(true);
+              }}
+            />
+          </Tooltip>
+
+          <Tooltip title="Delete contact">
+            <Button
+              size="small"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => {
+                setId(contact.id);
+                setShowDeleteModal(true);
+              }}
+            />
+          </Tooltip>
+
+          {["invalid", "bounced"].includes(contact.email_status) && (
+            <Tooltip title="Fix email issues">
+              <Button size="small" type="dashed" icon={<WarningOutlined />} />
+            </Tooltip>
+          )}
+        </Space>
+      ),
     },
   ];
 
-  const renderContacts = () => {
-    ContactsCards.length > 0 &&
-      ContactsCards.map((contact) => {
-        tableDataSource.push({
-          key: contact.id,
-          name: contact.name,
-          phone_number: contact.phone_number,
-          email: contact.email,
-          editButton: (
-            <EditButton
-              setShowModal={setShowEditModal}
-              setData={setContactInfo}
-              data={contact}
-            />
-          ),
-          deleteButton: (
-            <DeleteButton
-              id={contact.id}
-              setId={setId}
-              cb={setShowDeleteModal}
-            />
-          ),
-          messages: (
-            <ShowMessagesButton
-              cb={setShowAssociatedModal}
-              setId={setId}
-              id={contact.id}
-              name={contact.email}
-              setName={setName}
-            />
-          ),
-        });
-        filterValues.push({ text: contact.name, value: contact.name });
-      });
-  };
+  const tableDataSource = ContactsCards.map((contact) => ({
+    key: contact.id,
+    ...contact,
+    messages: (
+      <ViewMessagesButton
+        contactId={contact.id}
+        totalMessages={contact.total_messages}
+        onOpen={(id) => {
+          setSelectedContactId(id);
+          setShowMessagesModal(true);
+        }}
+      />
+      // <ShowMessagesButton
+      //   cb={setShowAssociatedModal}
+      //   setId={setId}
+      //   id={contact.id}
+      //   name={contact.email}
+      //   setName={setName}
+      // />
+    ),
+  }));
 
   const onSelectChange = (newSelectedRowKeys) => {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -161,60 +251,81 @@ const Contacts = () => {
     setShowDeleteContactsModal(true);
   };
 
-  renderContacts();
+  // renderContacts();
 
   return (
     <Layout>
       <Header
         style={{
-          backgroundColor: "transparent",
+          background: "transparent",
+          height: "auto", // 🔥 CLAVE
+          lineHeight: "normal", // 🔥 CLAVE
+          padding: "16px",
         }}
       >
-        <Row
-          gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
-          justify="start"
-          align="middle"
-        >
+        <Row align="middle" justify="space-between" gutter={[16, 16]} wrap>
+          {/* ===============================
+        Title + Subtitle
+    =============================== */}
           <Col>
-            <Title level={3} style={{ margin: "auto" }}>
+            <Title level={3} style={{ marginBottom: 0 }}>
               Contacts
             </Title>
+            <Typography.Text type="secondary">
+              Manage your contacts and email validation status
+            </Typography.Text>
           </Col>
 
+          {/* ===============================
+        Actions
+    =============================== */}
           <Col>
-            <Button
-              type="primary"
-              onClick={handleShowAddContactModal}
-              style={{
-                color: "white",
-                backgroundColor: "green",
-                borderColor: "transparent",
-              }}
-            >
-              <PlusCircleFilled /> Add Contact
-            </Button>
-          </Col>
-
-          <Col>
-            {showDeleteButton && (
+            <Space wrap>
               <Button
-                type="default"
-                onClick={handleDeleteContact}
-                style={{
-                  color: "white",
-                  backgroundColor: "rgb(237 43 43)",
-                  borderColor: "transparent",
-                }}
+                type="primary"
+                icon={<PlusCircleFilled />}
+                onClick={handleShowAddContactModal}
               >
-                <DeleteFilled /> Delete Contacts
+                Add Contact
               </Button>
-            )}
+
+              {showDeleteButton && (
+                <Button
+                  danger
+                  icon={<DeleteFilled />}
+                  onClick={handleDeleteContact}
+                >
+                  Delete selected
+                </Button>
+              )}
+            </Space>
+          </Col>
+        </Row>
+
+        {/* ===============================
+      Warning / Alert
+  =============================== */}
+        <Row style={{ marginTop: 12 }}>
+          <Col span={24}>
+            <Alert
+              type="warning"
+              showIcon
+              message="Some contacts may not receive emails"
+              description="Review contacts with invalid or bounced email status before launching campaigns."
+              closable
+            />
           </Col>
         </Row>
       </Header>
+
       <Content style={{ margin: "5px 0 5px 5px" }}>
         <Table
           loading={tableDataSource?.length > 0 ? false : true}
+          rowClassName={(record) =>
+            ["invalid_domain", "bounced"].includes(record.email_status)
+              ? "row-warning"
+              : ""
+          }
           dataSource={tableDataSource}
           columns={tableColumns}
           rowSelection={rowSelection}
@@ -247,11 +358,19 @@ const Contacts = () => {
           id={id}
         />
       )}
-      {showMessagesAssociatedModal && (
+      {/* {showMessagesAssociatedModal && (
         <MessagesAssociatedModal
           cb={setShowAssociatedModal}
           id={id}
           contact={name}
+        />
+      )} */}
+
+      {showMessagesModal && (
+        <ContactMessagesModal
+          visible={showMessagesModal}
+          contactId={selectedContactId}
+          onClose={() => setShowMessagesModal(false)}
         />
       )}
     </Layout>

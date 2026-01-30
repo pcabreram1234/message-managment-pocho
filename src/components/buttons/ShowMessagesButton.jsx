@@ -1,18 +1,20 @@
 import React from "react";
-import { Button } from "antd";
-import { MessageFilled } from "@ant-design/icons";
+import { Button, Tooltip } from "antd";
+import { MailOutlined } from "@ant-design/icons";
 
 const ShowMessagesButton = ({ cb, setId, id, setName, name }) => {
   return (
-    <Button
-      onClick={() => {
-        cb(true);
-        setId(id);
-        setName(name);
-      }}
-    >
-      <MessageFilled />
-    </Button>
+    <Tooltip title="View message history">
+      <Button
+        size="small"
+        icon={<MailOutlined />}
+        onClick={() => {
+          cb(true);
+          setId(id);
+          setName(name);
+        }}
+      />
+    </Tooltip>
   );
 };
 
