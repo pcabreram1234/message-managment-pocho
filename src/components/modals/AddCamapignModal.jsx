@@ -39,7 +39,7 @@ const AddCamapignModal = ({
   const API_CATEGORY_URL =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
-    "categories";
+    "categories/simple";
 
   const API_ASSOCIATE_TO_URL =
     import.meta.env.VITE_API_URL +
@@ -60,13 +60,15 @@ const AddCamapignModal = ({
   const categories = fetchData(API_CATEGORY_URL);
   const availableMessages = fetchData(API_MESSAGES_URL);
 
+  console.log(categories);
+
   const handleSubmit = () => {
     form.validateFields().then((values) => {
       const [startDate, endDate] = values.dates;
       const newCampaign = {
         name: values.name,
         description: values.description,
-        category: values.category,
+        CategoryId: values.CategoryId,
         start_date: startDate.format("YYYY-MM-DD"),
         end_date: endDate.format("YYYY-MM-DD"),
         status: values.status,
@@ -220,16 +222,14 @@ const AddCamapignModal = ({
           />
         </Form.Item>
         <Form.Item
-          name="category"
+          name="CategoryId"
           label="Category"
           rules={[{ required: true }]}
         >
           <Select placeholder="Select a Category">
             {categories?.categories?.map((category) => {
               return (
-                <Option value={category?.categorie_name}>
-                  {category?.categorie_name}
-                </Option>
+                <Option value={category?.id}>{category?.categorie_name}</Option>
               );
             })}
           </Select>

@@ -1,235 +1,223 @@
-import React, { useState, useEffect } from "react";
-import { Layout, Typography, Table, Row, Col, Button } from "antd";
+import React, { useMemo, useState } from "react";
+import {
+  Layout,
+  Typography,
+  Table,
+  Row,
+  Col,
+  Button,
+  Card,
+  Space,
+  Tag,
+  Empty,
+} from "antd";
+import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+
 import AddCategoryModal from "../components/modals/AddCategoryModal";
-import { fetchData } from "../utility/fetchData";
-import { PlusCircleFilled, DeleteFilled } from "@ant-design/icons";
-import DeleteButton from "../components/buttons/DeleteButton";
-import EditCategoryButton from "../components/buttons/EditCategoryButton";
 import EditCategoryModal from "../components/modals/EditCategoryModal";
 import DeleteCategoryModal from "../components/modals/DeleteCategoryModal";
 import DeleteCategoriesModal from "../components/modals/DeleteCategoriesModal";
+import { fetchData } from "../utility/fetchData";
 
 const { Header, Content } = Layout;
-const { Title } = Typography;
+const { Title, Text } = Typography;
+
 const API_URL =
   import.meta.env.VITE_API_URL +
   import.meta.env.VITE_API_URL_ROUTER +
   "categories";
+
 const Categories = () => {
-  const [showAddCategoryModal, setAddCategorymodal] = useState(false);
-  const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
-  const [showDeleteCategoryModal, setShowDeleteCategoryModal] = useState(false);
-  const [showDeleteButton, setShowDeleteButton] = useState(false);
-  const [showDeleteCategoriesModal, setShowDeleteCategoriesModal] =
-    useState(false);
-  const [id, setId] = useState([]);
-  const [name, setName] = useState([]);
-  const [associateTo, setAssociateTo] = useState([]);
-  let categories = fetchData(API_URL);
+  /* =====================
+     Data fetching
+  ====================== */
+  const categories = fetchData(API_URL);
+
+  /* =====================
+     State
+  ====================== */
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [activeCategory, setActiveCategory] = useState(null);
 
-  // Table States
-  const [pagination, setPagination] = useState({
-    pageSize: 10,
-    defaultPageSize: 10,
-    showSizeChanger: true,
-  });
+  const [showAdd, setShowAdd] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [showDeleteOne, setShowDeleteOne] = useState(false);
+  const [showDeleteMany, setShowDeleteMany] = useState(false);
 
-  let filterValues = [];
-  let tableDataSource = [];
-  let tableColumns = [
-    {
-      title: "Category",
-      dataIndex: "name",
-      key: "name",
-      filtered: true,
-      sorter: (a, b) =>
-        a.name.toString().toLowerCase().charCodeAt(0) >
-        b.name.toString().toLowerCase().charCodeAt(0),
+  /* =====================
+     DataSource (useMemo)
+  ====================== */
+  const dataSource = useMemo(
+    () =>
+      categories?.categories?.map((cat) => ({
+        key: cat.id,
+        id: cat.id,
+        name: cat.categorie_name,
+        associate_to: cat.associate_to,
+      })) || [],
+    [categories],
+  );
 
-      sortDirections: ["ascend", "descend", "ascend"],
-      filterSearch: true,
-      filters: filterValues,
-      onFilter: (value, record) => record.name.indexOf(value) === 0,
-    },
-    {
-      title: "Edit",
-      dataIndex: "editButton",
-      key: "editButton",
-    },
-    {
-      title: "Delete",
-      dataIndex: "deleteButton",
-      key: "delete",
-    },
-  ];
-
-  const setCategoryData = ({ id, name, associateTo }) => {
-    setId(id);
-    setName(name);
-    setAssociateTo(associateTo);
-  };
-
-  const renderCategoriesTable = () => {
-    if (categories.categories) {
-      categories.categories.map((category) => {
-        tableDataSource.push({
-          key: category.id,
-          name: category.categorie_name,
-          associate_to: category.associate_to,
-          editButton: (
-            <EditCategoryButton
-              setCategoryData={setCategoryData}
-              id={category.id}
-              name={category.categorie_name}
-              associateTo={category.associate_to}
-              setShowEditCategoryModal={setShowEditCategoryModal}
+  /* =====================
+     Columns (useMemo)
+  ====================== */
+  const columns = useMemo(
+    () => [
+      {
+        title: "Category",
+        dataIndex: "name",
+        key: "name",
+        sorter: (a, b) => a.name.localeCompare(b.name),
+      },
+      {
+        title: "Associated To",
+        dataIndex: "associate_to",
+        key: "associate_to",
+        render: (value) => {
+          if (value === "both") {
+            return (
+              <Space>
+                <Tag color="blue">Campaigns</Tag>
+                <Tag color="green">Messages</Tag>
+              </Space>
+            );
+          } else if (value === "none") {
+            return (
+              <Space>
+                <Tag color="gray">None</Tag>
+              </Space>
+            );
+          }
+          return value === "campaign" ? (
+            <Tag color="blue">Campaigns</Tag>
+          ) : (
+            <Tag color="green">Messages</Tag>
+          );
+        },
+      },
+      {
+        title: "Actions",
+        key: "actions",
+        render: (_, record) => (
+          <Space>
+            <Button
+              type="text"
+              icon={<EditOutlined />}
+              onClick={() => {
+                setActiveCategory(record);
+                setShowEdit(true);
+              }}
             />
-          ),
-          deleteButton: (
-            <DeleteButton
-              id={category.id}
-              setId={setId}
-              cb={setShowDeleteCategoryModal}
+            <Button
+              type="text"
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => {
+                setActiveCategory(record);
+                setShowDeleteOne(true);
+              }}
             />
-          ),
-        });
-        filterValues.push({
-          text: category.categorie_name,
-          value: category.categorie_name,
-        });
-      });
-    }
-  };
+          </Space>
+        ),
+      },
+    ],
+    [],
+  );
 
-  const handleShowCategoryModal = () => {
-    setAddCategorymodal(true);
-  };
-
-  const handleDeleteCategories = () => {
-    setShowDeleteCategoriesModal(true);
-  };
-
-  const onSelectChange = (key) => {
-    setSelectedRowKeys(key);
-  };
-  const onSelect = (key) => {
-    setSelectedRowKeys(key);
-  };
-
+  /* =====================
+     Row selection
+  ====================== */
   const rowSelection = {
     selectedRowKeys,
-    onChange: onSelectChange,
-    onSelect: onSelect,
-    preserveSelectedRowKeys: true,
-    selections: [
-      Table.SELECTION_ALL,
-      Table.SELECTION_INVERT,
-      Table.SELECTION_NONE,
-    ],
+    onChange: setSelectedRowKeys,
   };
-
-  /* Renderizada que muestra o no el boton para borrar contacto en caso
-  de que se seleccione alguna fila */
-  useEffect(() => {
-    setId(selectedRowKeys);
-    if (selectedRowKeys.length > 1) {
-      setShowDeleteButton(true);
-    } else {
-      setShowDeleteButton(false);
-    }
-  }, [selectedRowKeys]);
-
-  renderCategoriesTable();
-  useEffect(() => {}, []);
 
   return (
     <Layout>
-      <Header
-        style={{
-          backgroundColor: "transparent",
-        }}
-      >
-        <Row
-          gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
-          justify="start"
-          align="middle"
-        >
+      {/* =====================
+          Header
+      ====================== */}
+      <Header style={{ background: "transparent", padding: 0 }}>
+        <Row justify="space-between" align="middle">
           <Col>
-            <Title level={3} style={{ margin: "auto" }}>
+            <Title level={3} style={{ marginBottom: 0 }}>
               Categories
             </Title>
+            <Text type="secondary">
+              Manage how you organize messages and campaigns
+            </Text>
           </Col>
 
           <Col>
-            <Button
-              type="primary"
-              onClick={handleShowCategoryModal}
-              style={{
-                color: "white",
-                backgroundColor: "green",
-                borderColor: "transparent",
-              }}
-            >
-              <PlusCircleFilled /> Add Category
-            </Button>
-          </Col>
-          <Col>
-            {showDeleteButton && (
+            <Space>
+              {selectedRowKeys.length > 0 && (
+                <Button danger onClick={() => setShowDeleteMany(true)}>
+                  Delete ({selectedRowKeys.length})
+                </Button>
+              )}
+
               <Button
-                type="default"
-                onClick={handleDeleteCategories}
-                style={{
-                  color: "white",
-                  backgroundColor: "rgb(237 43 43)",
-                  borderColor: "transparent",
-                }}
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => setShowAdd(true)}
               >
-                <DeleteFilled /> Delete Categories
+                New Category
               </Button>
-            )}
+            </Space>
           </Col>
         </Row>
       </Header>
 
-      <Content
-        style={{
-          margin: "5px 0 5px 5px",
-        }}
-      >
-        <Table
-          loading={tableDataSource?.length > 0 ? false : true}
-          dataSource={tableDataSource}
-          columns={tableColumns}
-          rowSelection={rowSelection}
-          pagination={pagination}
-          scroll={{ x: "max-content", y: 100 * 5 }}
-          onChange={(e) => {
-            setPagination(e);
-          }}
-        />
+      {/* =====================
+          Content
+      ====================== */}
+      <Content style={{ marginTop: 16 }}>
+        <Card>
+          <Table
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={dataSource}
+            loading={!categories?.categories}
+            pagination={{ pageSize: 10, showSizeChanger: true }}
+            locale={{
+              emptyText: (
+                <Empty
+                  description={
+                    "No categories yet. Categories help you organize messages and campaigns."
+                  }
+                >
+                  <Button type="primary" onClick={() => setShowAdd(true)}>
+                    Create your first category
+                  </Button>
+                </Empty>
+              ),
+            }}
+          />
+        </Card>
       </Content>
 
-      {showAddCategoryModal && (
-        <AddCategoryModal setAddCategorymodal={setAddCategorymodal} />
-      )}
-      {showEditCategoryModal && (
+      {/* =====================
+          Modals
+      ====================== */}
+      {showAdd && <AddCategoryModal setAddCategorymodal={setShowAdd} />}
+
+      {showEdit && activeCategory && (
         <EditCategoryModal
-          id={id}
-          name={name}
-          associate_to={associateTo}
-          setShowEditCategoryModal={setShowEditCategoryModal}
+          id={activeCategory.id}
+          name={activeCategory.name}
+          associate_to={activeCategory.associate_to}
+          setShowEditCategoryModal={setShowEdit}
         />
       )}
 
-      {showDeleteCategoryModal && (
-        <DeleteCategoryModal cb={setShowDeleteCategoryModal} id={id} />
+      {showDeleteOne && activeCategory && (
+        <DeleteCategoryModal id={activeCategory.id} cb={setShowDeleteOne} />
       )}
 
-      {showDeleteCategoriesModal && (
+      {showDeleteMany && (
         <DeleteCategoriesModal
-          id={id}
-          setShowDeleteCategoriesModal={setShowDeleteCategoriesModal}
+          id={selectedRowKeys}
+          setShowDeleteCategoriesModal={setShowDeleteMany}
         />
       )}
     </Layout>

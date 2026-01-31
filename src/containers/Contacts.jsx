@@ -186,7 +186,15 @@ const Contacts = () => {
 
           {["invalid", "bounced"].includes(contact.email_status) && (
             <Tooltip title="Fix email issues">
-              <Button size="small" type="dashed" icon={<WarningOutlined />} />
+              <Button
+                size="small"
+                type="dashed"
+                icon={<WarningOutlined />}
+                onClick={() => {
+                  setContactInfo(contact);
+                  setShowEditModal(true);
+                }}
+              />
             </Tooltip>
           )}
         </Space>

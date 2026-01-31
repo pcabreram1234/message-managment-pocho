@@ -183,6 +183,7 @@ const CampaignsManagment = ({ campaings }) => {
               icon={<EditOutlined />}
               onClick={() => {
                 setShowEditCampaignModal(true);
+                console.log(record)
                 setCamapignToUpdate({
                   id: record?.id,
                   name: record?.name,
@@ -190,7 +191,7 @@ const CampaignsManagment = ({ campaings }) => {
                   status: record?.status,
                   start_date: record?.start_date,
                   end_date: record?.end_date,
-                  category: record?.category,
+                  CategoryId: record?.CategoryId,
                   send_strategy: campaings.find((c) => c.id === record.id)
                     ?.send_strategy,
                   send_interval_value: campaings.find((c) => c.id === record.id)
