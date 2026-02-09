@@ -1,71 +1,77 @@
 import React, { useState } from "react";
-import { Modal } from "antd";
-import { EditFilled } from "@ant-design/icons";
-import { editDataFuntion } from "../../utility/Funtions";
+import { Modal, message } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import Message from "../forms/Message";
+import useSubmitData from "../../hooks/useSubmitData";
+import { useActionContext } from "../../context/ActionContext";
+const { info, error } = message;
 
-const EditMessageModal = ({
-  data,
-  setShowEditMessageModal,
-  setShowPopUpModal,
-  setPopUpModalInfo,
-}) => {
-  /* Destructuring data object */
-  const { id, messageTosend, categories, contacts } = data;
-  /* Fields states */
-  const [message, setMessage] = useState(messageTosend);
-  const [categoriesEdit, setCategoriesEdit] = useState(categories);
-  const [associate_to, setAssociateTo] = useState(contacts);
+const EditMessageModal = ({ data, setShowEditMessageModal }) => {
+  if (!data) return null;
+
+  const { id, message, Categories = [], Contacts = [] } = data;
+
+  const { submitData } = useSubmitData();
+  const { dispatchAction } = useActionContext();
+
+  /* Fields state */
+  const [messageText, setMessageText] = useState(message);
+  const [categoriesEdit, setCategoriesEdit] = useState(Categories);
+  const [associateTo, setAssociateTo] = useState(Contacts);
   const [fieldsCompleted, setFieldsCompleted] = useState(false);
 
-  /* Service URL API */
+  /* API */
   const API_URL =
     import.meta.env.VITE_API_URL +
     import.meta.env.VITE_API_URL_ROUTER +
     "messages/editMessage";
 
-  /* Modal states */
-  const [isVisible, setIsVisible] = useState(true);
-
-  const handleOnCancel = () => {
-    setIsVisible(false);
+  const handleCancel = () => {
     setShowEditMessageModal(false);
   };
 
-  const handleMessageInfo = (message, associate_to, categories) => {
-    setMessage(message);
+  const handleMessageInfo = (msg, contacts, categories) => {
+    setMessageText(msg);
+    setAssociateTo(contacts);
     setCategoriesEdit(categories);
-    setAssociateTo(associate_to);
   };
 
-  let dataToSend = {
-    id: parseInt(id),
-    message: message,
-    Contacts: associate_to,
+  const payload = {
+    id,
+    message: messageText,
+    Contacts: associateTo,
     Categories: categoriesEdit,
+  };
+
+  const handleOk = () => {
+    if (!fieldsCompleted) return;
+
+    submitData(API_URL, payload, "PATCH").then((resp) => {
+      if (typeof resp.result === "number" || resp.result === 1) {
+        info("Message Saved");
+        dispatchAction("refresh", "messagesTable");
+        setShowEditMessageModal(false);
+      } else {
+        error("Error: " + resp?.message);
+      }
+    });
   };
 
   return (
     <Modal
       title="Edit Message"
-      visible={isVisible}
-      closable={true}
-      onCancel={handleOnCancel}
+      open={true}
+      centered
+      okText="Save changes"
       okButtonProps={{
-        icon: <EditFilled />,
-        htmlType: "submit",
+        icon: <EditOutlined />,
       }}
-      centered={true}
-      okText={"Save"}
-      onOk={() => {
-        if (fieldsCompleted) {
-          setShowPopUpModal(true);
-          editDataFuntion(API_URL, dataToSend, setPopUpModalInfo);
-        }
-      }}
+      onCancel={handleCancel}
+      onOk={handleOk}
+      destroyOnClose
     >
       <Message
-        data={dataToSend}
+        data={payload}
         handleMessageInfo={handleMessageInfo}
         setFieldsCompleted={setFieldsCompleted}
         config={false}

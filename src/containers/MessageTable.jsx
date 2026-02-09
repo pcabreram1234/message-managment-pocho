@@ -1,408 +1,335 @@
-import React, { useState, useEffect } from "react";
-import { Table, Tag, Layout, Typography, Input, Button, Col, Row } from "antd";
-import { fetchData } from "../utility/fetchData";
-import { deleteDuplicateInFilter } from "../utility/Funtions";
-import { DeleteFilled, PlusCircleFilled } from "@ant-design/icons";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Layout,
+  Typography,
+  Table,
+  Button,
+  Card,
+  Space,
+  Tag,
+  Tooltip,
+  Empty,
+  Modal,
+} from "antd";
+import {
+  PlusOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  SendOutlined,
+} from "@ant-design/icons";
+import useSubmitData from "../hooks/useSubmitData";
 import AddMessageModal from "../components/modals/AddMessageModal";
-import SendToModal from "../components/modals/SendToModal";
-import SendToButton from "../components/buttons/SendToButton";
-import EditButton from "../components/buttons/EditButton";
-import DeleteButton from "../components/buttons/DeleteButton";
 import EditMessageModal from "../components/modals/EditMessageModal";
-import PopUpModal from "../components/modals/PopUpModal";
 import DeleteMessageModal from "../components/modals/DeleteMessageModal";
-import SeveralMessagesToSendModal from "../components/modals/SeveralMessagesToSendModal";
-import SendButton from "../components/buttons/SendButton";
+import SendToModal from "../components/modals/SendToModal";
+import MessageStatusResult from "../components/MessageStatusResult";
+import AddCamapignModal from "../components/modals/AddCamapignModal";
+import { useActionContext } from "../context/ActionContext";
+import { useActionEffect } from "../hooks/useActionEffect";
+
 const API_URL =
   import.meta.env.VITE_API_URL +
   import.meta.env.VITE_API_URL_ROUTER +
   "messages";
 
+const API_URL_CONTACTS =
+  import.meta.env.VITE_API_URL +
+  import.meta.env.VITE_API_URL_ROUTER +
+  "contacts/simple";
+
 const { Content, Header } = Layout;
-const { Title } = Typography;
-const { TextArea } = Input;
+const { Title, Text } = Typography;
 
 const MessageTable = () => {
-  const messages = fetchData(API_URL);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-
-  /* Fields Message States */
-  const [id, setId] = useState([]);
-  const [messageTosend, setMessageToSend] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const { dispatchAction } = useActionContext();
+  const [dataSource, setDataSource] = useState([]);
   const [contacts, setContacts] = useState([]);
+  const [messagesTosend, setMessagesToSend] = useState([]);
+  const { submitData } = useSubmitData();
 
-  /* Modal states */
-  const [showSendToModal, setShowSendToModal] = useState(false);
-  const [showAddMessageModal, setShowAddMessageModal] = useState(false);
-  const [showDeleteButton, setShowDeleteButton] = useState(false);
-  const [showSendToButton, setShowSendToButton] = useState(false);
-  const [showEditMessageModal, setShowEditMessageModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showPopUpModal, setShowPopUpModal] = useState(false);
-  const [showSeveralMessagesToSendModal, setShowSeveralMessagesToSendModal] =
-    useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [currentMessage, setCurrentMessage] = useState(null);
+  const [currenteContacts, setCurrentContacts] = useState(null);
+  const [messageId, setMessageId] = useState(null);
 
-  /* PopUp Modal states */
-  const [modalMessage, setModalMessage] = useState([]);
-  const [alertModalType, setAlertModalType] = useState();
-  const [modalInfoText, setModalInfoText] = useState();
+  const [showAdd, setShowAdd] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [showSend, setShowSend] = useState(false);
+  const [showMessageStatusResult, setShowMessageStatusResult] = useState(false);
+  const [showAddCampaignModal, setShowAddcamapginModal] = useState(false);
+  const [msResult, setMsResult] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Table States
-  const [pagination, setPagination] = useState({
-    pageSize: 5,
-    defaultPageSize: 5,
-    showSizeChanger: true,
-  });
+  const loadMessages = useCallback(() => {
+    submitData(API_URL, null, "GET").then((resp) => {
+      setDataSource(
+        () =>
+          resp?.result?.map((m) => ({
+            key: m.id,
+            id: m.id,
+            content: m.message,
+            categories: m.Categories || [],
+            contactsCount: m.Contacts?.length || 0,
+            contacts: m.Contacts,
+            raw: m,
+          })) || [],
+      );
+      dispatchAction("", "");
+    });
+  }, [API_URL, dispatchAction, submitData]);
 
-  let categoriesFilter = [];
-  let associatedFilter = [];
-  let categoriesTmpFilter = [];
-  let associateTmpFilter = [];
-  let messagesTosend = [];
+  const loadContacts = useCallback(() => {
+    submitData(API_URL_CONTACTS, null, "GET").then((resp) => {
+      setContacts(resp);
+    });
+  }, [API_URL]);
 
-  let dataSource = [];
-  let columns = [
-    {
-      title: "Message",
-      dataIndex: "message",
-      key: "message",
-    },
-    {
-      title: "Categories",
-      dataIndex: "categories",
-      key: "categories",
-      width: 150,
-      filtered: true,
-      filterSearch: true,
-      filters: categoriesFilter,
-      onFilter: (value, record) =>
-        record.categories.some((obj) => obj.categorie_name === value),
-      render: (categories) => (
-        <>
-          {categories.map((category) => {
-            return (
-              <Tag
-                key={category.id}
-                color={"rgb(158, 255, 206)"}
-                style={{ color: "black" }}
-              >
-                {category.categorie_name}
-              </Tag>
-            );
-          })}
-        </>
-      ),
-    },
-    {
-      title: "Contacts associated",
-      dataIndex: "contacts",
-      key: "contacts",
-      width: 100,
-      filtered: true,
-      filterSearch: true,
-      filters: associatedFilter,
-      onFilter: (value, record) => {
-        return record.contacts.some((obj) => obj.email === value);
+  const columns = useMemo(
+    () => [
+      {
+        title: "Message",
+        dataIndex: "content",
+        key: "content",
+        ellipsis: true,
+        render: (text) => (
+          <Tooltip title={text}>
+            <Text>{text}</Text>
+          </Tooltip>
+        ),
       },
-      render: (contacts) => (
-        <>
-          {contacts.map((contact) => {
-            return (
-              <Tag
-                key={contact.id}
-                color={"#9effce"}
-                style={{ color: "black" }}
-              >
-                {contact.email}
+      {
+        title: "Categories",
+        dataIndex: "categories",
+        key: "categories",
+        render: (categories) => (
+          <Space wrap>
+            {categories.map((c) => (
+              <Tag key={c.id} color="green">
+                {c.categorie_name}
               </Tag>
-            );
-          })}
-        </>
-      ),
-    },
-    {
-      title: "Actions",
-      dataIndex: "actions",
-      key: "actions",
-      width: 100,
-      align: "center",
-    },
-  ];
-
-  const handleShowEditModal = () => {
-    setShowEditMessageModal(true);
-  };
-
-  const setMessageInfo = ({ id, message, Categories, Contacts }) => {
-    setId(id);
-    setMessageToSend(message);
-    setCategories(Categories);
-    setContacts(Contacts);
-  };
-
-  const renderMessages = () => {
-    console.log(messages);
-    const { result } = messages;
-    if (result) {
-      result.map((message) => {
-        dataSource.push({
-          key: message.id,
-          message: (
-            <TextArea
-              rows={4}
-              value={message.message}
-              contentEditable={false}
-              size="middle"
-            />
-          ),
-          categories: message.Categories,
-          contacts: message.Contacts,
-          actions: [
-            <Col
-              key={message.id}
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-                flexWrap: "nowrap",
-                gap: "10px",
-                wordBreak: "break-all",
-              }}
-            >
-              <EditButton
-                data={message}
-                setData={setMessageInfo}
-                setShowModal={handleShowEditModal}
+            ))}
+          </Space>
+        ),
+      },
+      {
+        title: "Contacts",
+        dataIndex: "contactsCount",
+        key: "contacts",
+        align: "center",
+        render: (count) => <Tag>{count}</Tag>,
+      },
+      {
+        title: "Actions",
+        key: "actions",
+        align: "center",
+        render: (_, record) => (
+          <Space>
+            <Tooltip title="Edit">
+              <Button
+                type="text"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  setCurrentMessage(record.raw);
+                  setShowEdit(true);
+                }}
               />
+            </Tooltip>
 
-              <DeleteButton
-                setId={setId}
-                id={message.id}
-                cb={setShowDeleteModal}
+            <Tooltip title="Delete">
+              <Button
+                type="text"
+                danger
+                icon={<DeleteOutlined />}
+                onClick={() => {
+                  setCurrentMessage(record.raw);
+                  setShowDelete(true);
+                }}
               />
+            </Tooltip>
 
-              {/* <SendToButton
-                setShowSendToModal={setShowSendToModal}
-                setMessageToSend={setMessageToSend}
-                associateTo={message.Contacts}
-                setAssociateTo={setContacts}
-                message={message.message}
-              /> */}
-            </Col>,
-          ],
-        });
-      });
-    }
-
-    dataSource.map((data) => {
-      const { categories, contacts } = data;
-      categories.map((category) => {
-        categoriesTmpFilter.push(category.categorie_name);
-      });
-
-      contacts.map((contact) => {
-        associateTmpFilter.push(contact.email);
-      });
-    });
-    /* Las variables de filtros temporales se les reasigna su valor en base a la 
-    funcion que elimina los duplicados */
-    categoriesTmpFilter = deleteDuplicateInFilter(categoriesTmpFilter);
-    associateTmpFilter = deleteDuplicateInFilter(associateTmpFilter);
-
-    /* Se recorre las dos variables de filtros temporales para que 
-    en cada recorrido le agregue las propiedades del objeto que necesita
-    la UI para mostrar las opciones de los filtros */
-    categoriesTmpFilter.map((category) => {
-      categoriesFilter.push({
-        text: category,
-        value: category,
-      });
-    });
-
-    associateTmpFilter.map((contact) => {
-      associatedFilter.push({ text: contact, value: contact });
-    });
-  };
-
-  const onSelect = (key, selected) => {
-    setSelectedRowKeys(key);
-    for (let i = 0; i < selected.length; i++) {
-      const { key, contacts, message } = selected[i];
-      messagesTosend.push({
-        key: key,
-        contacts: contacts,
-        message: message.props.value,
-      });
-    }
-    setMessageToSend(messagesTosend);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelect,
-    onSelect: onSelect,
-    onSelectMultiple: onSelect,
-    preserveSelectedRowKeys: true,
-    selections: [
-      Table.SELECTION_ALL,
-      Table.SELECTION_INVERT,
-      Table.SELECTION_NONE,
+            <Tooltip title="Send">
+              <Button
+                type="text"
+                icon={<SendOutlined />}
+                onClick={() => {
+                  setMessagesToSend([record.content]);
+                  setCurrentContacts(record.contacts?.map((c) => c.id));
+                  setMessageId(record?.id);
+                  setShowSend(true);
+                }}
+              />
+            </Tooltip>
+          </Space>
+        ),
+      },
     ],
+    [],
+  );
+
+  useActionEffect({ type: "refresh", target: "messagesTable" }, loadMessages);
+
+  useEffect(() => {
+    loadMessages();
+    loadContacts();
+  }, [API_URL]);
+
+  const onRetry = () => {
+    setShowMessageStatusResult(false);
+  };
+  const onGoToCampaigns = () => {
+    setShowAddcamapginModal(true);
+    setShowMessageStatusResult(false);
   };
 
-  const onkDeleteButton = () => {
-    setId(selectedRowKeys);
-    setShowDeleteModal(true);
-  };
-
-  const addMessageOnOk = () => {
-    setShowAddMessageModal(true);
-  };
-
-  const setPopUpModalInfo = (modalMessage, alertModalType, modalInfoText) => {
-    setModalMessage(modalMessage);
-    setAlertModalType(alertModalType);
-    setModalInfoText(modalInfoText);
+  const handleSubmit = (API_URL, selectedContactIds) => {
+    setIsLoading(true);
+    submitData(API_URL, {
+      messageId: messageId,
+      contactsId: selectedContactIds,
+    })
+      .then((resp) => {
+        setMsResult(resp);
+        setShowMessageStatusResult(true);
+        if (resp?.summary && resp?.summary?.failed === 0) {
+          setShowSend(false);
+        }
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   useEffect(() => {
-    if (selectedRowKeys.length > 1) {
-      setShowDeleteButton(true);
-      setShowSendToButton(true);
-    } else {
-      setShowSendToButton(false);
-      setShowDeleteButton(false);
-    }
-  }, [selectedRowKeys]);
-
-  renderMessages();
+    console.log(showMessageStatusResult);
+  }, [showMessageStatusResult]);
 
   return (
     <Layout>
       <Header
         style={{
-          backgroundColor: "transparent",
+          background: "transparent",
+          padding: "16px 24px",
+          height: "auto",
+          lineHeight: "normal",
         }}
       >
-        <Row
-          gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
-          justify="start"
-          align="middle"
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: 16,
+            flexWrap: "wrap",
+          }}
         >
-          <Col>
-            <Title level={2} style={{ margin: 0 }}>
-              Messages
-            </Title>
-          </Col>
-          <Col>
-            <Row
-              gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}
-              align="middle"
-              justify="center"
+          <Space direction="vertical" size={0}>
+            <Title level={2}>Messages</Title>
+            <Text type="secondary">
+              Create and manage reusable message templates to speed up your
+              communication. Send messages instantly to selected contacts or use
+              them later in campaigns.
+            </Text>
+          </Space>
+
+          <Space>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setShowAdd(true)}
             >
-              <Col>
-                <Button
-                  type="primary"
-                  style={{
-                    color: "white",
-                    backgroundColor: "green",
-                    borderColor: "transparent",
-                  }}
-                  onClick={addMessageOnOk}
-                >
-                  <PlusCircleFilled /> Add Message
-                </Button>
-              </Col>
+              New Message
+            </Button>
 
-              <Col>
-                {showDeleteButton && (
-                  <Button
-                    type="default"
-                    style={{
-                      color: "white",
-                      backgroundColor: "rgb(237 43 43)",
-                      borderColor: "transparent",
-                    }}
-                    onClick={onkDeleteButton}
-                  >
-                    <DeleteFilled /> Delete Messages
-                  </Button>
-                )}
-              </Col>
-            </Row>
-          </Col>
-
-          <Col>
-            {showSendToButton && (
-              <SendButton setShowModal={setShowSeveralMessagesToSendModal} />
+            {selectedRowKeys.length > 0 && (
+              <Button
+                danger
+                icon={<DeleteOutlined />}
+                onClick={() => setShowDelete(true)}
+              >
+                Delete ({selectedRowKeys.length})
+              </Button>
             )}
-          </Col>
-        </Row>
+
+            {selectedRowKeys.length > 1 && (
+              <Button icon={<SendOutlined />} onClick={() => setShowSend(true)}>
+                Send ({selectedRowKeys.length})
+              </Button>
+            )}
+          </Space>
+        </div>
       </Header>
 
-      <Content>
-        <Table
-          loading={dataSource?.length > 0 ? false : true}
-          dataSource={dataSource}
-          columns={columns}
-          rowSelection={rowSelection}
-          pagination={pagination}
-          scroll={{ x: "max-content", y: 100 * 5 }}
-          onChange={(e) => {
-            setPagination(e);
-          }}
-        />
+      <Content style={{ padding: 16 }}>
+        <Card>
+          <Table
+            rowSelection={{
+              selectedRowKeys,
+              onChange: setSelectedRowKeys,
+            }}
+            columns={columns}
+            dataSource={dataSource}
+            pagination={{ pageSize: 10 }}
+            locale={{
+              emptyText: <Empty description="No messages yet" />,
+            }}
+          />
+        </Card>
       </Content>
 
-      {showSendToModal && (
-        <SendToModal
-          setShowSendToModal={setShowSendToModal}
-          message={messageTosend}
-          associateTo={contacts}
-          setAssociateTo={setContacts}
-        />
-      )}
+      {showAdd && <AddMessageModal setShowAddMessageModal={setShowAdd} />}
 
-      {showAddMessageModal && (
-        <AddMessageModal
-          setShowAddMessageModal={setShowAddMessageModal}
-          setShowPopUpModal={setShowPopUpModal}
-          setPopUpModalInfo={setPopUpModalInfo}
-        />
-      )}
-
-      {showEditMessageModal && (
+      {showEdit && (
         <EditMessageModal
-          data={{ id, messageTosend, categories, contacts }}
-          setShowEditMessageModal={setShowEditMessageModal}
-          setShowPopUpModal={setShowPopUpModal}
-          setPopUpModalInfo={setPopUpModalInfo}
+          data={currentMessage}
+          setShowEditMessageModal={setShowEdit}
         />
       )}
 
-      {showPopUpModal && (
-        <PopUpModal
-          isModalVisible={true}
-          modalMessage={modalMessage}
-          alertModalType={alertModalType}
-          modalInfoText={modalInfoText}
-        />
-      )}
-
-      {showDeleteModal && (
+      {showDelete && (
         <DeleteMessageModal
-          id={id}
-          setShowDeleteModal={setShowDeleteModal}
-          setPopUpModalInfo={setPopUpModalInfo}
-          titleModal="Do you want do delete this message?"
+          id={currentMessage?.id || selectedRowKeys}
+          setShowDeleteModal={setShowDelete}
+          titleModal="Delete selected message(s)?"
         />
       )}
 
-      {showSeveralMessagesToSendModal && (
-        <SeveralMessagesToSendModal
-          messages={messageTosend}
-          setShowModal={setShowSeveralMessagesToSendModal}
+      {showSend && (
+        <SendToModal
+          contacts={contacts}
+          selectedContacts={currenteContacts}
+          setShowSendToModal={setShowSend}
+          messages={messagesTosend}
+          messageId={messageId}
+          handleSubmit={handleSubmit}
+          isLoading={isLoading}
+        />
+        // <SeveralMessagesToSendModal
+        //   messages={dataSource?.filter((m) => selectedRowKeys.includes(m.id))}
+        //   setShowModal={setShowSend}
+      )}
+
+      {showMessageStatusResult && (
+        <Modal
+          open={showMessageStatusResult}
+          onCancel={onRetry}
+          footer={null}
+          destroyOnClose
+          centered
+          width={600}
+        >
+          <MessageStatusResult
+            response={msResult}
+            onRetry={onRetry}
+            onGoToCampaigns={onGoToCampaigns}
+          />
+        </Modal>
+      )}
+
+      {showAddCampaignModal && (
+        <AddCamapignModal
+          setShowAddcamapginModal={setShowAddcamapginModal}
+          showAddCampaignModal={showAddCampaignModal}
         />
       )}
     </Layout>

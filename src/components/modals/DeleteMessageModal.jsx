@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Modal } from "antd";
+import { message, Modal } from "antd";
 import { DeleteFilled } from "@ant-design/icons";
-import { deleteDataFuntion } from "../../utility/Funtions";
+import useSubmitData from "../../hooks/useSubmitData";
+import { useActionContext } from "../../context/ActionContext";
 
 const API_URL =
   import.meta.env.VITE_API_URL +
@@ -14,6 +15,20 @@ const DeleteMessageModal = ({
   titleModal,
 }) => {
   const [showModal, setShowModal] = useState(true);
+  const { submitData } = useSubmitData();
+  const { dispatchAction } = useActionContext();
+
+  const handleOk = () => {
+    submitData(API_URL, { id }, "DELETE").then((resp) => {
+      if (typeof resp.result === "number" || resp.result === 1) {
+        message.info("Message Deleted");
+        dispatchAction("refresh", "messagesTable");
+        setShowDeleteModal(false);
+      } else {
+        message.error("Error: " + resp?.message);
+      }
+    });
+  };
 
   const onCancel = () => {
     setShowModal(false);
@@ -30,9 +45,7 @@ const DeleteMessageModal = ({
       okText="Yes"
       cancelText="No"
       onCancel={onCancel}
-      onOk={() => {
-        deleteDataFuntion(API_URL, { id }, setPopUpModalInfo);
-      }}
+      onOk={handleOk}
       style={{ textAlign: "center" }}
     ></Modal>
   );

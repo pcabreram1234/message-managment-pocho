@@ -1,63 +1,100 @@
-import React, { useState } from "react";
-import { Modal, Select, Button, Input, Divider } from "antd";
+import React, { useState, useEffect } from "react";
+import { Modal, Button, Input, Divider, List, Select } from "antd";
 import { MailFilled } from "@ant-design/icons";
-import { fetchData } from "../../utility/fetchData";
-import ContactsAssociate from "../buttons/ContactsAsociate";
 
-const API_URL =
-  import.meta.env.VITE_API_URL +
-  import.meta.env.VITE_API_URL_ROUTER +
-  "contacts";
 const { TextArea } = Input;
 
 const SendToModal = ({
   setShowSendToModal,
-  message,
-  associateTo,
-  setAssociateTo,
+  messages = [],
+  contacts,
+  selectedContacts,
+  messageId,
+  handleSubmit,
+  isLoading,
 }) => {
   const [showModal, setShowModal] = useState(true);
+  const [selectedContactIds, setSelectedContactIds] = useState([]);
 
-  let children = [];
   const onCancel = () => {
     setShowModal(false);
     setShowSendToModal(false);
   };
 
-  const renderAssociateContacts = () => {
-    if (associateTo.length > 0) {
-      children = associateTo.map((contact) => {
-        return <Select.Option key={contact.id}>{contact.email}</Select.Option>;
-      });
-    } else {
-      const contacts = fetchData(API_URL);
-      if (contacts.length > 0) {
-        children = contacts.map((contact) => {
-          return (
-            <Select.Option key={contact.id}>{contact.email}</Select.Option>
-          );
-        });
-      }
-    }
-  };
+  const API_URL =
+    import.meta.env.VITE_API_URL +
+    import.meta.env.VITE_API_URL_ROUTER +
+    "sendMessages/" +
+    messageId;
 
-  renderAssociateContacts();
+  useEffect(() => {
+    if (contacts?.length) {
+      setSelectedContactIds(selectedContacts);
+    }
+  }, [contacts]);
 
   return (
-    <Modal visible={showModal} title="Send To?" closable onCancel={onCancel}>
-      <Input.Group>
-        <TextArea value={message} size="large" style={{ height: "200px" }} />
-      </Input.Group>
+    <Modal
+      open={showModal}
+      title={`Send Message Immediately`}
+      onCancel={onCancel}
+      footer={null}
+      centered
+    >
+      <List
+        size="small"
+        bordered
+        dataSource={messages}
+        style={{ maxHeight: 400, overflowY: "auto" }}
+      >
+        <List.Item>
+          <div style={{ width: "100%" }}>
+            <TextArea
+              value={messages}
+              readOnly
+              autoSize={{ minRows: 10, maxRows: 16 }}
+              size="large"
+              style={{
+                marginTop: 8,
+                resize: "none",
+                fontSize: 14,
+                lineHeight: "1.6",
+              }}
+            />
+          </div>
+        </List.Item>
+      </List>
+
       <Divider />
-      <Input.Group>
-        <ContactsAssociate
-          associateTo={associateTo}
-          setAssociateTo={setAssociateTo}
-        />
-        <Button type="primary">
-          Send <MailFilled />
-        </Button>
-      </Input.Group>
+
+      {/* Asociación de contactos */}
+      <Select
+        mode="multiple"
+        style={{ width: "100%" }}
+        allowClear
+        value={selectedContactIds} // Usar value en lugar de defaultValue
+        onChange={setSelectedContactIds}
+        filterOption={(input, option) =>
+          option.label.toLowerCase().includes(input.toLowerCase())
+        }
+        options={contacts?.map((c) => ({ value: c.id, label: c.email }))}
+      />
+
+      <Divider />
+
+      {/* Acción */}
+      <Button
+        type="primary"
+        block
+        loading={isLoading}
+        icon={<MailFilled />}
+        disabled={selectedContactIds.length === 0 || messages.length === 0}
+        onClick={() => {
+          handleSubmit(API_URL, selectedContactIds);
+        }}
+      >
+        Send
+      </Button>
     </Modal>
   );
 };
